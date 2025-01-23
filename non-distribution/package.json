@@ -2,9 +2,9 @@
   "name": "cs1380:m0",
   "version": "1.0.0",
   "author": {
-    "name": "<first last?>",
-    "email": "<email@brown.edu?>",
-    "cslogin": "<cslogin?>"
+    "name": "Jaideep Naik",
+    "email": "jaideep_naik@brown.edu",
+    "cslogin": "jnaik2"
   },
   "description": "A set of components for cs1380's search engine.",
   "dependencies": {
