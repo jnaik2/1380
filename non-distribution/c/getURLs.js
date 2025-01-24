@@ -23,23 +23,23 @@ const rl = readline.createInterface({
 });
 
 
-html_input = '';
+let htmlInput = '';
 rl.on('line', (line) => {
   // 2. Read HTML input from standard input (stdin) line by line using the `readline` module.
-  html_input += line;
+  htmlInput += line;
 });
 
 rl.on('close', () => {
   // 3. Parse HTML using jsdom
-  parsed_html = new JSDOM(html_input);
+  const parsedHtml = new JSDOM(htmlInput);
 
   // 4. Find all URLs:
   //  - select all anchor (`<a>`) elements) with an `href` attribute using `querySelectorAll`.
   //  - extract the value of the `href` attribute for each anchor element.
 
-  parsed_html.window.document.querySelectorAll('a').forEach((element) => {
+  parsedHtml.window.document.querySelectorAll('a').forEach((element) => {
     if (element.hasAttribute('href')) {
-      link = element.getAttribute('href');
+      const link = element.getAttribute('href');
       console.log(new URL(link, baseURL).href);
     }
   });
