@@ -27,15 +27,15 @@
     "hours": 999,
     "loc": 999,
     "dev": {
-      "cpu-no": 999,
-      "mem-gb": 999,
-      "ssd-gb": 999
+      "cpu-no": 1,
+      "mem-gb": 1,
+      "ssd-gb": 8
     },
     "throughput": {
       "dev": [],
       "aws": [],
       "gs": []
     },
-    "dloc": -99
+    "dloc": 3000
   }
 }
