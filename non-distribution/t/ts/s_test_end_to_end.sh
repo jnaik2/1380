@@ -38,10 +38,9 @@ term="filter block"
 if $DIFF <(./query.js "$term") <(cat "$T_FOLDER"/d/end2end2.txt) >&2;
 then
     echo "$0 success: search results are identical"
-    exit 0
 else
     echo "$0 failure: search results are not identical"
-    exit 1
+    EXIT=1
 fi
 
 
