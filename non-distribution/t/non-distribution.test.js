@@ -65,3 +65,44 @@ test('(20 pts) test-sandbox_1', () => {
   const command = `"${path.join(__dirname, 'grade-sandbox-1.sh')}"`;
   execSync(command, {stdio: ['pipe', 'pipe', 'inherit']}).toString().trim();
 });
+
+test('student process test', () => {
+  const command = `"${path.join(__dirname, 'ts/s_test_process.sh')}"`; execSync(command).toString().trim();
+});
+test('student stem test', () => {
+  const command = `"${path.join(__dirname, 'ts/s_test_stem.sh')}"`; execSync(command).toString().trim();
+});
+test('student getText test', () => {
+  const command = `"${path.join(__dirname, 'ts/s_test_getText.sh')}"`; execSync(command).toString().trim();
+});
+test('student getURLs test', () => {
+  const command = `"${path.join(__dirname, 'ts/s_test_getURLs.sh')}"`; execSync(command).toString().trim();
+});
+test('student merge test', () => {
+  const command = `"${path.join(__dirname, 'ts/s_test_merge.sh')}"`;
+  execSync(command).toString().trim();
+});
+test('student invert test', () => {
+  const command = `"${path.join(__dirname, 'ts/s_test_invert.sh')}"`;
+  execSync(command).toString().trim();
+});
+test('student combine test', () => {
+  const command = `"${path.join(__dirname, 'ts/s_test_combine.sh')}"`;
+  execSync(command).toString().trim();
+});
+test('student query test', () => {
+  const command = `"${path.join(__dirname, 'ts/s_test_query.sh')}"`;
+  execSync(command).toString().trim();
+});
+test('student query test 2', () => {
+  const command = `"${path.join(__dirname, 'ts/s_test_query2.sh')}"`;
+  execSync(command).toString().trim();
+});
+test('student query test 3', () => {
+  const command = `"${path.join(__dirname, 'ts/s_test_query2.sh')}"`;
+  execSync(command).toString().trim();
+});
+test('student end to end test', () => {
+  const command = `"${path.join(__dirname, 'ts/s_test_end_to_end.sh')}"`;
+  execSync(command, {stdio: ['pipe', 'pipe', 'inherit']}).toString().trim();
+});

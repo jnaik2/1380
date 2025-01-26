@@ -96,7 +96,6 @@ const printMerged = (err, data) => {
 
     global[term] = urlfs; // Array of {url, freq} objects
   }
-  // console.log(global)
 
   // 5. Merge the local index into the global index:
   // - For each term in the local index, if the term exists in the global index:
@@ -109,12 +108,8 @@ const printMerged = (err, data) => {
   Object.entries(local).forEach((entry) => {
     const [term, data] = entry;
     if (term in global) {
-      // console.log("HERE")
-      // console.log(local[term], global[term])
       global[term].push(data);
       global[term].sort(compare);
-      // console.log("AFTER")
-      // console.log(local[term], global[term]);
     } else {
       global[term] = [data];
     }

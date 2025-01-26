@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Text Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        p {
+            margin-bottom: 1em;
+        }
+        .hidden-text {
+            display: none;
+        }
+        .nested {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .nested div {
+            margin: 5px 0;
+        }
+        .reversed {
+            direction: rtl;
+            unicode-bidi: bidi-override;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to My Random Text Page</h1>
+    <a>This is an anchor element, but there's no link</a>
+    <p>I put a sneaky link here, but it's not an anchor href element: google.com </p>
+    <a href="https://example.com">This is an anchor element, with a link</a>
+    
+</body>
+</html>

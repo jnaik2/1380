@@ -32,15 +32,22 @@ const {execSync} = require('child_process');
 
 function query(indexFile, args) {
   const searchQuery = args.join(` `);
-  const sanitizedQuery = execSync(`echo "${searchQuery}" | ./c/process.sh | ./c/stem.js`).toString().trimEnd();
-  const lines = fs.readFileSync(indexFile).toString().split(`\n`);
-
-  for (let index = 0; index < lines.length; index++) {
-    const line = lines[index];
-    if (line.split(`|`)[0].includes(sanitizedQuery)) {
+  let sanitizedQuery = execSync(`echo "${searchQuery}" | ./c/process.sh | ./c/stem.js`).toString();
+  const lines = fs.readFileSync(indexFile).toString().trim().split(`\n`);
+  sanitizedQuery = sanitizedQuery.split(`\n`);
+  lines.forEach((line) => {
+    const words = line.split(`|`)[0].split(' ');
+    let found = true;
+    for (let index = 0; index < sanitizedQuery.length; index++) {
+      if (!words.includes(sanitizedQuery[index])) {
+        found = false;
+        break;
+      }
+    }
+    if (found) {
       console.log(line);
     }
-  }
+  });
 }
 
 const args = process.argv.slice(2); // Get command-line arguments

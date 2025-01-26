@@ -8,7 +8,7 @@ cd "$(dirname "$0")/..$R_FOLDER/.." || exit 1
 
 DIFF=${DIFF:-diff}
 
-term="hello check stuff"
+term="stuff check"
 
 cat "$T_FOLDER"/d/query1.txt > d/global-index.txt
 

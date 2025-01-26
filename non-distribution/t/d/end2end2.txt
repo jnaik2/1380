@@ -1,0 +1,2 @@
+block filter | http://www.testingmcafeesites.com/testcat_ac.html 1 http://www.testingmcafeesites.com/testcat_al.html 1 http://www.testingmcafeesites.com/testcat_an.html 1 http://www.testingmcafeesites.com/testcat_au.html 1
+purpos block filter | http://www.testingmcafeesites.com/testcat_ac.html 1 http://www.testingmcafeesites.com/testcat_al.html 1 http://www.testingmcafeesites.com/testcat_an.html 1 http://www.testingmcafeesites.com/testcat_au.html 1

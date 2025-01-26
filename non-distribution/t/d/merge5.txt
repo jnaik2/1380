@@ -1,0 +1,5 @@
+fight | b.com 1
+light | c.com 3
+orange | d.com 1
+right | a.com 2
+stuff | d.com 4 b.com 2 a.com 1 c.com 1
