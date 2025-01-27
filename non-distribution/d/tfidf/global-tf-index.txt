@@ -1,0 +1,28 @@
+antelop kingdom stuff | https://jnaik2.github.io/etch-a-sketch/test1.html 0.06666666666666667
+antelop kingdom | https://jnaik2.github.io/etch-a-sketch/test1.html 0.06666666666666667
+antelop | https://jnaik2.github.io/etch-a-sketch/test1.html 0.06666666666666667
+check pineappl pineappl | https://jnaik2.github.io/etch-a-sketch/test2.html 0.047619047619047616
+check pineappl | https://jnaik2.github.io/etch-a-sketch/test2.html 0.047619047619047616
+check | https://jnaik2.github.io/etch-a-sketch/test1.html 0.06666666666666667 https://jnaik2.github.io/etch-a-sketch/test2.html 0.047619047619047616
+dog food stuff | https://jnaik2.github.io/etch-a-sketch/test3.html 0.16666666666666666
+dog food | https://jnaik2.github.io/etch-a-sketch/test3.html 0.16666666666666666
+dog | https://jnaik2.github.io/etch-a-sketch/test3.html 0.16666666666666666
+flower stuff stuff | https://jnaik2.github.io/etch-a-sketch/test2.html 0.047619047619047616
+flower stuff | https://jnaik2.github.io/etch-a-sketch/test2.html 0.047619047619047616
+flower | https://jnaik2.github.io/etch-a-sketch/test2.html 0.047619047619047616
+food stuff | https://jnaik2.github.io/etch-a-sketch/test3.html 0.16666666666666666
+food | https://jnaik2.github.io/etch-a-sketch/test3.html 0.16666666666666666
+kingdom stuff stuff | https://jnaik2.github.io/etch-a-sketch/test1.html 0.06666666666666667
+kingdom stuff | https://jnaik2.github.io/etch-a-sketch/test1.html 0.06666666666666667
+kingdom | https://jnaik2.github.io/etch-a-sketch/test1.html 0.06666666666666667
+pineappl pineappl pineappl | https://jnaik2.github.io/etch-a-sketch/test2.html 0.09523809523809523
+pineappl pineappl | https://jnaik2.github.io/etch-a-sketch/test2.html 0.14285714285714285
+pineappl | https://jnaik2.github.io/etch-a-sketch/test2.html 0.19047619047619047
+stuff check pineappl | https://jnaik2.github.io/etch-a-sketch/test2.html 0.047619047619047616
+stuff check | https://jnaik2.github.io/etch-a-sketch/test1.html 0.06666666666666667 https://jnaik2.github.io/etch-a-sketch/test2.html 0.047619047619047616
+stuff stuff check | https://jnaik2.github.io/etch-a-sketch/test1.html 0.06666666666666667 https://jnaik2.github.io/etch-a-sketch/test2.html 0.047619047619047616
+stuff stuff | https://jnaik2.github.io/etch-a-sketch/test1.html 0.06666666666666667 https://jnaik2.github.io/etch-a-sketch/test2.html 0.047619047619047616
+stuff | https://jnaik2.github.io/etch-a-sketch/test3.html 0.16666666666666666 https://jnaik2.github.io/etch-a-sketch/test1.html 0.13333333333333333 https://jnaik2.github.io/etch-a-sketch/test2.html 0.09523809523809523
+water antelop kingdom | https://jnaik2.github.io/etch-a-sketch/test1.html 0.06666666666666667
+water antelop | https://jnaik2.github.io/etch-a-sketch/test1.html 0.06666666666666667
+water | https://jnaik2.github.io/etch-a-sketch/test1.html 0.06666666666666667

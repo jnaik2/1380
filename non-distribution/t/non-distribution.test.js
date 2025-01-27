@@ -106,3 +106,7 @@ test('student end to end test', () => {
   const command = `"${path.join(__dirname, 'ts/s_test_end_to_end.sh')}"`;
   execSync(command, {stdio: ['pipe', 'pipe', 'inherit']}).toString().trim();
 });
+test('testing tf-idf', () => {
+  const command = `"${path.join(__dirname, 'ts/s_test_tfidf.sh')}"`;
+  execSync(command, {stdio: ['pipe', 'pipe', 'inherit']}).toString().trim();
+});

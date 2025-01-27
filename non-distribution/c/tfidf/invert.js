@@ -7,6 +7,7 @@ const rl = readline.createInterface({
 
 const url = process.argv[2];
 const map = {};
+let totalWordCount = 0;
 
 rl.on('line', (line) => {
   const sanitizedLine = line.replaceAll('\t', ' ').trim();
@@ -15,9 +16,12 @@ rl.on('line', (line) => {
   } else {
     map[sanitizedLine] = 1;
   }
+  totalWordCount += 1;
 });
+
+// Calculating the term-frequency in each local document
 rl.on('close', () => {
-  Object.keys(map).sort().forEach((key) => {
-    console.log(`${key} | ${map[key]} | ${url}`);
+  Object.keys(map).forEach((key) => {
+    console.log(`${key} | ${(map[key]/totalWordCount)} | ${url}`);
   });
 });
