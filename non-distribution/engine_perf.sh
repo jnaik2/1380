@@ -42,7 +42,9 @@ while read -r url; do
 
   url_count=$((url_count + 1))
 
-  if [[ "$(cat d/visited.txt | wc -l)" -ge "$(cat d/urls.txt | wc -l)" ]]; then
+visited_count=$(wc -l < d/visited.txt)
+urls_count=$(wc -l < d/urls.txt)
+if [[ "$visited_count" -ge "$urls_count" ]]; then
     break
   fi
 
