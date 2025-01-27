@@ -43,8 +43,9 @@ To characterize correctness, we developed `12` tests that test the following cas
  12. t/ts/s_test_combine.sh: This more extensively tests combine.js on a custom corpus
 
 
-*Performance*: The throughput of various subsystems is described in the `"throughput"` portion of package.json. The characteristics of my development machines are summarized in the `"dev"` portion of package.json.
-
+*Performance*: The throughput of various subsystems is described in the `"throughput"` portion of package.json. The characteristics of my development machines are summarized in the `"dev"` portion of package.json. The throughput represents the average time, in milliseconds,
+for a crawl, index, and query operation respectively to complete. I performed a test using 50 links/queries, and then calculated the average
+time for each operation to complete. It took much longer on the cloud to complete.
 
 ## Wild Guess
 
