@@ -1,9 +1,4 @@
 #!/usr/bin/env node
-/*
-    Checklist:
-    7. Serialize Date, Error objects
-    9. Serialize circular objects and arrays
-*/
 const nativeObjectsToStr = new Map();
 const strToNativeObjects = new Map();
 
