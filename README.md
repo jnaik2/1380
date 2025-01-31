@@ -78,4 +78,18 @@ distribution.all.comm.send(['sid'], {node: node, service: 'status', method: 'get
 
 # Results and Reflections
 
-> ...
+# M1: Serialization / Deserialization
+
+
+## Summary
+
+My implementation comprises `2` software components, totaling `150` lines of code. Key challenges included `deserializing functions, finding all native objects, and handling cycles`. To deserialize functions, I had to combine the original function's code as a string, but also wrap it with something like Function("return ", originalString)() so that way anonymous functions wouldn't get ignored or just undefined. I was under the impression simply doing Function(originalString) would convert it to a function but it didn't work properly if I tried to execute it after. To find all native objects, I preprocessed the built in libraries list and checked if the library was a function/object and if it was an object I recursively parsed further and added it to my hashmaps. Handling cycles was difficult because I didn't know how to generate/track the UEID and I had to split my code into two components. An exposed serialize/deserialize function & a helper, recursive serialize/deserialize function that used a hashmap to track the references.
+
+
+## Correctness & Performance Characterization
+
+*Correctness*: I wrote `5` tests in m1.studen.test.js. My tests include objects with base support like strings & numbers, but also complex types like objects, arrays,
+and native functions. I also handled recursive & cylic structures in my tests. Some of my tests focused on edge cases.
+
+
+*Performance*: The latency of various subsystems is described in the `"latency"` portion of package.json. The characteristics of my development machines are summarized in the `"dev"` portion of package.json. The first value represents a workload using only base values (T2), the second value is for function values (T3), and the third value is for the complete complex workload (T4). See performance/m1.js for how it was measured
