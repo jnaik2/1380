@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
     Checklist:
 
@@ -12,7 +13,7 @@
     9. Serialize circular objects and arrays
     10. Serialize native functions
 */
-
+let nextUIUD = 0;
 
 function serialize(object) {
   return JSON.stringify(serializeRecursive(object, new Map()))
