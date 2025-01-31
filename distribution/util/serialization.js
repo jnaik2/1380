@@ -1,26 +1,47 @@
 #!/usr/bin/env node
 /*
     Checklist:
-
-    1. Serialize strings
-    2. Serialize numbers
-    3. Serialize booleans
-    4. Serialize (non-circular) Objects
-    5. Serialize (non-circular) Arrays
-    6. Serialize undefined and null
     7. Serialize Date, Error objects
-    8. Serialize (non-native) functions
     9. Serialize circular objects and arrays
-    10. Serialize native functions
 */
+const nativeObjectsToStr = new Map();
+const strToNativeObjects = new Map();
+
+function populateNativeObjects() {
+  const builtinLibs = require(`repl`)._builtinLibs;
+  builtinLibs.forEach((pkg) => {
+    if (!(pkg == "sys" || pkg == "wasi")) {
+      const rootObj = require(pkg);
+      switch (typeof rootObj) {
+        case "function":
+          strToNativeObjects.set(pkg, rootObj)
+          nativeObjectsToStr.set(rootObj, pkg)
+          break;
+        case "object":
+          for (const [k, v] of Object.entries(rootObj)) {
+            strToNativeObjects.set(`${pkg}.${k}`, v)
+            nativeObjectsToStr.set(v, `${pkg}.${k}`)
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  })
+}
+populateNativeObjects()
+
 let nextUIUD = 0;
 
 function serialize(object) {
-  return JSON.stringify(serializeRecursive(object, new Map()))
+  return JSON.stringify(serializeRecursive(object, new Map()));
 }
 
 function serializeRecursive(object, referenceMap) {
-  let type = typeof object
+  if (nativeObjectsToStr.has(object)) {
+    return {"type": "native", "id": nextUIUD++, "value": nativeObjectsToStr.get(object) }
+  }
+  let type = typeof object;
   let value;
   let id = nextUIUD++;
   switch (type) {
@@ -49,6 +70,8 @@ function serializeObject(object, referenceMap) {
     return ["null", ""]
   } else if (object instanceof Date) {
     return ["date", object.toISOString()]
+  } else if (object instanceof Error) {
+    return ["error", object.message]
   } else if (object instanceof Array) {
     if (referenceMap.has(object)) {
       return ["reference", referenceMap.get(object)]
@@ -57,7 +80,6 @@ function serializeObject(object, referenceMap) {
     return ["array", object.map(item => serializeRecursive(item, referenceMap))]
   } else {
     if (referenceMap.has(object)) {
-      console.log(object)
       return ["reference", referenceMap.get(object)]
     }
     let newObject = {}
@@ -85,11 +107,15 @@ function deserializeRecursive(json, referenceMap) {
     case "null":
       return null
     case "function":
-      return Function(value)
+      return new Function("return " + value)()
     case "date":
       return new Date(value)
+    case "error":
+      return new Error(value)
     case "array":
       return value.map(item => deserializeRecursive(item, referenceMap))
+    case "native":
+      return strToNativeObjects.get(value)
     case "reference":
       return referenceMap.get(value)
     case "object":
@@ -107,3 +133,4 @@ module.exports = {
   serialize: serialize,
   deserialize: deserialize,
 };
+  
