@@ -50,7 +50,7 @@ const start = function(callback) {
 
     req.on('end', () => {
 
-      /* Here, you can handle the service requests. 
+      /* Here, you can handle the service requests.
       Use the local routes service to get the service you need to call.
       You need to call the service with the method and arguments provided in the request.
       Then, you need to serialize the result and send it back to the caller.
