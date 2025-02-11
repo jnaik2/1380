@@ -1,9 +1,7 @@
 /** @typedef {import("../types").Callback} Callback */
 
-const { comm } = require("./local");
-const status = require("./status");
 const routes = { get, put, rem };
-let serviceMap = { status: status, comm: comm, routes: routes };
+let serviceMap = {};
 
 /**
  * @param {string} configuration
