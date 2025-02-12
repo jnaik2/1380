@@ -6,7 +6,7 @@
     Imporant: Do not modify any of the test headers (i.e., the test('header', ...) part). Doing so will result in grading penalties.
 */
 
-const distribution = require("../../config.js");
+const distribution = require("../../distribution");
 test("(1 pts) student test", (done) => {
   // Test status with a missing configuration to ensure error handling
   distribution.local.status.get(null, (e, v) => {
@@ -14,6 +14,16 @@ test("(1 pts) student test", (done) => {
       expect(e).toBeTruthy();
       expect(e).toBeInstanceOf(Error);
       expect(v).toBeFalsy();
+    } catch (error) {
+      done(error);
+    }
+  });
+
+  // Test status on nid
+  distribution.local.status.get("nid", (e, v) => {
+    try {
+      expect(e).toBeFalsy();
+      expect(v).toBeTruthy();
       done();
     } catch (error) {
       done(error);
@@ -38,18 +48,14 @@ test("(1 pts) student test", (done) => {
           expect(e).toBeInstanceOf(Error);
           expect(e.message).toBe("Value not accessible in service");
           expect(v).toBeFalsy();
-          done();
         } catch (error) {
           done(error);
         }
       });
     });
   });
-});
 
-test("(1 pts) student test", (done) => {
   // Test routes consecutive puts to ensure the service is updated with latest
-  const routes = distribution.local.routes;
 
   const testService1 = {};
   const testService2 = {};
@@ -76,15 +82,14 @@ test("(1 pts) student test", (done) => {
 });
 
 test("(1 pts) student test", (done) => {
-  // Test send() with malformed inputs to ensure error handling
-  const node = distribution.node.config;
-  const remote = { node: node, service: "status" };
-  const message = ["invalid"];
+  // Test removing a non existent service to ensure error handling
+  const routes = distribution.local.routes;
 
-  distribution.local.comm.send(message, remote, (e, v) => {
+  routes.rem("nonexistent", (e, v) => {
     try {
       expect(e).toBeTruthy();
       expect(e).toBeInstanceOf(Error);
+      expect(e.message).toBe("Value not accessible in service");
       expect(v).toBeFalsy();
       done();
     } catch (error) {
@@ -94,9 +99,41 @@ test("(1 pts) student test", (done) => {
 });
 
 test("(1 pts) student test", (done) => {
+  // Test routes.get() with missing configuration to ensure error handling
+  const routes = distribution.local.routes;
+
+  routes.get(null, (e, v) => {
+    try {
+      expect(e).toBeTruthy();
+      expect(e).toBeInstanceOf(Error);
+      expect(e.message).toBe("Configuration not specified");
+      expect(v).toBeFalsy();
+      done();
+    } catch (error) {
+      done(error);
+    }
+  });
+});
+
+test("(1 pts) student test", (done) => {
+  // Test send() with missing method to ensure error handling
+  const node = distribution.node.config;
+  let remote = { node: node, service: "status" };
+  let message = ["invalid"];
+
+  distribution.local.comm.send(message, remote, (e, v) => {
+    try {
+      expect(e).toBeTruthy();
+      expect(e).toBeInstanceOf(Error);
+      expect(v).toBeFalsy();
+    } catch (error) {
+      done(error);
+    }
+  });
+
   // Test send() with missing node to ensure error handling
-  const remote = { service: "status", method: "get" };
-  const message = ["sid"];
+  remote = { service: "status", method: "get" };
+  message = ["sid"];
 
   distribution.local.comm.send(message, remote, (e, v) => {
     try {

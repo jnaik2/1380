@@ -14,6 +14,7 @@ const start = function (callback) {
   const server = http.createServer((req, res) => {
     /* Your server will be listening for PUT requests. */
 
+    global.moreStatus["counts"]++;
     if (req.method !== "PUT") {
       res.statusCode = 405;
       res.end(serialize(new Error("Method not allowed")));

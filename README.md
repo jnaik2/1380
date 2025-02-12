@@ -104,7 +104,7 @@ My implementation comprises `4` software components, totaling `300` lines of cod
 
 ## Correctness & Performance Characterization
 
-_Correctness_: I wrote `5` tests. 1 tests edge cases in status, 2 test complex interactions with routes, and 2 edge tests in comm.
+_Correctness_: I wrote `10` tests. The first test is for status.get, the second - fourth cover routes including both unit tests (e.g. just testing routes.rem) and nested interactions. The fifth test covers comm.send
 
 _Performance_: I characterized the performance of comm and RPC by sending 1000 service requests in a tight loop. Average throughput and latency is recorded in `package.json`. The first number represents comm & the second represents RPC.
 
