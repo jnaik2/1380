@@ -1,4 +1,3 @@
-
 const status = function(config) {
   const context = {};
   context.gid = config.gid || 'all';
