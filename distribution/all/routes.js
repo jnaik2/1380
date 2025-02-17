@@ -2,14 +2,28 @@
 
 function routes(config) {
   const context = {};
-  context.gid = config.gid || 'all';
+  context.gid = config.gid || "all";
 
   /**
    * @param {object} service
    * @param {string} name
    * @param {Callback} callback
    */
-  function put(service, name, callback = () => { }) {
+  function put(service, name, callback = () => {}) {
+    let callBack = callback || console.log;
+    let remote = { service: "routes", method: "put" };
+
+    distribution[context.gid].comm.send(
+      [service, name],
+      remote,
+      (errorMap, responseMap) => {
+        if (errorMap) {
+          callBack(errorMap, null);
+        } else {
+          callBack(null, responseMap);
+        }
+      }
+    );
   }
 
   /**
@@ -17,10 +31,9 @@ function routes(config) {
    * @param {string} name
    * @param {Callback} callback
    */
-  function rem(service, name, callback = () => { }) {
-  }
+  function rem(service, name, callback = () => {}) {}
 
-  return {put, rem};
+  return { put, rem };
 }
 
 module.exports = routes;
