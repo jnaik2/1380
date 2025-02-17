@@ -27,6 +27,7 @@ const start = function (callback) {
     */
 
     const urlArr = url.parse(req.url).pathname.split("/");
+    const gid = urlArr[urlArr.length - 3];
     const service = urlArr[urlArr.length - 2];
     const method = urlArr[urlArr.length - 1];
 
@@ -60,7 +61,7 @@ const start = function (callback) {
       try {
         // Use a try catch in case the body is not in JSON format
         const args = deserialize(body.join(""));
-        routes.get(service, (e1, s) => {
+        routes.get({ service: service, gid: gid }, (e1, s) => {
           if (e1) {
             res.statusCode = 404;
             res.end(serialize(e1));

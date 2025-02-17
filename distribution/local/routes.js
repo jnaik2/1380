@@ -1,10 +1,9 @@
 /** @typedef {import("../types").Callback} Callback */
 
-const routes = { get, put, rem };
 let serviceMap = {};
 
 /**
- * @param {string} configuration
+ * @param {string | {service: string, gid: string}} configuration
  * @param {Callback} callback
  * @return {void}
  */
@@ -14,10 +13,25 @@ function get(configuration, callback) {
     callback(new Error("Configuration not specified"), null);
     return;
   }
-  if (!serviceMap[configuration]) {
-    callBack(new Error("Value not accessible in service"), null);
+
+  let gid = "local";
+  let status = configuration;
+  if (typeof configuration === "object") {
+    configuration = configuration.service;
+    status = configuration.status;
+  }
+
+  let service;
+  if (gid == "local") {
+    service = serviceMap[configuration];
   } else {
-    callBack(null, serviceMap[configuration]);
+    service = distribution[gid][configuration];
+  }
+
+  if (!service) {
+    callBack(new Error("Service not accessible"), null);
+  } else {
+    callBack(null, service);
   }
 }
 
@@ -59,4 +73,4 @@ function rem(configuration, callback) {
   }
 }
 
-module.exports = routes;
+module.exports = { get, put, rem };
