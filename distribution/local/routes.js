@@ -29,7 +29,12 @@ function get(configuration, callback) {
   }
 
   if (!service) {
-    callBack(new Error("Service not accessible"), null);
+    const rpc = global.toLocal[configuration.serviceName];
+    if (rpc) {
+      callback(null, { call: rpc });
+    } else {
+      callBack(new Error(`Service, ${service}, not accessible`), null);
+    }
   } else {
     callBack(null, service);
   }
