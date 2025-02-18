@@ -47,7 +47,7 @@ function get(configuration, callback) {
  * @return {void}
  */
 function put(service, configuration, callback) {
-  let callBack = callback || console.log;
+  let callBack = callback || (() => {});
   if (!configuration) {
     callback(new Error("Configuration not specified"), null);
     return;

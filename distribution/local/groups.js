@@ -40,25 +40,25 @@ groups.put = function (config, group, callback) {
 
   global.distribution[gid] = {};
   global.distribution[gid].status = require("../../distribution/all/status")({
-    gid: "all",
+    gid: gid,
   });
   global.distribution[gid].comm = require("../../distribution/all/comm")({
-    gid: "all",
+    gid: gid,
   });
   global.distribution[gid].gossip = require("../../distribution/all/gossip")({
-    gid: "all",
+    gid: gid,
   });
   global.distribution[gid].groups = require("../../distribution/all/groups")({
-    gid: "all",
+    gid: gid,
   });
   global.distribution[gid].routes = require("../../distribution/all/routes")({
-    gid: "all",
+    gid: gid,
   });
   global.distribution[gid].mem = require("../../distribution/all/mem")({
-    gid: "all",
+    gid: gid,
   });
   global.distribution[gid].store = require("../../distribution/all/store")({
-    gid: "all",
+    gid: gid,
   });
 
   if (!nodeMap["all"]) {

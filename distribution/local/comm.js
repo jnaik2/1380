@@ -40,8 +40,9 @@ function send(message, remote, callback) {
     return;
   }
   let pathPrefix = "/local";
-  if (remote.node.gid) {
-    pathPrefix = `/${remote.node.gid}`;
+
+  if (remote.gid) {
+    pathPrefix = `/${remote.gid}`;
   }
 
   const postData = serialize(message);
