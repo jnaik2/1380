@@ -56,13 +56,7 @@ const status = function (config) {
         [],
         remote,
         (errorMap, responseMap) => {
-          distribution.local.status.stop((e, v) => {
-            if (errorMap) {
-              callBack(errorMap, null);
-            } else {
-              callBack(null, responseMap);
-            }
-          });
+          callBack(errorMap, responseMap);
         }
       );
     },

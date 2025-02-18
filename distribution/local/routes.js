@@ -16,7 +16,9 @@ function get(configuration, callback) {
 
   let gid = "local";
   if (typeof configuration === "object") {
-    gid = configuration.gid;
+    if (gid in configuration) {
+      gid = configuration.gid;
+    }
     configuration = configuration.service;
   }
 

@@ -11,11 +11,7 @@ const groups = function (config) {
         [config, group],
         remote,
         (errorMap, responseMap) => {
-          if (errorMap) {
-            callBack(errorMap, null);
-          } else {
-            callBack(null, responseMap);
-          }
+          callBack(errorMap, responseMap);
         }
       );
     },
@@ -25,14 +21,10 @@ const groups = function (config) {
       let remote = { service: "groups", method: "del" };
 
       distribution[context.gid].comm.send(
-        name,
+        [name],
         remote,
         (errorMap, responseMap) => {
-          if (errorMap) {
-            callBack(errorMap, null);
-          } else {
-            callBack(null, responseMap);
-          }
+          callBack(errorMap, responseMap);
         }
       );
     },
@@ -42,14 +34,10 @@ const groups = function (config) {
       let remote = { service: "groups", method: "get" };
 
       distribution[context.gid].comm.send(
-        name,
+        [name],
         remote,
         (errorMap, responseMap) => {
-          if (errorMap) {
-            callBack(errorMap, null);
-          } else {
-            callBack(null, responseMap);
-          }
+          callBack(errorMap, responseMap);
         }
       );
     },
@@ -62,11 +50,7 @@ const groups = function (config) {
         [name, node],
         remote,
         (errorMap, responseMap) => {
-          if (errorMap) {
-            callBack(errorMap, null);
-          } else {
-            callBack(null, responseMap);
-          }
+          callBack(errorMap, responseMap);
         }
       );
     },
@@ -79,11 +63,7 @@ const groups = function (config) {
         [name, node],
         remote,
         (errorMap, responseMap) => {
-          if (errorMap) {
-            callBack(errorMap, null);
-          } else {
-            callBack(null, responseMap);
-          }
+          callBack(errorMap, responseMap);
         }
       );
     },

@@ -17,11 +17,7 @@ function routes(config) {
       [service, name],
       remote,
       (errorMap, responseMap) => {
-        if (errorMap) {
-          callBack(errorMap, null);
-        } else {
-          callBack(null, responseMap);
-        }
+        callBack(errorMap, responseMap);
       }
     );
   }
