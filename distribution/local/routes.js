@@ -14,12 +14,14 @@ function get(configuration, callback) {
     return;
   }
 
-  let gid = "local";
+  let gid;
   if (typeof configuration === "object") {
-    if (gid in configuration) {
-      gid = configuration.gid;
-    }
+    gid = configuration.gid;
     configuration = configuration.service;
+  }
+
+  if (!gid) {
+    gid = "local";
   }
 
   let map = routesMap;
