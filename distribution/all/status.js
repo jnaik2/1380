@@ -1,5 +1,3 @@
-const distribution = require("../../distribution");
-
 const status = function (config) {
   const context = {};
   context.gid = config.gid || "all";
@@ -9,18 +7,22 @@ const status = function (config) {
       let callBack = callback || console.log;
       let remote = { service: "status", method: "get" };
 
-      distribution[context.gid].comm.send(
-        configuration,
+      global.distribution[context.gid].comm.send(
+        [configuration],
         remote,
         (errorMap, responseMap) => {
-          if (errorMap) {
-            callBack(errorMap, null);
-          } else {
+          if (
+            configuration == "heapTotal" ||
+            configuration == "heapUsed" ||
+            configuration == "counts"
+          ) {
             let sum = 0;
             for (const sid in responseMap) {
               sum += responseMap[sid];
             }
-            callBack(null, sum);
+            callBack(errorMap, sum);
+          } else {
+            callBack(errorMap, responseMap);
           }
         }
       );
@@ -28,7 +30,7 @@ const status = function (config) {
 
     spawn: (configuration, callback) => {
       let callBack = callback || console.log;
-      distribution.local.status.spawn(configuration, (e, v) => {
+      global.distribution.local.status.spawn(configuration, (e, v) => {
         distribution[context.gid].comm.send(
           [context.gid, configuration],
           {
@@ -50,7 +52,7 @@ const status = function (config) {
       let callBack = callback || console.log;
       let remote = { service: "status", method: "stop" };
 
-      distribution[context.gid].comm.send(
+      global.distribution[context.gid].comm.send(
         [],
         remote,
         (errorMap, responseMap) => {

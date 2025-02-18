@@ -67,12 +67,8 @@ const start = function (callback) {
             res.end(serialize(e1));
           } else {
             s[method](...args, (e2, r) => {
-              if (e2) {
-                res.statusCode = 500;
-                res.end(serialize(e2));
-              } else {
-                res.end(serialize(r));
-              }
+              res.statusCode = 200;
+              res.end(serialize({ e: e2, r: r }));
             });
           }
         });

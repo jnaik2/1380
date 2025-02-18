@@ -65,10 +65,12 @@ function send(message, remote, callback) {
     res.on("end", () => {
       try {
         const data = deserialize(body.join(""));
-        if (res.statusCode == 200) {
-          callBack(null, data);
-        } else {
+        if (res.statusCode != 200) {
           callBack(data, null);
+        } else {
+          const err = data.e;
+          const res = data.r;
+          callBack(err, res);
         }
       } catch (error) {
         callBack(error, null);

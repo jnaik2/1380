@@ -1,4 +1,3 @@
-const distribution = require("../../distribution");
 const id = require("../util/id");
 
 const groups = {};
@@ -39,25 +38,25 @@ groups.put = function (config, group, callback) {
   }
 
   global.distribution[gid] = {};
-  global.distribution[gid].status = require("../../distribution/all/status")({
+  global.distribution[gid].status = require("../all/status")({
     gid: gid,
   });
-  global.distribution[gid].comm = require("../../distribution/all/comm")({
+  global.distribution[gid].comm = require("../all/comm")({
     gid: gid,
   });
-  global.distribution[gid].gossip = require("../../distribution/all/gossip")({
+  global.distribution[gid].gossip = require("../all/gossip")({
     gid: gid,
   });
-  global.distribution[gid].groups = require("../../distribution/all/groups")({
+  global.distribution[gid].groups = require("../all/groups")({
     gid: gid,
   });
-  global.distribution[gid].routes = require("../../distribution/all/routes")({
+  global.distribution[gid].routes = require("../all/routes")({
     gid: gid,
   });
-  global.distribution[gid].mem = require("../../distribution/all/mem")({
+  global.distribution[gid].mem = require("../all/mem")({
     gid: gid,
   });
-  global.distribution[gid].store = require("../../distribution/all/store")({
+  global.distribution[gid].store = require("../all/store")({
     gid: gid,
   });
 

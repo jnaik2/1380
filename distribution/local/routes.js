@@ -15,28 +15,25 @@ function get(configuration, callback) {
   }
 
   let gid = "local";
-  let status = configuration;
   if (typeof configuration === "object") {
+    gid = configuration.gid;
     configuration = configuration.service;
-    status = configuration.status;
   }
 
-  let service;
-  if (gid == "local") {
-    service = routesMap[configuration];
-  } else {
-    service = distribution[gid][configuration];
+  let map = routesMap;
+  if (gid != "local") {
+    map = global.distribution[gid];
   }
 
-  if (!service) {
-    const rpc = global.toLocal[service];
+  if (!(configuration in map)) {
+    const rpc = global.toLocal[configuration];
     if (rpc) {
       callback(null, { call: rpc });
     } else {
-      callBack(new Error(`Service, ${service}, not accessible`), null);
+      callBack(new Error(`Service, ${configuration}, not accessible`), null);
     }
   } else {
-    callBack(null, service);
+    callBack(null, map[configuration]);
   }
 }
 
