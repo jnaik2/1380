@@ -1,6 +1,6 @@
 /** @typedef {import("../types").Callback} Callback */
 
-let serviceMap = {};
+let routesMap = {};
 
 /**
  * @param {string | {service: string, gid: string}} configuration
@@ -23,13 +23,13 @@ function get(configuration, callback) {
 
   let service;
   if (gid == "local") {
-    service = serviceMap[configuration];
+    service = routesMap[configuration];
   } else {
     service = distribution[gid][configuration];
   }
 
   if (!service) {
-    const rpc = global.toLocal[configuration.serviceName];
+    const rpc = global.toLocal[service];
     if (rpc) {
       callback(null, { call: rpc });
     } else {
@@ -56,7 +56,7 @@ function put(service, configuration, callback) {
     callback(new Error("Service not specified"), null);
     return;
   }
-  serviceMap[configuration] = service;
+  routesMap[configuration] = service;
   callBack(null, configuration);
 }
 
@@ -70,10 +70,10 @@ function rem(configuration, callback) {
     callback(new Error("Configuration not specified"), null);
     return;
   }
-  if (!serviceMap[configuration]) {
+  if (!routesMap[configuration]) {
     callBack(new Error("Value not accessible in service"), null);
   } else {
-    delete serviceMap[configuration];
+    delete routesMap[configuration];
     callBack(null, configuration);
   }
 }

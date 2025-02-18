@@ -38,30 +38,28 @@ groups.put = function (config, group, callback) {
     gid = config.gid;
   }
 
-  if (!distribution[gid]) {
-    distribution[gid] = {};
-    distribution[gid].status = require("../../distribution/all/status")({
-      gid: "all",
-    });
-    distribution[gid].comm = require("../../distribution/all/comm")({
-      gid: "all",
-    });
-    distribution[gid].gossip = require("../../distribution/all/gossip")({
-      gid: "all",
-    });
-    distribution[gid].groups = require("../../distribution/all/groups")({
-      gid: "all",
-    });
-    distribution[gid].routes = require("../../distribution/all/routes")({
-      gid: "all",
-    });
-    distribution[gid].mem = require("../../distribution/all/mem")({
-      gid: "all",
-    });
-    distribution[gid].store = require("../../distribution/all/store")({
-      gid: "all",
-    });
-  }
+  global.distribution[gid] = {};
+  global.distribution[gid].status = require("../../distribution/all/status")({
+    gid: "all",
+  });
+  global.distribution[gid].comm = require("../../distribution/all/comm")({
+    gid: "all",
+  });
+  global.distribution[gid].gossip = require("../../distribution/all/gossip")({
+    gid: "all",
+  });
+  global.distribution[gid].groups = require("../../distribution/all/groups")({
+    gid: "all",
+  });
+  global.distribution[gid].routes = require("../../distribution/all/routes")({
+    gid: "all",
+  });
+  global.distribution[gid].mem = require("../../distribution/all/mem")({
+    gid: "all",
+  });
+  global.distribution[gid].store = require("../../distribution/all/store")({
+    gid: "all",
+  });
 
   if (!nodeMap["all"]) {
     nodeMap["all"] = {};
@@ -71,7 +69,7 @@ groups.put = function (config, group, callback) {
 
   nodeMap[gid] = group;
 
-  callBack(null, nodeMap[config]);
+  callBack(null, group);
 };
 
 groups.del = function (name, callback) {
