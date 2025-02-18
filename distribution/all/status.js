@@ -1,3 +1,4 @@
+const id = distribution.util.id;
 const status = function (config) {
   const context = {};
   context.gid = config.gid || "all";
@@ -30,19 +31,19 @@ const status = function (config) {
 
     spawn: (configuration, callback) => {
       let callBack = callback || console.log;
-      global.distribution.local.status.spawn(configuration, (e, v) => {
-        distribution[context.gid].comm.send(
-          [context.gid, configuration],
-          {
-            service: "groups",
-            method: "add",
-          },
-          (_, __) => {
-            if (e) {
-              callBack(e, null);
-            } else {
-              callBack(null, v);
-            }
+      global.distribution.local.status.spawn(configuration, (e1, v1) => {
+        distribution.local.groups.add(
+          context.gid,
+          configuration,
+          (_, group) => {
+            global.distribution[context.gid].groups.put(
+              context.gid,
+              group,
+              (e, v) => {
+                // console.log(v);
+                callBack(e1, v1);
+              }
+            );
           }
         );
       });

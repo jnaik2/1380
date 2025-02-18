@@ -79,7 +79,7 @@ function send(message, remote, callback) {
   });
 
   req.on("error", (err) => {
-    callBack(err, null);
+    callBack(new Error(err), null);
   });
 
   req.write(postData);
