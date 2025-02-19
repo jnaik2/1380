@@ -115,13 +115,15 @@ test("(5 pts) (scenario) use the gossip service", (done) => {
 
   // Create groupD in an appropriate way...
   const groupD = {};
-  let numD;
+  groupD[id.getSID(n1)] = n1;
+  groupD[id.getSID(n2)] = n2;
+  groupD[id.getSID(n3)] = n3;
 
   // How many nodes are expected to receive the new group membership?
-  let nExpected = 0;
+  let nExpected = 2;
 
   // Experiment with the subset function used in the gossip service...
-  let config = { gid: "groupD", subset: (lst) => "?" };
+  let config = { gid: "groupD", subset: (lst) => 2 };
 
   // Instantiated groupD
   distribution.local.groups.put(config, groupD, (e, v) => {
@@ -134,7 +136,7 @@ test("(5 pts) (scenario) use the gossip service", (done) => {
         // Adding a new node to 'newgroup' using the gossip service
         distribution.groupD.gossip.send(message, remote, (e, v) => {
           // Experiment with the time delay between adding the new node to 'newgroup' and checking the group membership in groupD...
-          let delay = 0;
+          let delay = 1000;
           setTimeout(() => {
             distribution.groupD.groups.get("newgroup", (e, v) => {
               let count = 0;

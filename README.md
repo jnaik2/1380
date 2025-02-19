@@ -113,3 +113,19 @@ _Performance_: I characterized the performance of comm and RPC by sending 1000 s
 > How would you explain the implementation of `createRPC` to someone who has no background in computer science — i.e., with the minimum jargon possible?
 
 createRPC is essentially a way for two computers to communicate not just data, but tasks. Let's say you are super knowledgable about history. I could ask you a bunch of questions on my topic, let's say American independence, and piece together your answers to better understand the topic. But, since you are knowledgable, I could just outsource my paper topic on American independence to you, and then get the finished product. createRPC is like outsourcing the big dirty work (e.g. a paper) as opposed to combining the small work yourself (e.g. request/responses)
+
+# M3: Node Groups & Gossip Protocols
+
+## Summary
+
+My implementation comprises `8` new software components, totaling `300` added lines of code over the previous implementation. The new components include distributed & modified local versions of groups, comm, routes, and status. The key challenges I faced was managing `1` the routes and new distributed services. I handled this by instantiating a global distribution object per GID that I then could access as necessary for distributed services, but using the routeMap for local services. Another challenge `2` was implementing distributed services, especially comm.send. This was challenging because it required me to think about concurrency and how I could collect the results from multiple nodes. The next challenge that resulted from this was `3` modifying how I handled errors. Since distributed services could collect errors across multiple nodes, I couldn't just check if err was null, I had to wrap it in an object and then check.
+
+## Correctness & Performance Characterization
+
+_Correctness_ -- I included 5 tests. The tests test my distributed implementations in a variety of settings. They all run under 5 seconds.
+
+## Key Feature
+
+> What is the point of having a gossip protocol? Why doesn't a node just send the message to _all_ other nodes in its group?
+
+The point of a gossip protocol is to allow for scalable communication in massive networks of nodes. If a node sends all messages to all nodes, it would result in too many messages that would not scale well for large groups. Gossip protocols still promise convergence, but they don't send overwhelming amounts of messages so they can scale to any size.
