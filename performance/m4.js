@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const distribution = require("../distribution");
+const distribution = require("../config.js");
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 let data = new Map();
 let gid = "test"
