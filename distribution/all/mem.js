@@ -1,4 +1,4 @@
-const { id, serialize, deserialize} = require('../util/util');
+const { id } = require('../util/util');
 
 function mem(config) {
   const context = {};
