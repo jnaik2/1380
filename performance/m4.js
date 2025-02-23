@@ -84,22 +84,30 @@ function initializeDistributedGroup() {
         n2: n2,
         n3: n3
     };
+
+    console.log("Initializing Distributed Group");
     global.distribution.local.groups.put(gid, group, (err, res) => {
         if (err) {
             console.log(err);
             return;
         }
+        console.log("Local Distributed Group");
         global.distribution[gid].groups.put(gid, group, (e, v) => {
             if (e) {
                 console.log(e);
                 return;
             }
+            console.log("Distributed Group created");
+            console.log("Generating data");
             generateData(1000);
+            console.log("Inserting");
             insertData();
+            console.log("Querying");
             queryData();
             return;
         });
     });
 }
 
+console.log("Starting");
 initializeDistributedGroup();
