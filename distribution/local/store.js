@@ -10,12 +10,21 @@ const path = require('path');
 
 function put(state, configuration, callback) {
   let nid = global.moreStatus["nid"];
-  let key = configuration;
-  if (!configuration) {
+  let key;
+  let gid = "local";
+  if (typeof configuration === "string") {
+    key = configuration;
+  } else if (configuration != null) {
+    key = configuration.key;
+    gid = configuration.gid;
+  }
+
+  if (!key) {
     key = id.getID(state);
   }
 
-  let filepath = path.join(process.cwd(), `/store/${nid}/${key}`);
+
+  let filepath = path.join(process.cwd(), `/store/${nid}/${gid}/${key}`);
   let dirPath = path.dirname(filepath);
 
   if (!fs.existsSync(dirPath)) {
@@ -33,7 +42,20 @@ function put(state, configuration, callback) {
 
 function get(configuration, callback) {
   let nid = global.moreStatus["nid"];
-  let filepath = path.join(process.cwd(), `/store/${nid}/${configuration}`);
+  let key;
+  let gid = "local";
+  if (typeof configuration === "string") {
+    key = configuration;
+  } else if (configuration != null) {
+    key = configuration.key;
+    gid = configuration.gid;
+  }
+
+  if (!key) {
+    key = id.getID(state);
+  }
+
+  let filepath = path.join(process.cwd(), `/store/${nid}/${gid}/${key}`);
   fs.readFile(filepath, (err, data) => {
     if (err) {
       callback(new Error(err), null);
@@ -46,7 +68,20 @@ function get(configuration, callback) {
 
 function del(configuration, callback) {
   let nid = global.moreStatus["nid"];
-  let filepath = path.join(process.cwd(), `/store/${nid}/${configuration}`);
+  let key;
+  let gid = "local";
+  if (typeof configuration === "string") {
+    key = configuration;
+  } else if (configuration != null) {
+    key = configuration.key;
+    gid = configuration.gid;
+  }
+
+  if (!key) {
+    key = id.getID(state);
+  }
+
+  let filepath = path.join(process.cwd(), `/store/${nid}/${gid}/${key}`);
 
   if (!fs.existsSync(filepath)) {
     callback(new Error("No value found for key: " + configuration), null);

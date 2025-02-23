@@ -33,31 +33,33 @@ groups.put = function (config, group, callback) {
   }
 
   let gid = config;
+  let hash;
   if (typeof config === "object") {
     gid = config.gid;
+    hash = config.hash || id.naiveHash;
   }
 
   global.distribution[gid] = {};
   global.distribution[gid].status = require("../all/status")({
-    gid: gid,
+    gid: gid, hash: hash
   });
   global.distribution[gid].comm = require("../all/comm")({
-    gid: gid,
+    gid: gid, hash: hash
   });
   global.distribution[gid].gossip = require("../all/gossip")({
-    gid: gid,
+    gid: gid, hash: hash
   });
   global.distribution[gid].groups = require("../all/groups")({
-    gid: gid,
+    gid: gid, hash: hash
   });
   global.distribution[gid].routes = require("../all/routes")({
-    gid: gid,
+    gid: gid, hash: hash
   });
   global.distribution[gid].mem = require("../all/mem")({
-    gid: gid,
+    gid: gid, hash: hash
   });
   global.distribution[gid].store = require("../all/store")({
-    gid: gid,
+    gid: gid, hash: hash
   });
 
   if (!nodeMap["all"]) {
