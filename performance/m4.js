@@ -85,7 +85,15 @@ function initializeDistributedGroup() {
         n3: n3
     };
     global.distribution.local.groups.put(gid, group, (err, res) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
         global.distribution[gid].groups.put(gid, group, (e, v) => {
+            if (e) {
+                console.log(e);
+                return;
+            }
             generateData(1000);
             insertData();
             queryData();
