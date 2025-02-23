@@ -1,14 +1,10 @@
 #!/usr/bin/env node
-const distribution = require("../config.js");
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 let data = new Map();
 let gid = "test"
 
-let localServer;
-distribution.node.start((server) => {
-  localServer = server;
-});
-
+const config = { "ip": "13.59.239.128", "port": 8000, "onStart": (server) => console.log('hi!') };
+const distribution = require("distribution.js")(config);
 
 function generateString() {
     let result = ' ';
