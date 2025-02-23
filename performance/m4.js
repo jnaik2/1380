@@ -4,7 +4,7 @@ let data = new Map();
 let gid = "test"
 
 const config = { "ip": "13.59.239.128", "port": 8000, "onStart": (server) => console.log('hi!') };
-const distribution = require("distribution.js")(config);
+const distribution = require("../distribution.js")(config);
 
 function generateString() {
     let result = ' ';
