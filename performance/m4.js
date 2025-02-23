@@ -35,6 +35,10 @@ function insertData() {
     for (let [key, value] of data) {
 
         global.distribution[gid].mem.put(value, key, (err, res) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
             count++;
             if (count === 1000) {
                 let throughputEnd = Date.now();
@@ -52,6 +56,10 @@ function queryData() {
     let count = 0;
     for (let [key, value] of data) {
         global.distribution[gid].mem.get(key, (err, res) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
             count++;
             if (count === 1000) {
                 let throughputEnd = Date.now();
@@ -81,6 +89,7 @@ function initializeDistributedGroup() {
             generateData(1000);
             insertData();
             queryData();
+            return;
         });
     });
 }
