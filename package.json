@@ -26,7 +26,7 @@
     "@brown-ds/distribution": "latest"
   },
   "report": {
-    "hours": 24,
+    "hours": 16,
     "loc": 300,
     "dev": {
       "cpu-no": 8,

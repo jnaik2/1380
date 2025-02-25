@@ -129,3 +129,27 @@ _Correctness_ -- I included 5 tests. The tests test my distributed implementatio
 > What is the point of having a gossip protocol? Why doesn't a node just send the message to _all_ other nodes in its group?
 
 The point of a gossip protocol is to allow for scalable communication in massive networks of nodes. If a node sends all messages to all nodes, it would result in too many messages that would not scale well for large groups. Gossip protocols still promise convergence, but they don't send overwhelming amounts of messages so they can scale to any size.
+
+# M4: Distributed Storage
+
+## Summary
+
+My implementation consists of 5 main components: local store, local mem, distributed store, distributed mem, and hashing. The key challenge I faced with store was making sure the folders on local computer were distinct. To do this, I included GID & NID in the subdirectory. In mem, I also faced a challenge with getting the NIDs since I had to iterate over the actual node objects. In hashing, I also had trouble implementing rendevous & consistent hashing because I didn't know how to convert the hashes to orders in a ring. I resolved this by sorting the list and using the idToNum.
+
+## Correctness & Performance Characterization
+
+> Describe how you characterized the correctness and performance of your implementation
+
+
+*Correctness* -- I implemented 5 tests and they test distributed & local store & mem with consistent hashing. They covered the core functionality of put, get, and del calls, especially the edge case where even the same key in different groups should not be retrieved.
+
+
+*Performance* -- The average latency for inserting was 11 ms and the throughput is 100 req/s. The average latency for querying is 5 ms and the throughput is 200 req/s
+
+
+## Key Feature
+
+> Why is the `reconf` method designed to first identify all the keys to be relocated and then relocate individual objects instead of fetching all the objects immediately and then pushing them to their corresponding locations?
+
+This avoids unnecessary work. Suppose not all objects need to be relocated, then the overhead of retrieving the objects from all the nodes is unnecessary, whereas if the keys need to be relocated we can first determine that locally and then relocate only the objects that need to be moved instead of all of them.
+
