@@ -63,6 +63,8 @@ const start = function(callback) {
       try {
         // Use a try catch in case the body is not in JSON format
         args = deserialize(body.join(''));
+        console.log(`Args in node is ${JSON.stringify(args)}`);
+        console.log(`Service is ${service} and method is ${method}`);
         routes.get({service: service, gid: gid}, (e1, s) => {
           if (e1) {
             res.statusCode = 404;
