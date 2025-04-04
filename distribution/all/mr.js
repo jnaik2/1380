@@ -192,7 +192,7 @@ function mr(config) {
                 });
               });
             },
-            reduceFunc: function(keys, gid, jid, reduceCallback) {
+            reduceFunc: function(gid, jid, reduceCallback) {
               reduceCallback = reduceCallback || function() {};
               global.distribution.local.status.get('sid', (e, v) => {
                 if (e !== null && Object.keys(e).length > 0) {
@@ -209,7 +209,6 @@ function mr(config) {
                     console.error(`[${localSid}] Error retrieving keys for reduce phase:`, getErr);
                     reduceCallback(getErr, getRes);
                   }
-                  console.log(`${localSid}: Results are ${getRes}`);
 
                   let reducerRes = [];
 
@@ -233,10 +232,11 @@ function mr(config) {
                   }
 
                   const keysReducer = Object.keys(getRes); // get keys for reducer mem get
-                  getRes.forEach((key) => {
+                  console.log(`${localSid}: Reducer getting results from store are ${Object.values(getRes)} and the keys are ${keysReducer}\n`);
+                  keysReducer.forEach((key) => {
                     console.log(`${localSid} starting reducer function on key ${key}`);
-                    const res = keysReducer[key];
-
+                    const res = getRes[key];
+                    console.log(`${localSid} starting reducer function with value ${res}`)
                     try {
                       const reducerResult = this.reducerFunc(key, res);
                       reducerRes = reducerRes.concat(reducerResult);
@@ -269,7 +269,7 @@ function mr(config) {
                 });
               });
             },
-            shuffleFunc: function(keys, gid, jid, shuffleCallback) {
+            shuffleFunc: function(gid, jid, shuffleCallback) {
               shuffleCallback = shuffleCallback || function() {};
               global.distribution.local.status.get('sid', (e, v) => {
                 if (e !== null && Object.keys(e).length > 0) {
@@ -391,7 +391,7 @@ function mr(config) {
                   // for this, check whether we are sending correctly to comm.send
                   global.distribution[this.contextGid].comm.send(
                       [this.contextGid, this.workerServiceId],
-                      shuffleRequest,
+                      shuffleRequest, // need to pass more arguments
                       (err, res) => {
                         if (err) {
                           console.error('[Orchestrator] Error starting shuffle phase:', err);
@@ -420,7 +420,7 @@ function mr(config) {
 
                   // for this, check whether we are sending correctly to comm.send
                   global.distribution[this.contextGid].comm.send(
-                      [this.contextGid, this.configId],
+                      [this.contextGid, this.workerServiceId],
                       reduceRequest,
                       (err, res) => {
                         if (err) {
@@ -465,25 +465,28 @@ function mr(config) {
                   console.log('[Orchestrator] New Id is :', newId);
                   // delete service
                   console.log(`[Orchestrator] Deregistering MapReduce service with service ID ${newId} and workerService Id ${this.workerServiceId}`);
-                  global.distribution.local.routes.rem(`${newId}`, (remErr, remRes) => {
-                    if (remErr !== null && Object.keys(remErr).length > 0) {
-                      console.error('[Orchestrator] Error deregistering serviceId:', remErr);
-                    } else {
-                      console.log('[Orchestrator] ServiceId successfully deregistered:', remRes);
-                    }
-                    global.distribution[this.contextGid].routes.rem(this.workerServiceId, (err, res) => {
-                      if (err !== null && Object.keys(err).length > 0) {
-                        console.error('[Orchestrator] Error deregistering workerServiceId:', err);
-                      } else {
-                        console.log('[Orchestrator] workerServiceId successfully deregistered:', res);
-                      }
+                  // global.distribution.local.routes.rem(`${newId}`, (remErr, remRes) => {
+                  //   if (remErr !== null && Object.keys(remErr).length > 0) {
+                  //     console.error('[Orchestrator] Error deregistering serviceId:', remErr);
+                  //   } else {
+                  //     console.log('[Orchestrator] ServiceId successfully deregistered:', remRes);
+                  //   }
+                  //   global.distribution[this.contextGid].routes.rem(this.workerServiceId, (err, res) => {
+                  //     if (err !== null && Object.keys(err).length > 0) {
+                  //       console.error('[Orchestrator] Error deregistering workerServiceId:', err);
+                  //     } else {
+                  //       console.log('[Orchestrator] workerServiceId successfully deregistered:', res);
+                  //     }
   
-                      // return
-                      console.log(`[Orchestrator] Returning final results to caller: ${finalResults}`);
-                      cb(null, finalResults);
-                    });
-                    return
-                  });
+                  //     // // return
+                  //     // console.log(`[Orchestrator] Returning final results to caller: ${finalResults}`);
+                  //     // cb(null, finalResults);
+                  //   });
+                    // return
+                    console.log(`[Orchestrator] Returning final results to caller: ${JSON.stringify(finalResults)}`);
+                    cb(null, finalResults);
+                    return;
+                  // });
                   // global.distribution[this.contextGid].routes.rem(this.workerServiceId, (err, res) => {
                   //   if (err) {
                   //     console.error('[Orchestrator] Error deregistering service:', err);

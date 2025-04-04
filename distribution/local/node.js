@@ -73,8 +73,8 @@ const start = function(callback) {
               args = [args];
             }
 
-            console.log(`IN TRY, args is ${JSON.stringify(args)} and its keys are ${Object.keys(args)}`);
-            console.log(`True or false, ${'nameToRemove' in Object.keys(args)}`);
+            // console.log(`IN TRY, args is ${JSON.stringify(args)} and its keys are ${Object.keys(args)}`);
+            // console.log(`True or false, ${'nameToRemove' in Object.keys(args)}`);
             if ('nameToRemove' in args) {
               console.log(`Removing in nameToRemove ${args.nameToRemove} from ${args.gid}`);
               args = [args];
