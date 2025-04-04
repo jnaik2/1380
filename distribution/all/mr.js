@@ -238,7 +238,7 @@ function mr(config) {
                     const res = keysReducer[key];
 
                     try {
-                      const reducerResult = this.reducerFunc(res);
+                      const reducerResult = this.reducerFunc(key, res);
                       reducerRes = reducerRes.concat(reducerResult);
                     } catch (reducerError) {
                       console.error(`${localSid}: Reducer error is ${reducerError}`);
@@ -461,8 +461,29 @@ function mr(config) {
 
                   console.log('[Orchestrator] Combined final results:', finalResults);
 
+                  let newId = `mr-${this.configId}`;
+                  console.log('[Orchestrator] New Id is :', newId);
                   // delete service
-                  console.log('[Orchestrator] Deregistering MapReduce service with service ID:', this.workerServiceId);
+                  console.log(`[Orchestrator] Deregistering MapReduce service with service ID ${newId} and workerService Id ${this.workerServiceId}`);
+                  global.distribution.local.routes.rem(`${newId}`, (remErr, remRes) => {
+                    if (remErr !== null && Object.keys(remErr).length > 0) {
+                      console.error('[Orchestrator] Error deregistering serviceId:', remErr);
+                    } else {
+                      console.log('[Orchestrator] ServiceId successfully deregistered:', remRes);
+                    }
+                    global.distribution[this.contextGid].routes.rem(this.workerServiceId, (err, res) => {
+                      if (err !== null && Object.keys(err).length > 0) {
+                        console.error('[Orchestrator] Error deregistering workerServiceId:', err);
+                      } else {
+                        console.log('[Orchestrator] workerServiceId successfully deregistered:', res);
+                      }
+  
+                      // return
+                      console.log(`[Orchestrator] Returning final results to caller: ${finalResults}`);
+                      cb(null, finalResults);
+                    });
+                    return
+                  });
                   // global.distribution[this.contextGid].routes.rem(this.workerServiceId, (err, res) => {
                   //   if (err) {
                   //     console.error('[Orchestrator] Error deregistering service:', err);
@@ -475,8 +496,8 @@ function mr(config) {
                   //   cb(null, finalResults);
                   // });
                   // return
-                  console.log('[Orchestrator] Returning final results to caller');
-                  cb(null, finalResults);
+                  // console.log('[Orchestrator] Returning final results to caller');
+                  // cb(null, finalResults);
                 } else {
                   console.log(`[Orchestrator] Waiting for ${this.totalNodes - Object.keys(this.completedReducePart).length} more nodes to complete reduce phase`);
                 }
