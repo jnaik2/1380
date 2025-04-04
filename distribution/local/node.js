@@ -1,8 +1,8 @@
-const http = require("http");
-const url = require("url");
-const log = require("../util/log");
-const { serialize, deserialize } = require("../util/util");
-const { routes } = require("./local");
+const http = require('http');
+const url = require('url');
+const log = require('../util/log');
+const {serialize, deserialize} = require('../util/util');
+const {routes} = require('./local');
 
 /*
     The start function will be called to start your node.
@@ -10,14 +10,14 @@ const { routes } = require("./local");
     After your node has booted, you should call the callback.
 */
 
-const start = function (callback) {
+const start = function(callback) {
   const server = http.createServer((req, res) => {
     /* Your server will be listening for PUT requests. */
 
-    global.moreStatus["counts"]++;
-    if (req.method !== "PUT") {
+    global.moreStatus['counts']++;
+    if (req.method !== 'PUT') {
       res.statusCode = 405;
-      res.end(serialize(new Error("Method not allowed")));
+      res.end(serialize(new Error('Method not allowed')));
       return;
     }
 
@@ -26,7 +26,7 @@ const start = function (callback) {
       The url will have the form: http://node_ip:node_port/service/method
     */
 
-    const urlArr = url.parse(req.url).pathname.split("/");
+    const urlArr = url.parse(req.url).pathname.split('/');
     const gid = urlArr[urlArr.length - 3];
     const service = urlArr[urlArr.length - 2];
     const method = urlArr[urlArr.length - 1];
@@ -46,33 +46,48 @@ const start = function (callback) {
       Our nodes expect data in JSON format.
   */
 
-    let body = [];
+    const body = [];
 
-    req.on("data", (chunk) => {
+    req.on('data', (chunk) => {
       body.push(chunk);
     });
 
-    req.on("end", () => {
+    req.on('end', () => {
       /* Here, you can handle the service requests.
       Use the local routes service to get the service you need to call.
       You need to call the service with the method and arguments provided in the request.
       Then, you need to serialize the result and send it back to the caller.
       */
+      let x;
+      let args;
       try {
         // Use a try catch in case the body is not in JSON format
-        const args = deserialize(body.join(""));
-        routes.get({ service: service, gid: gid }, (e1, s) => {
+        args = deserialize(body.join(''));
+        routes.get({service: service, gid: gid}, (e1, s) => {
           if (e1) {
             res.statusCode = 404;
             res.end(serialize(e1));
           } else {
+            x = s;
+            if ('results' in args) {
+              args = [args];
+            }
+
+            console.log(`IN TRY, args is ${JSON.stringify(args)} and its keys are ${Object.keys(args)}`);
+            console.log(`True or false, ${'nameToRemove' in Object.keys(args)}`);
+            if ('nameToRemove' in args) {
+              console.log(`Removing in nameToRemove ${args.nameToRemove} from ${args.gid}`);
+              args = [args];
+            }
             s[method](...args, (e2, r) => {
               res.statusCode = 200;
-              res.end(serialize({ e: e2, r: r }));
+              res.end(serialize({e: e2, r: r}));
             });
           }
         });
       } catch (error) {
+        console.log(x, method, `ABCDE`, args);
+        console.log(x[method], `AMDOMOAM`, args);
         res.statusCode = 400;
         res.end(serialize(error));
       }
@@ -90,13 +105,13 @@ const start = function (callback) {
 
   server.listen(global.nodeConfig.port, global.nodeConfig.ip, () => {
     log(
-      `Server running at http://${global.nodeConfig.ip}:${global.nodeConfig.port}/`
+        `Server running at http://${global.nodeConfig.ip}:${global.nodeConfig.port}/`,
     );
     global.distribution.node.server = server;
     callback(server);
   });
 
-  server.on("error", (error) => {
+  server.on('error', (error) => {
     // server.close();
     log(`Server error: ${error}`);
     throw error;

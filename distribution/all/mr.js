@@ -133,12 +133,13 @@ function mr(config) {
                       mapCallback(storeErr, {});
                       return;
                     }
+                    console.log(`${localSid} got store for key: ${key}, result: ${storeRes}`);
 
                     keysCompleted+=1;
 
                     let mapperResult;
                     try {
-                      mapperResult = this.mapperFunc(storeRes);
+                      mapperResult = this.mapperFunc(key, storeRes);
                       console.log(`[${localSid}] Mapper result for key ${key} is ${JSON.stringify(mapperResult)}`);
                       if (Array.isArray(mapperResult)) {
                         mapResults.push(...mapperResult);
@@ -163,7 +164,7 @@ function mr(config) {
                         return;
                       }
 
-                      console.log(`${localSid} putting store for key: ${key}, result: ${storePutRes}`);
+                      console.log(`${localSid} putting store for key: ${key}, result: ${JSON.stringify(storePutRes)}`);
 
                       const notifyRemote = {
                         service: this.serviceId,
@@ -177,6 +178,9 @@ function mr(config) {
                         nodeId: localSid,
                       };
 
+                      console.log(`${localSid} Sending notify to orchestrator remote: ${JSON.stringify(notifyRemote)}`);
+                      console.log(`${localSid} Sending notify to orchestrator: ${JSON.stringify(args)}`);
+
                       global.distribution.local.comm.send(args, notifyRemote, (commE, commV) => {
                         if (commE !== null && Object.keys(commE).length > 0) {
                           console.error(` ${localSid} Error recieved for sending notify to orchestrator: `, commE);
@@ -189,6 +193,7 @@ function mr(config) {
               });
             },
             reduceFunc: function(keys, gid, jid, reduceCallback) {
+              reduceCallback = reduceCallback || function() {};
               global.distribution.local.status.get('sid', (e, v) => {
                 if (e !== null && Object.keys(e).length > 0) {
                   console.log('[Local node] Failed to get sid');
@@ -265,6 +270,7 @@ function mr(config) {
               });
             },
             shuffleFunc: function(keys, gid, jid, shuffleCallback) {
+              shuffleCallback = shuffleCallback || function() {};
               global.distribution.local.status.get('sid', (e, v) => {
                 if (e !== null && Object.keys(e).length > 0) {
                   console.log('[Local node] Failed to get sid');
@@ -283,7 +289,7 @@ function mr(config) {
                   }
                   const res = [];
                   // const keysProcessed = 0;
-                  if (storeRes.length === 0) {
+                  if (!storeRes || storeRes.length === 0) {
                     console.log(`[${localSid}] No map results to shuffle`);
                     const notifyRemote = {
                       service: this.serviceId,
@@ -359,6 +365,7 @@ function mr(config) {
             workerServiceId: workerServiceId,
 
             notify: function(notification, notifyCallback) {
+              console.log(`[Orchestrator] Received notification: ${JSON.stringify(notification)}`);
               console.log(`[Orchestrator] Received ${notification.phase} phase completion notification from node ${notification.nodeId}`);
 
               // just got a map notify
@@ -383,7 +390,7 @@ function mr(config) {
 
                   // for this, check whether we are sending correctly to comm.send
                   global.distribution[this.contextGid].comm.send(
-                      [this.contextGid, this.configId],
+                      [this.contextGid, this.workerServiceId],
                       shuffleRequest,
                       (err, res) => {
                         if (err) {
@@ -428,7 +435,7 @@ function mr(config) {
                 }
               } else if (notification.phase === 'reduce') {
                 this.completedReducePart[notification.nodeId] = true;
-                console.log(`[Orchestrator] Reduce completion status:`, this.reduceCompleted);
+                console.log(`[Orchestrator] Reduce completion status:`, this.completedReducePart);
 
                 // store reduce results
                 if (notification.results !== null) {
@@ -455,18 +462,21 @@ function mr(config) {
                   console.log('[Orchestrator] Combined final results:', finalResults);
 
                   // delete service
-                  console.log('[Orchestrator] Deregistering MapReduce service');
-                  global.distribution[this.contextGid].routes.delete(this.workerServiceId, (err, res) => {
-                    if (err) {
-                      console.error('[Orchestrator] Error deregistering service:', err);
-                    } else {
-                      console.log('[Orchestrator] Service successfully deregistered:', res);
-                    }
+                  console.log('[Orchestrator] Deregistering MapReduce service with service ID:', this.workerServiceId);
+                  // global.distribution[this.contextGid].routes.rem(this.workerServiceId, (err, res) => {
+                  //   if (err) {
+                  //     console.error('[Orchestrator] Error deregistering service:', err);
+                  //   } else {
+                  //     console.log('[Orchestrator] Service successfully deregistered:', res);
+                  //   }
 
-                    // return
-                    console.log('[Orchestrator] Returning final results to caller');
-                    cb(null, finalResults);
-                  });
+                  //   // return
+                  //   console.log('[Orchestrator] Returning final results to caller');
+                  //   cb(null, finalResults);
+                  // });
+                  // return
+                  console.log('[Orchestrator] Returning final results to caller');
+                  cb(null, finalResults);
                 } else {
                   console.log(`[Orchestrator] Waiting for ${this.totalNodes - Object.keys(this.completedReducePart).length} more nodes to complete reduce phase`);
                 }
@@ -559,7 +569,7 @@ function mr(config) {
                   const mapRemote = {
                     node: nodes[sid],
                     service: workerServiceId,
-                    method: 'map',
+                    method: 'mapFunc',
                   };
 
                   console.log(`[Orchestrator] Map remote is: ${JSON.stringify(mapRemote)}`);

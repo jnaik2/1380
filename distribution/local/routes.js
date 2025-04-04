@@ -1,6 +1,6 @@
 /** @typedef {import("../types").Callback} Callback */
 
-let routesMap = {};
+const routesMap = {};
 
 /**
  * @param {string | {service: string, gid: string}} configuration
@@ -8,31 +8,31 @@ let routesMap = {};
  * @return {void}
  */
 function get(configuration, callback) {
-  let callBack = callback || console.log;
+  const callBack = callback || console.log;
   if (!configuration) {
-    callback(new Error("Configuration not specified"), null);
+    callback(new Error('Configuration not specified'), null);
     return;
   }
 
   let gid;
-  if (typeof configuration === "object") {
+  if (typeof configuration === 'object') {
     gid = configuration.gid;
     configuration = configuration.service;
   }
 
   if (!gid) {
-    gid = "local";
+    gid = 'local';
   }
 
   let map = routesMap;
-  if (gid != "local") {
+  if (gid != 'local') {
     map = global.distribution[gid];
   }
 
   if (!(configuration in map)) {
     const rpc = global.toLocal[configuration];
     if (rpc) {
-      callback(null, { call: rpc });
+      callback(null, {call: rpc});
     } else {
       callBack(new Error(`Service, ${configuration}, not accessible`), null);
     }
@@ -48,13 +48,13 @@ function get(configuration, callback) {
  * @return {void}
  */
 function put(service, configuration, callback) {
-  let callBack = callback || (() => {});
+  const callBack = callback || (() => {});
   if (!configuration) {
-    callback(new Error("Configuration not specified"), null);
+    callback(new Error('Configuration not specified'), null);
     return;
   }
   if (!service) {
-    callback(new Error("Service not specified"), null);
+    callback(new Error('Service not specified'), null);
     return;
   }
   routesMap[configuration] = service;
@@ -66,17 +66,34 @@ function put(service, configuration, callback) {
  * @param {Callback} callback
  */
 function rem(configuration, callback) {
-  let callBack = callback || console.log;
-  if (!configuration) {
-    callback(new Error("Configuration not specified"), null);
+  callback = callback || console.log;
+  console.log(`Removing ${configuration} in local routes rem`);
+  // console.log(routesMap);
+  // console.log(global.distribution['ncdc']);
+
+  const thingToRemove = configuration.nameToRemove;
+  const gid = configuration.gid;
+  console.log(`Removing ${thingToRemove} from ${gid}.This is global stuff: ${JSON.stringify(global.distribution[gid])} and tis is local stuff ${JSON.stringify(routesMap)}`);
+  if (!thingToRemove) {
+    callback(new Error('Configuration not specified'), null);
     return;
   }
-  if (!routesMap[configuration]) {
-    callBack(new Error("Value not accessible in service"), null);
+
+  if (true) {
+    if (!routesMap[thingToRemove]) {
+      callback(new Error('Value not accessible in service'), null);
+    } else {
+      delete routesMap[thingToRemove];
+      callback(null, thingToRemove);
+    }
   } else {
-    delete routesMap[configuration];
-    callBack(null, configuration);
+    if (!global.distribution[gid][thingToRemove]) {
+      callback(new Error(`Value not accessible in global service: ${thingToRemove} from gid ${gid}`), null);
+    } else {
+      delete global.distribution[gid][thingToRemove];
+      callback(null, thingToRemove);
+    }
   }
 }
 
-module.exports = { get, put, rem };
+module.exports = {get, put, rem};

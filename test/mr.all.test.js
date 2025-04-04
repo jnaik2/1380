@@ -16,6 +16,7 @@ const n3 = {ip: '127.0.0.1', port: 7112};
 
 test.only('(20 pts) all.mr:ncdc', (done) => {
   const mapper = (key, value) => {
+    console.log(`IN MAPPER: key: ${key}, value: ${value}`);
     const words = value.split(/(\s+)/).filter((e) => e !== ' ');
     const out = {};
     out[words[1]] = parseInt(words[3]);
