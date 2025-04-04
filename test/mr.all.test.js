@@ -14,7 +14,7 @@ const n1 = {ip: '127.0.0.1', port: 7110};
 const n2 = {ip: '127.0.0.1', port: 7111};
 const n3 = {ip: '127.0.0.1', port: 7112};
 
-test('(20 pts) all.mr:ncdc', (done) => {
+test.only('(20 pts) all.mr:ncdc', (done) => {
   const mapper = (key, value) => {
     const words = value.split(/(\s+)/).filter((e) => e !== ' ');
     const out = {};
@@ -49,11 +49,14 @@ test('(20 pts) all.mr:ncdc', (done) => {
     });
   };
 
+  console.log("Reached test");
+
   let cntr = 0;
   // Send the dataset to the cluster
   dataset.forEach((o) => {
     const key = Object.keys(o)[0];
     const value = o[key];
+    console.log("Reached inside dataset");
     distribution.ncdc.store.put(value, key, (e, v) => {
       cntr++;
       // Once the dataset is in place, run the map reduce
