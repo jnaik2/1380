@@ -157,14 +157,15 @@ function mr(config) {
                       console.log(`[${localSid}] Mapper results is ${JSON.stringify(mapperResult)}`);
                     }
 
-                    global.distribution.local.store.put(mapResults, jid + '_mapResults' + localSid, (storePutErr, storePutRes) => {
+                    const mapKey = jid + '_mapResults' + localSid;
+                    global.distribution.local.store.put(mapResults, mapKey, (storePutErr, storePutRes) => {
                       if (storePutErr !== null && Object.keys(storePutErr) > 0) {
                         console.error(`${localSid} Error putting store for key: ${key}, error: ${e}`);
                         mapCallback(storePutErr, {});
                         return;
                       }
 
-                      console.log(`${localSid} putting store for key: ${key}, result: ${JSON.stringify(storePutRes)}`);
+                      console.log(`${localSid} putting store for key: ${key}, result: ${JSON.stringify(storePutRes)}, with store key: ${mapKey}`);
 
                       const notifyRemote = {
                         service: this.serviceId,
@@ -192,7 +193,7 @@ function mr(config) {
                 });
               });
             },
-            reduceFunc: function(keys, gid, jid, reduceCallback) {
+            reduceFunc: function(gid, jid, reduceCallback) {
               reduceCallback = reduceCallback || function() {};
               global.distribution.local.status.get('sid', (e, v) => {
                 if (e !== null && Object.keys(e).length > 0) {
@@ -201,16 +202,21 @@ function mr(config) {
                   return;
                 }
 
+                // worker-mr-9e9805911312e22e39370b1cefdb2838ab1118b782757cc759b7151ec7d75429_shuffleResultsfa3de
+                // worker-mr-9e9805911312e22e39370b1cefdb2838ab1118b782757cc759b7151ec7d75429_shuffleResultsfa3de
+
                 const localSid = v;
                 console.log(`${localSid} node starting reducer procedure with job id ${jid}`);
-                const shuffleKey = jid + '_shuffleResults' + localSid;
-                global.distribution.local.mem.get(shuffleKey, (getErr, getRes) => {
+                // const shuffleKey = jid + '_shuffleResults' + localSid;
+                const newRedistributedKey = jid + localSid + '_redistributed';
+                console.log(`${localSid}: The shufflekey in reduce is ${newRedistributedKey}`);
+                global.distribution.local.store.get(newRedistributedKey, (getErr, getRes) => {
                   if (getErr !== null && Object.keys(getErr).length > 0) {
                     console.error(`[${localSid}] Error retrieving keys for reduce phase:`, getErr);
                     reduceCallback(getErr, getRes);
                   }
-                  console.log(`${localSid}: Results are ${getRes}`);
 
+                  console.log(`${localSid}: Result from mem get is ${JSON.stringify(getRes)}`);
                   let reducerRes = [];
 
                   if (!getRes || getRes.length == 0) {
@@ -233,19 +239,20 @@ function mr(config) {
                   }
 
                   const keysReducer = Object.keys(getRes); // get keys for reducer mem get
-                  getRes.forEach((key) => {
+                  console.log(`${localSid}: Reducer getting results from store are ${Object.values(getRes)} and the keys are ${keysReducer}\n`);
+                  keysReducer.forEach((key) => {
                     console.log(`${localSid} starting reducer function on key ${key}`);
-                    const res = keysReducer[key];
-
+                    const res = getRes[key];
+                    console.log(`${localSid} starting reducer function with value ${res}`);
                     try {
-                      const reducerResult = this.reducerFunc(res);
+                      const reducerResult = this.reducerFunc(key, res);
                       reducerRes = reducerRes.concat(reducerResult);
                     } catch (reducerError) {
                       console.error(`${localSid}: Reducer error is ${reducerError}`);
                     }
                   });
 
-                  console.log(`${localSid} Finished reducing and now sending to orchestrator`);
+                  console.log(`${localSid} Finished reducing and now sending to orchestrator with results ${JSON.stringify(reducerRes)}`);
                   const notifyRequest = {
                     service: this.serviceId,
                     method: 'notify',
@@ -253,6 +260,7 @@ function mr(config) {
                   };
 
                   const args = {phase: 'reduce', nodeId: localSid, results: reducerRes};
+                  console.log(`${localSid} Args for notifying from reducer function is ${JSON.stringify(args)}`);
                   global.distribution.local.comm.send(
                       args,
                       notifyRequest,
@@ -269,7 +277,7 @@ function mr(config) {
                 });
               });
             },
-            shuffleFunc: function(keys, gid, jid, shuffleCallback) {
+            shuffleFunc: function(gid, jid, shuffleCallback) {
               shuffleCallback = shuffleCallback || function() {};
               global.distribution.local.status.get('sid', (e, v) => {
                 if (e !== null && Object.keys(e).length > 0) {
@@ -281,13 +289,14 @@ function mr(config) {
                 const localSid = v;
                 console.log(`${localSid} node starting shuffle procedure with job id ${jid}`);
 
+                console.log(`${localSid}: Getting map results in shuffle with key ${jid + '_mapResults' + localSid}`);
                 global.distribution.local.store.get(jid + '_mapResults' + localSid, (storeErr, storeRes) => {
                   if (storeErr !== null && Object.keys(storeErr).length > 0) {
                     console.error(`${localSid} failed to get store results for key ${jid + '_mapResults' + localSid}`);
                     shuffleCallback(storeErr, {});
                     return;
                   }
-                  const res = [];
+                  const res = {};
                   // const keysProcessed = 0;
                   if (!storeRes || storeRes.length === 0) {
                     console.log(`[${localSid}] No map results to shuffle`);
@@ -310,19 +319,33 @@ function mr(config) {
                     return;
                   }
 
+                  console.log(`${localSid}: The result of getting from store in shuffle is ${JSON.stringify(storeRes)}`);
                   // group by item
-                  storeRes.forEach((key) => {
-                    const [keys] = Object.keys(key);
-                    console.log(`[${localSid}] Shuffling key ${keys}: ${key[keys]}`);
+                  // storeRes.forEach((key) => {
+                  //   const [keys] = Object.keys(key);
+                  //   console.log(`[${localSid}] Shuffling key ${keys}: ${JSON.stringify(key[keys])}`);
 
-                    if (!res[keys]) {
-                      res[keys] = [];
-                    }
-                    res[keys].push(key[keys]);
+                  //   if (!res[keys]) {
+                  //     res[keys] = [];
+                  //   }
+                  //   res[keys].push(key[keys]);
+                  //   console.log(`${localSid}: After pushing, res is ${JSON.stringify(res)} with key ${keys} and value ${JSON.stringify(key[keys])}`);
+                  // });
+                  storeRes.forEach((item) => {
+                    // Iterate through all keys in the object
+                    Object.keys(item).forEach((key) => {
+                      if (!res[key]) {
+                        res[key] = [];
+                      }
+                      res[key].push(item[key]);
+                    });
                   });
 
+                  console.log(`${localSid}: Putting the shuffle res: ${JSON.stringify(res)}`);
+
                   const shuffleKey = jid + '_shuffleResults' + localSid;
-                  global.distribution.local.mem.put(res, shuffleKey, (memPuterr, memPutRes) => {
+                  console.log(`${localSid}: The shufflekey in shuffle is ${shuffleKey}`);
+                  global.distribution.local.store.put(res, shuffleKey, (memPuterr, memPutRes) => {
                     if (memPuterr) {
                       console.error(`[${localSid}] Error in shuffle putting data for key ${shuffleKey}:`, memPuterr);
                     } else {
@@ -336,7 +359,7 @@ function mr(config) {
                       node: this.orchestratorNode,
                     };
 
-                    const args = {phase: 'shuffle', nodeId: localSid, results: null};
+                    const args = {phase: 'shuffle', nodeId: localSid, results: res};
 
                     global.distribution.local.comm.send(
                         args,
@@ -358,6 +381,7 @@ function mr(config) {
             completedMapPart: {},
             completedReducePart: {},
             completedShufflePart: {},
+            shuffleResults: {},
             reducerResults: {},
             totalNodes: 0,
             contextGid: context.gid,
@@ -391,7 +415,7 @@ function mr(config) {
                   // for this, check whether we are sending correctly to comm.send
                   global.distribution[this.contextGid].comm.send(
                       [this.contextGid, this.workerServiceId],
-                      shuffleRequest,
+                      shuffleRequest, // need to pass more arguments
                       (err, res) => {
                         if (err) {
                           console.error('[Orchestrator] Error starting shuffle phase:', err);
@@ -404,32 +428,132 @@ function mr(config) {
                   console.log(`[Orchestrator] Waiting for ${this.totalNodes - Object.keys(this.completedMapPart).length} more nodes to complete map phase`);
                 }
               } else if (notification.phase === 'shuffle') {
+                // get results from each local shuffle
+                // how can I concat it in this? I need to access from store which means I need this.workerServiceId + "_shuffleReasults" + localSid
+
+                // need to redistribute keys to other nodes
                 this.completedShufflePart[notification.nodeId] = true;
                 console.log(`[Orchestrator] Shuffle completion status:`, this.completedShufflePart);
 
-                if (Object.keys(this.completedShufflePart).length == this.totalNodes) {
-                  console.log('[Orchestrator] All shuffle operations complete, starting reducer phase');
-                  // start shuffle phase on all nodes
-                  const reduceRequest = {
-                    service: workerServiceId,
-                    method: 'reduceFunc',
-                  };
+                if (notification.results !== null) {
+                  this.shuffleResults[notification.nodeId] = notification.results;
+                  console.log(`[Orchestrator] Received shuffle results from node ${notification.nodeId}:`, notification.results);
+                }
 
 
-                  // start shuffle phase
+                if (Object.keys(this.completedShufflePart).length === this.totalNodes) {
+                  console.log('[Orchestrator] All shuffle operations complete, shuffling results and redistributing once more');
 
-                  // for this, check whether we are sending correctly to comm.send
-                  global.distribution[this.contextGid].comm.send(
-                      [this.contextGid, this.configId],
-                      reduceRequest,
-                      (err, res) => {
-                        if (err) {
-                          console.error('[Orchestrator] Error starting reduce phase:', err);
-                        } else {
-                          console.log('[Orchestrator] Reduce phase started successfully:', res);
+                  // get all nodes in group again
+
+                  global.distribution.local.groups.get(this.contextGid, (groupErr, groupV) => {
+                    if (groupErr !== null && Object.keys(groupErr).length > 0) {
+                      console.error('[Orchestrator] Error getting group nodes:', groupErr);
+                      return;
+                    }
+
+                    const allKeys = {};
+                    for (const nid in this.shuffleResults) {
+                      const nidShuffleResults = this.shuffleResults[nid];
+                      if (nidShuffleResults) {
+                        for (const k in nidShuffleResults) {
+                          if (!allKeys[k]) {
+                            allKeys[k] = [];
+                          }
+                          allKeys[k] = allKeys[k].concat(nidShuffleResults[k]);
                         }
-                      },
-                  );
+                      }
+                    }
+
+                    console.log('[Orchestrator] Consolidated keys:', Object.keys(allKeys));
+
+                    // start redistributing this stuff now
+
+                    // store per sid the new Keys in redistributed keys
+                    const redistributedKeys = {};
+                    Object.keys(groupV).forEach((sid) => {
+                      redistributedKeys[sid] = {};
+                    });
+
+                    console.log(`[Orchestrator] Creted redistribued keys`);
+
+                    const allNids = {};
+                    for (const [sid, actualNode] of Object.entries(groupV)) {
+                      const nid = global.distribution.util.id.getNID(actualNode);
+                      allNids[nid] = sid;
+                    }
+
+                    console.log(`[Orchestrator] Creted all nids`);
+
+
+                    // use consistent hashing to redistribute again
+                    for (const key in allKeys) {
+                      const keyHash = global.distribution.util.id.getID(key);
+                      console.log(`[Orchestrator] Doing consistent hashing for ${key}`);
+                      const nodeNid = global.distribution.util.id.consistentHash(keyHash, Object.keys(allNids));
+                      console.log(`[Orchestrator] Finished consistent hashing for ${key}`);
+                      const nodeSid = allNids[nodeNid];
+                      console.log(`[Orchestrator] Got nodeSId`);
+                      // Assign this key and all its values to the selected node
+                      redistributedKeys[nodeSid][key] = allKeys[key];
+                      // console.log(`[Orchestrator] Assigned key to redistributedKeys for ${key} with sid ${nodeSid}`);
+                      console.log(`[Orchestrator] Assigned key ${key} to node ${nodeSid}`);
+                    }
+
+                    console.log(`[Orchestrator] Finished redistributing keys ${JSON.stringify(redistributedKeys)}`);
+                    //    [Orchestrator] Finished redistributing keys
+                    //  {"c65b0":{"a":[1,1,1,1],"e":[1,1,1,1,1,1,1],"u":[1,1],"c":[1,1,1,1],"t":[1,1,1,1],"i":[1],"x":[1]},
+                    // "fa3de":{"o":[1,1,1],"g":[1]},
+                    // "7ff68":{"m":[1,1],"p":[1,1],"r":[1,1,1,1],"d":[1,1],"s":[1],"h":[1,1],"n":[1,1],"l":[1,1,1,1],"w":[1]}}
+                    // now start storing the redistributed stuff in store again with new key
+                    let processedNodesForRedistributing = 0;
+                    for (const sidToSend in redistributedKeys) {
+                      const actualNode = groupV[sidToSend];
+                      const newRedistributedKey = this.workerServiceId + sidToSend + '_redistributed';
+
+                      const storeRemote = {
+                        node: actualNode,
+                        service: 'store',
+                        method: 'put',
+                      };
+
+                      console.log(`[Orchestrator] Sending redistributed data to node ${sidToSend}:`, actualNode);
+                      global.distribution.local.comm.send([redistributedKeys[sidToSend], newRedistributedKey], storeRemote, (commE, commV) => {
+                        if (commE !== null && Object.keys(commE).length > 0) {
+                          console.error(`[Orchestrator] Error storing redistributed data on node ${sidToSend}:`, commE);
+                          return;
+                        } else {
+                          console.log(`[Orchestrator] Successfully stored redistributed data on node ${sidToSend}`);
+                        }
+                        processedNodesForRedistributing++;
+                        if (processedNodesForRedistributing === Object.keys(groupV).length) {
+                          console.log('[Orchestrator] All nodes have received redistributed data, starting reduce phase');
+
+                          // start shuffle phase on all nodes
+                          const reduceRequest = {
+                            service: workerServiceId,
+                            method: 'reduceFunc',
+                          };
+
+
+                          // start shuffle phase
+                          // for this, check whether we are sending correctly to comm.send
+                          global.distribution[this.contextGid].comm.send(
+                              [this.contextGid, this.workerServiceId],
+                              reduceRequest,
+                              (err, res) => {
+                                if (err) {
+                                  console.error('[Orchestrator] Error starting reduce phase:', err);
+                                } else {
+                                  console.log('[Orchestrator] Reduce phase started successfully:', res);
+                                }
+                              },
+                          );
+                        }
+                      });
+                    }
+                  });
+                  // console.log('[Orchestrator] All shuffle operations complete, starting reducer phase');
                 } else {
                   console.log(`[Orchestrator] Waiting for ${this.totalNodes - Object.keys(this.completedShufflePart).length} more nodes to complete shuffle phase`);
                 }
@@ -461,8 +585,32 @@ function mr(config) {
 
                   console.log('[Orchestrator] Combined final results:', finalResults);
 
+                  const newId = `mr-${this.configId}`;
+                  console.log('[Orchestrator] New Id is :', newId);
                   // delete service
-                  console.log('[Orchestrator] Deregistering MapReduce service with service ID:', this.workerServiceId);
+                  console.log(`[Orchestrator] Deregistering MapReduce service with service ID ${newId} and workerService Id ${this.workerServiceId}`);
+                  // global.distribution.local.routes.rem(`${newId}`, (remErr, remRes) => {
+                  //   if (remErr !== null && Object.keys(remErr).length > 0) {
+                  //     console.error('[Orchestrator] Error deregistering serviceId:', remErr);
+                  //   } else {
+                  //     console.log('[Orchestrator] ServiceId successfully deregistered:', remRes);
+                  //   }
+                  //   global.distribution[this.contextGid].routes.rem(this.workerServiceId, (err, res) => {
+                  //     if (err !== null && Object.keys(err).length > 0) {
+                  //       console.error('[Orchestrator] Error deregistering workerServiceId:', err);
+                  //     } else {
+                  //       console.log('[Orchestrator] workerServiceId successfully deregistered:', res);
+                  //     }
+
+                  //     // // return
+                  //     // console.log(`[Orchestrator] Returning final results to caller: ${finalResults}`);
+                  //     // cb(null, finalResults);
+                  //   });
+                  // return
+                  console.log(`[Orchestrator] Returning final results to caller: ${JSON.stringify(finalResults)}`);
+                  cb(null, finalResults);
+                  return;
+                  // });
                   // global.distribution[this.contextGid].routes.rem(this.workerServiceId, (err, res) => {
                   //   if (err) {
                   //     console.error('[Orchestrator] Error deregistering service:', err);
@@ -475,8 +623,8 @@ function mr(config) {
                   //   cb(null, finalResults);
                   // });
                   // return
-                  console.log('[Orchestrator] Returning final results to caller');
-                  cb(null, finalResults);
+                  // console.log('[Orchestrator] Returning final results to caller');
+                  // cb(null, finalResults);
                 } else {
                   console.log(`[Orchestrator] Waiting for ${this.totalNodes - Object.keys(this.completedReducePart).length} more nodes to complete reduce phase`);
                 }

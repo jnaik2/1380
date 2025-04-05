@@ -45,7 +45,9 @@ function send(message, remote, callback) {
     pathPrefix = `/${remote.gid}`;
   }
 
+  console.log(`In comm, postData before serializing is ${JSON.stringify(message)}`);
   const postData = serialize(message);
+  console.log(`In comm, postData is ${postData}, and deserializing it gives us ${Object.values(JSON.parse(postData))}`);
   const options = {
     hostname: remote.node.ip,
     port: remote.node.port,

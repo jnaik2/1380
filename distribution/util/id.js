@@ -21,7 +21,7 @@ function getSID(node) {
 
 
 function idToNum(id) {
-  let n = parseInt(id, 16);
+  const n = parseInt(id, 16);
   assert(!isNaN(n), 'idToNum: id is not in KID form!');
   return n;
 }
@@ -33,14 +33,31 @@ function naiveHash(kid, nids) {
 }
 
 function consistentHash(kid, nids) {
-  const hashValue = idToNum(kid);
-  nids.sort();
-  for (let i = 0; i < nids.length; i++) {
-    if (idToNum(nids[i]) >= hashValue) {
-      return nids[i];
-    }
+  console.log('IN CONSISTENT HASH');
+  console.log(nids);
+  const ring = [];
+  for (const nid of nids) {
+    ring.push({originalId: nid, val: idToNum(nid)});
   }
-  return nids[0];
+  // let newKid = kid.substring(0, 5);
+  // console.log(newKid);
+  ring.push({originalId: kid, val: idToNum(kid)});
+
+  ring.sort((a, b) => a.val-b.val);
+
+  const indexOfKid = ring.findIndex((elm) => elm.originalId === kid);
+
+  console.log(indexOfKid);
+  console.log(ring.length);
+  let indexNeeded;
+  if (indexOfKid === ring.length-1) {
+    indexNeeded = 0;
+  } else {
+    indexNeeded = indexOfKid+1;
+  }
+  console.log(`Ring is ${JSON.stringify(Object.values(ring))}`);
+  console.log(ring[indexNeeded].originalId);
+  return ring[indexNeeded].originalId;
 }
 
 

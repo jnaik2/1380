@@ -71,8 +71,16 @@ function rem(configuration, callback) {
   // console.log(routesMap);
   // console.log(global.distribution['ncdc']);
 
-  const thingToRemove = configuration.nameToRemove;
-  const gid = configuration.gid;
+  let thingToRemove;
+  let gid;
+  if (typeof(configuration) === 'object') {
+     thingToRemove = configuration.nameToRemove;
+     gid = configuration.gid;
+  } else {
+    thingToRemove = configuration;
+    gid = 'local';
+  }
+  
   console.log(`Removing ${thingToRemove} from ${gid}.This is global stuff: ${JSON.stringify(global.distribution[gid])} and tis is local stuff ${JSON.stringify(routesMap)}`);
   if (!thingToRemove) {
     callback(new Error('Configuration not specified'), null);
@@ -90,6 +98,7 @@ function rem(configuration, callback) {
     if (!global.distribution[gid][thingToRemove]) {
       callback(new Error(`Value not accessible in global service: ${thingToRemove} from gid ${gid}`), null);
     } else {
+      // console.log("SUCCESSFULLY REMOVED FOM")
       delete global.distribution[gid][thingToRemove];
       callback(null, thingToRemove);
     }
