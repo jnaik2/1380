@@ -55,22 +55,22 @@ function naiveHash(kid, nids) {
 }
 
 function consistentHash(kid, nids) {
-  let ring = [kid, ...nids].map(idToNum).sort();
+  const ring = [kid, ...nids].map(idToNum).sort();
 
-  let next = ring.find(num => num > idToNum(kid)) || ring[0]; 
-  return nids.find(nid => idToNum(nid) === next) || kid;
+  const next = ring.find((num) => num > idToNum(kid)) || ring[0];
+  return nids.find((nid) => idToNum(nid) === next) || kid;
 }
 
 
 function rendezvousHash(kid, nids) {
-  let lst = [];
+  const lst = [];
 
   for (const nid of nids) {
     lst.push(idToNum(getID(kid + nid)));
   }
 
-  let max = Math.max(...lst);
-  let index = lst.indexOf(max);
+  const max = Math.max(...lst);
+  const index = lst.indexOf(max);
   return nids[index];
 }
 

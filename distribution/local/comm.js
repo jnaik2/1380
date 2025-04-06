@@ -1,8 +1,8 @@
 /** @typedef {import("../types").Callback} Callback */
 /** @typedef {import("../types").Node} Node */
 
-const http = require("node:http");
-const { serialize, deserialize } = require("../util/util");
+const http = require('node:http');
+const {serialize, deserialize} = require('../util/util');
 
 /**
  * @typedef {Object} Target
@@ -18,28 +18,28 @@ const { serialize, deserialize } = require("../util/util");
  * @return {void}
  */
 function send(message, remote, callback) {
-  let callBack = callback || console.log;
+  const callBack = callback || console.log;
   if (!remote) {
-    callBack(new Error("Remote not specified"), null);
+    callBack(new Error('Remote not specified'), null);
     return;
   }
   if (!remote.node) {
-    callBack(new Error("Node not specified"), null);
+    callBack(new Error('Node not specified'), null);
     return;
   }
   if (!remote.node.ip) {
-    callBack(new Error("Node IP not specified"), null);
+    callBack(new Error('Node IP not specified'), null);
     return;
   }
   if (!remote.service) {
-    callBack(new Error("Service not specified"), null);
+    callBack(new Error('Service not specified'), null);
     return;
   }
   if (!remote.method) {
-    callBack(new Error("Method not specified"), null);
+    callBack(new Error('Method not specified'), null);
     return;
   }
-  let pathPrefix = "/local";
+  let pathPrefix = '/local';
 
   if (remote.gid) {
     pathPrefix = `/${remote.gid}`;
@@ -50,21 +50,21 @@ function send(message, remote, callback) {
     hostname: remote.node.ip,
     port: remote.node.port,
     path: `${pathPrefix}/${remote.service}/${remote.method}`,
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
-      "Content-Length": Buffer.byteLength(postData),
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(postData),
     },
   };
 
   const req = http.request(options, (res) => {
-    let body = [];
-    res.on("data", (chunk) => {
+    const body = [];
+    res.on('data', (chunk) => {
       body.push(chunk);
     });
-    res.on("end", () => {
+    res.on('end', () => {
       try {
-        const data = deserialize(body.join(""));
+        const data = deserialize(body.join(''));
         if (res.statusCode != 200) {
           callBack(data, null);
         } else {
@@ -78,7 +78,7 @@ function send(message, remote, callback) {
     });
   });
 
-  req.on("error", (err) => {
+  req.on('error', (err) => {
     callBack(new Error(err), null);
   });
 
@@ -86,4 +86,4 @@ function send(message, remote, callback) {
   req.end();
 }
 
-module.exports = { send };
+module.exports = {send};

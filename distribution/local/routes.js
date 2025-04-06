@@ -1,6 +1,6 @@
 /** @typedef {import("../types").Callback} Callback */
 
-let routesMap = {};
+const routesMap = {};
 
 /**
  * @param {string | {service: string, gid: string}} configuration
@@ -8,31 +8,31 @@ let routesMap = {};
  * @return {void}
  */
 function get(configuration, callback) {
-  let callBack = callback || console.log;
+  const callBack = callback || console.log;
   if (!configuration) {
-    callback(new Error("Configuration not specified"), null);
+    callback(new Error('Configuration not specified'), null);
     return;
   }
 
   let gid;
-  if (typeof configuration === "object") {
+  if (typeof configuration === 'object') {
     gid = configuration.gid;
     configuration = configuration.service;
   }
 
   if (!gid) {
-    gid = "local";
+    gid = 'local';
   }
 
   let map = routesMap;
-  if (gid != "local") {
+  if (gid != 'local') {
     map = global.distribution[gid];
   }
 
   if (!(configuration in map)) {
     const rpc = global.toLocal[configuration];
     if (rpc) {
-      callback(null, { call: rpc });
+      callback(null, {call: rpc});
     } else {
       callBack(new Error(`Service, ${configuration}, not accessible`), null);
     }
@@ -48,13 +48,13 @@ function get(configuration, callback) {
  * @return {void}
  */
 function put(service, configuration, callback) {
-  let callBack = callback || (() => {});
+  const callBack = callback || (() => {});
   if (!configuration) {
-    callback(new Error("Configuration not specified"), null);
+    callback(new Error('Configuration not specified'), null);
     return;
   }
   if (!service) {
-    callback(new Error("Service not specified"), null);
+    callback(new Error('Service not specified'), null);
     return;
   }
   routesMap[configuration] = service;
@@ -66,17 +66,17 @@ function put(service, configuration, callback) {
  * @param {Callback} callback
  */
 function rem(configuration, callback) {
-  let callBack = callback || console.log;
+  const callBack = callback || console.log;
   if (!configuration) {
-    callback(new Error("Configuration not specified"), null);
+    callback(new Error('Configuration not specified'), null);
     return;
   }
   if (!routesMap[configuration]) {
-    callBack(new Error("Value not accessible in service"), null);
+    callBack(new Error('Value not accessible in service'), null);
   } else {
     delete routesMap[configuration];
     callBack(null, configuration);
   }
 }
 
-module.exports = { get, put, rem };
+module.exports = {get, put, rem};
