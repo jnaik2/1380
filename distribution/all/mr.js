@@ -26,7 +26,6 @@ const {id} = require('../util/util');
  * @property {string[]} keys
  */
 
-
 /*
   Note: The only method explicitly exposed in the `mr` service is `exec`.
   Other methods, such as `map`, `shuffle`, and `reduce`, should be dynamically
@@ -61,11 +60,13 @@ function mr(config) {
       if (e !== null && Object.keys(e).length > 0) {
         console.log('[Orchestrator] Failed to get my local sid: ', e);
         cb(e, {});
+        return;
       }
       global.distribution.local.status.get('ip', (ipE, ipV) => {
         if (ipE !== null && Object.keys(ipE).length > 0) {
           console.log('[Orchestrator] Failed to get my local ip: ', ipE);
           cb(ipE, {});
+          return;
         }
         global.distribution.local.status.get('port', (portE, portV) => {
           // need to get local sid to send notify to orchestrator node
@@ -73,6 +74,7 @@ function mr(config) {
           if (portE !== null && Object.keys(portE).length > 0) {
             console.log('[Orchestrator] Failed to get my local port: ', portE);
             cb(portE, {});
+            return;
           }
           const workerService = {
             mapperFunc: configuration.map,
@@ -148,8 +150,9 @@ function mr(config) {
                       }
                     } catch (mapperError) {
                       console.error(`[${localSid}] Error in mapper function for key ${key}:`, mapperError);
+                      mapCallback(mapperError, {});
+                      return;
                     }
-
 
                     // map function is done for this node. put in mem and send notify to orchestrator
                     if (keysCompleted === keys.length) {
@@ -187,6 +190,7 @@ function mr(config) {
                           console.error(` ${localSid} Error recieved for sending notify to orchestrator: `, commE);
                         }
                         mapCallback(commE, commV);
+                        return;
                       });
                     });
                   });
@@ -214,6 +218,7 @@ function mr(config) {
                   if (getErr !== null && Object.keys(getErr).length > 0) {
                     console.error(`[${localSid}] Error retrieving keys for reduce phase:`, getErr);
                     reduceCallback(getErr, getRes);
+                    return;
                   }
 
                   console.log(`${localSid}: Result from mem get is ${JSON.stringify(getRes)}`);
@@ -376,7 +381,6 @@ function mr(config) {
             },
           };
 
-
           const orchestratorService = {
             completedMapPart: {},
             completedReducePart: {},
@@ -409,7 +413,6 @@ function mr(config) {
                     method: 'shuffleFunc',
                   };
 
-
                   // start shuffle phase
 
                   // for this, check whether we are sending correctly to comm.send
@@ -439,7 +442,6 @@ function mr(config) {
                   this.shuffleResults[notification.nodeId] = notification.results;
                   console.log(`[Orchestrator] Received shuffle results from node ${notification.nodeId}:`, notification.results);
                 }
-
 
                 if (Object.keys(this.completedShufflePart).length === this.totalNodes) {
                   console.log('[Orchestrator] All shuffle operations complete, shuffling results and redistributing once more');
@@ -485,19 +487,18 @@ function mr(config) {
 
                     console.log(`[Orchestrator] Creted all nids`);
 
-
                     // use consistent hashing to redistribute again
                     for (const key in allKeys) {
                       const keyHash = global.distribution.util.id.getID(key);
-                      console.log(`[Orchestrator] Doing consistent hashing for ${key}`);
+                      // console.log(`[Orchestrator] Doing consistent hashing for ${key}`);
                       const nodeNid = global.distribution.util.id.consistentHash(keyHash, Object.keys(allNids));
-                      console.log(`[Orchestrator] Finished consistent hashing for ${key}`);
+                      // console.log(`[Orchestrator] Finished consistent hashing for ${key}`);
                       const nodeSid = allNids[nodeNid];
-                      console.log(`[Orchestrator] Got nodeSId`);
+                      // console.log(`[Orchestrator] Got nodeSId`);
                       // Assign this key and all its values to the selected node
                       redistributedKeys[nodeSid][key] = allKeys[key];
                       // console.log(`[Orchestrator] Assigned key to redistributedKeys for ${key} with sid ${nodeSid}`);
-                      console.log(`[Orchestrator] Assigned key ${key} to node ${nodeSid}`);
+                      // console.log(`[Orchestrator] Assigned key ${key} to node ${nodeSid}`);
                     }
 
                     console.log(`[Orchestrator] Finished redistributing keys ${JSON.stringify(redistributedKeys)}`);
@@ -534,7 +535,6 @@ function mr(config) {
                             service: workerServiceId,
                             method: 'reduceFunc',
                           };
-
 
                           // start shuffle phase
                           // for this, check whether we are sending correctly to comm.send
@@ -636,7 +636,6 @@ function mr(config) {
           const partitionKeys = function(keys, nodes) {
             console.log(`[Orchestrator] Partitioning ${keys.length} keys across ${Object.keys(nodes).length} nodes`);
             const partitioned = {};
-
 
             Object.keys(nodes).forEach((nodeId) => {
               partitioned[nodeId] = [];
@@ -746,3 +745,5 @@ function mr(config) {
 };
 
 module.exports = mr;
+
+

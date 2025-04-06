@@ -44,6 +44,7 @@ test('(20 pts) all.mr:ncdc', (done) => {
     distribution.ncdc.mr.exec({keys: getDatasetKeys(dataset), map: mapper, reduce: reducer}, (e, v) => {
       try {
         expect(v).toEqual(expect.arrayContaining(expected));
+        console.log('TEST ACTUALLY PASSES');
         done();
       } catch (e) {
         done(e);
@@ -51,14 +52,14 @@ test('(20 pts) all.mr:ncdc', (done) => {
     });
   };
 
-  console.log("Reached test");
+  console.log('Reached test');
 
   let cntr = 0;
   // Send the dataset to the cluster
   dataset.forEach((o) => {
     const key = Object.keys(o)[0];
     const value = o[key];
-    console.log("Reached inside dataset");
+    console.log('Reached inside dataset');
     distribution.ncdc.store.put(value, key, (e, v) => {
       cntr++;
       // Once the dataset is in place, run the map reduce
@@ -128,7 +129,7 @@ test('(20 pts) all.mr:avgwrdl', (done) => {
   });
 });
 
-test('(25 pts) all.mr:cfreq', (done) => {
+test.only('(25 pts) all.mr:cfreq', (done) => {
   // Calculate the frequency of each character in a set of documents
   const mapper = (key, value) => {
     const chars = value.replace(/\s+/g, '').split('');

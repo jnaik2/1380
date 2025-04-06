@@ -1,4 +1,4 @@
-const http = require('http');
+const WebSocket = require('ws');
 const url = require('url');
 const log = require('../util/log');
 const {serialize, deserialize} = require('../util/util');
@@ -11,87 +11,70 @@ const {routes} = require('./local');
 */
 
 const start = function(callback) {
-  const server = http.createServer((req, res) => {
+  const wss = new WebSocket.Server({
+    host: global.nodeConfig.ip,
+    port: global.nodeConfig.port,
+  });
+
+  // Handle connections
+  wss.on('connection', (res, req) => {
     /* Your server will be listening for PUT requests. */
-
     global.moreStatus['counts']++;
-    if (req.method !== 'PUT') {
-      res.statusCode = 405;
-      res.end(serialize(new Error('Method not allowed')));
-      return;
-    }
+    // if (req.method !== 'PUT') {
+    //   console.log(req);
+    //   res.statusCode = 405;
+    //   res.send(serialize({e: new Error('Method not allowed'), r: null}));
+    //   return;
+    // }
 
-    /*
-      The path of the http request will determine the service to be used.
-      The url will have the form: http://node_ip:node_port/service/method
-    */
 
-    const urlArr = url.parse(req.url).pathname.split('/');
+    // Parse the URL to extract service information
+    const urlPath = url.parse(req.url).pathname;
+    const urlArr = urlPath.split('/');
     const gid = urlArr[urlArr.length - 3];
     const service = urlArr[urlArr.length - 2];
     const method = urlArr[urlArr.length - 1];
 
-    /*
-
-      A common pattern in handling HTTP requests in Node.js is to have a
-      subroutine that collects all the data chunks belonging to the same
-      request. These chunks are aggregated into a body variable.
-
-      When the req.on('end') event is emitted, it signifies that all data from
-      the request has been received. Typically, this data is in the form of a
-      string. To work with this data in a structured format, it is often parsed
-      into a JSON object using JSON.parse(body), provided the data is in JSON
-      format.
-
-      Our nodes expect data in JSON format.
-  */
-
-    const body = [];
-
-    req.on('data', (chunk) => {
-      body.push(chunk);
-    });
-
-    req.on('end', () => {
-      /* Here, you can handle the service requests.
-      Use the local routes service to get the service you need to call.
-      You need to call the service with the method and arguments provided in the request.
-      Then, you need to serialize the result and send it back to the caller.
-      */
+    res.on('message', (message) => {
       let x;
       let args;
       try {
-        // Use a try catch in case the body is not in JSON format
-        args = deserialize(body.join(''));
+        // Deserialize the message
+        args = deserialize(message.toString());
         console.log(`Args in node is ${JSON.stringify(args)}`);
         console.log(`Service is ${service} and method is ${method}`);
+
+        // Get the service
         routes.get({service: service, gid: gid}, (e1, s) => {
           if (e1) {
-            res.statusCode = 404;
-            res.end(serialize(e1));
+            // Service not found
+            console.log('reached here: ', e1);
+            res.send(serialize({e: e1, r: {}}));
           } else {
+            // console.log("Reached here: ", s);
             x = s;
             if ('results' in args) {
               args = [args];
             }
 
-            // console.log(`IN TRY, args is ${JSON.stringify(args)} and its keys are ${Object.keys(args)}`);
-            // console.log(`True or false, ${'nameToRemove' in Object.keys(args)}`);
             if ('nameToRemove' in args) {
               console.log(`Removing in nameToRemove ${args.nameToRemove} from ${args.gid}`);
               args = [args];
             }
+
+            // Call the method on the service
             s[method](...args, (e2, r) => {
-              res.statusCode = 200;
-              res.end(serialize({e: e2, r: r}));
+              // console.log("ERROR ERRROR ERROR");
+              // console.log(e2);
+              // console.log(r);
+              res.send(serialize({e: e2, r: r}));
             });
           }
         });
       } catch (error) {
         console.log(x, method, `ABCDE`, args);
         console.log(x[method], `AMDOMOAM`, args);
-        res.statusCode = 400;
-        res.end(serialize(error));
+        res.send(serialize({e: error, r: {}}));
       }
     });
   });
@@ -104,18 +87,17 @@ const start = function(callback) {
     At some point, we'll be adding the ability to stop a node
     remotely through the service interface.
   */
-
-  server.listen(global.nodeConfig.port, global.nodeConfig.ip, () => {
+  wss.on('listening', () => {
     log(
-        `Server running at http://${global.nodeConfig.ip}:${global.nodeConfig.port}/`,
+        `WebSocket server running at ws://${global.nodeConfig.ip}:${global.nodeConfig.port}/`,
     );
-    global.distribution.node.server = server;
-    callback(server);
+    global.distribution.node.server = wss;
+    callback(wss);
   });
 
-  server.on('error', (error) => {
-    // server.close();
-    log(`Server error: ${error}`);
+  // Handle errors
+  wss.on('error', (error) => {
+    log(`WebSocket server error: ${error}`);
     throw error;
   });
 };

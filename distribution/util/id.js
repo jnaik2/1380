@@ -33,8 +33,8 @@ function naiveHash(kid, nids) {
 }
 
 function consistentHash(kid, nids) {
-  console.log('IN CONSISTENT HASH');
-  console.log(nids);
+  // console.log('IN CONSISTENT HASH');
+  // console.log(nids);
   const ring = [];
   for (const nid of nids) {
     ring.push({originalId: nid, val: idToNum(nid)});
@@ -47,16 +47,16 @@ function consistentHash(kid, nids) {
 
   const indexOfKid = ring.findIndex((elm) => elm.originalId === kid);
 
-  console.log(indexOfKid);
-  console.log(ring.length);
+  // console.log(indexOfKid);
+  // console.log(ring.length);
   let indexNeeded;
   if (indexOfKid === ring.length-1) {
     indexNeeded = 0;
   } else {
     indexNeeded = indexOfKid+1;
   }
-  console.log(`Ring is ${JSON.stringify(Object.values(ring))}`);
-  console.log(ring[indexNeeded].originalId);
+  // console.log(`Ring is ${JSON.stringify(Object.values(ring))}`);
+  // console.log(ring[indexNeeded].originalId);
   return ring[indexNeeded].originalId;
 }
 
