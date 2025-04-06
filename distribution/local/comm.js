@@ -93,12 +93,12 @@ function send(message, remote, callback) {
             if (response.e !== null && response.e !== undefined && response.e != {}) {
               // console.log("Reach this case");
               // need this weird if statement otherwise we dont catch a weird edge case
-              // if (Object.keys(response.e).length > 0) {
-              //   callBack(response.e, null);
-              // } else {
-              //   callBack(response.e, response.r);
-              // }
-              callback(response.e, response.r);
+              if (Object.keys(response.e).length > 0) {
+                callBack(response.e, null);
+              } else {
+                callBack(response.e, response.r);
+              }
+              // callback(response.e, response.r);
             } else {
               // console.log("Result is: ", response.r);
               callBack(null, response.r);
