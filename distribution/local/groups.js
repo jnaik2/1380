@@ -36,7 +36,7 @@ groups.put = function(config, group, callback) {
   let hash;
   if (typeof config === 'object') {
     gid = config.gid;
-    hash = config.hash || id.naiveHash;
+    hash = config.hash || id.consistentHash;
   }
 
   global.distribution[gid] = {};

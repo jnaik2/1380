@@ -3,7 +3,7 @@ const {id} = require('../util/util');
 function store(config) {
   const context = {};
   context.gid = config.gid || 'all';
-  context.hash = config.hash || global.distribution.util.id.naiveHash;
+  context.hash = config.hash || id.consistentHash;
 
   /* For the distributed store service, the configuration will
           always be a string */

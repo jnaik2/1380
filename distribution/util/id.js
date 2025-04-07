@@ -55,14 +55,15 @@ function naiveHash(kid, nids) {
 }
 
 function consistentHash(kid, nids) {
-  const hashValue = idToNum(kid);
-  nids.sort();
-  for (let i = 0; i < nids.length; i++) {
-    if (idToNum(nids[i]) >= hashValue) {
-      return nids[i];
-    }
+  const nidsNum = nids.map(idToNum);
+  nidsNum.sort((a, b) => a - b);
+  const kidNum = idToNum(kid);
+  let index = nidsNum.findIndex((nid) => nid >= kidNum); // return index of first element satisfying condition
+  if (index === -1) {
+    index = 0;
   }
-  return nids[0];
+  const nidNum = nidsNum[index];
+  return nids.find((nid) => idToNum(nid) === nidNum);
 }
 
 

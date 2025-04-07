@@ -154,7 +154,7 @@ function mr(config) {
 
       objectKeys.forEach((key) => {
         const kid = id.getID(key);
-        const nodeId = id.naiveHash(kid, Object.keys(results));
+        const nodeId = id.consistentHash(kid, Object.keys(results));
         results[nodeId].push(key);
       });
       // Results maps from NID to keys that should be handled at that node
@@ -167,7 +167,6 @@ function mr(config) {
       global.distribution.local.groups.get(context.gid, (e, groups) => {
         let mapResponses = 0;
         const workerCount = Object.keys(groups).length;
-
         const partition = partitionKeys(configuration.keys, groups);
         for (const sid in groups) {
           const nid = id.getNID(groups[sid]);
