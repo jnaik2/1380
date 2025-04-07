@@ -36,19 +36,19 @@ const start = function(callback) {
     const method = urlArr[urlArr.length - 1];
 
     res.on('message', (message) => {
-      let x;
+      // let x;
       let args;
       try {
         // Deserialize the message
         args = deserialize(message.toString());
-        console.log(`Args in node is ${JSON.stringify(args)}`);
-        console.log(`Service is ${service} and method is ${method}`);
+        // console.log(`Args in node is ${JSON.stringify(args)}`);
+        // console.log(`Service is ${service} and method is ${method}`);
 
         // Get the service
         routes.get({service: service, gid: gid}, (e1, s) => {
           if (e1) {
             // Service not found
-            console.log('reached here: ', e1);
+            // console.log('reached here: ', e1);
             res.send(serialize({e: e1, r: {}}));
           } else {
             // console.log("Reached here: ", s);
@@ -58,7 +58,7 @@ const start = function(callback) {
             }
 
             if ('nameToRemove' in args) {
-              console.log(`Removing in nameToRemove ${args.nameToRemove} from ${args.gid}`);
+              // console.log(`Removing in nameToRemove ${args.nameToRemove} from ${args.gid}`);
               args = [args];
             }
 
@@ -72,8 +72,8 @@ const start = function(callback) {
           }
         });
       } catch (error) {
-        console.log(x, method, `ABCDE`, args);
-        console.log(x[method], `AMDOMOAM`, args);
+        // console.log(x, method, `ABCDE`, args);
+        // console.log(x[method], `AMDOMOAM`, args);
         res.send(serialize({e: error, r: {}}));
       }
     });
