@@ -55,10 +55,14 @@ function naiveHash(kid, nids) {
 }
 
 function consistentHash(kid, nids) {
-  const ring = [kid, ...nids].map(idToNum).sort();
-
-  const next = ring.find((num) => num > idToNum(kid)) || ring[0];
-  return nids.find((nid) => idToNum(nid) === next) || kid;
+  const hashValue = idToNum(kid);
+  nids.sort();
+  for (let i = 0; i < nids.length; i++) {
+    if (idToNum(nids[i]) >= hashValue) {
+      return nids[i];
+    }
+  }
+  return nids[0];
 }
 
 

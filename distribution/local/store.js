@@ -12,11 +12,15 @@ function put(state, configuration, callback) {
   const nid = global.moreStatus['nid'];
   let key;
   let gid = 'local';
+  let append = false;
   if (typeof configuration === 'string') {
     key = configuration;
   } else if (configuration != null) {
     key = configuration.key;
     gid = configuration.gid;
+    if (configuration.append == 'true') {
+      append = true;
+    }
   }
 
   if (!key) {
@@ -31,32 +35,67 @@ function put(state, configuration, callback) {
     fs.mkdirSync(dirPath, {recursive: true});
   }
 
-  fs.writeFile(filepath, serialize(state), (err) => {
-    if (err) {
-      callback(new Error(err), null);
-    } else {
-      callback(null, state);
+  if (append) {
+    try {
+      if (!fs.existsSync(filepath)) {
+        fs.writeFileSync(filepath, serialize(state));
+        callback(null, state);
+      } else {
+        let data = fs.readFileSync(filepath);
+        data = deserialize(data.toString());
+        const obj = state.concat(data);
+        fs.writeFileSync(filepath, serialize(obj));
+        callback(null, obj);
+      }
+    } catch (e) {
+      callback(e, null);
     }
-  });
+  } else {
+    try {
+      fs.writeFileSync(filepath, serialize(state));
+      callback(null, state);
+    } catch (e) {
+      callback(e, null);
+    }
+  }
 }
 
 function get(configuration, callback) {
   const nid = global.moreStatus['nid'];
-  let key;
+  let key = null;
   let gid = 'local';
   if (typeof configuration === 'string') {
     key = configuration;
   } else if (configuration != null) {
     key = configuration.key;
     gid = configuration.gid;
-  } else if (configuration == null) {
-    callback(new Error('Configuration not specified'), null);
+  }
+
+  if (!key) {
+    // return all possible keys
+    const dirPath = path.join(process.cwd(), `/store/${nid}/${gid}`);
+    if (!fs.existsSync(dirPath)) {
+      callback(new Error('No value found for key: ' + configuration), null);
+      return;
+    }
+    const files = fs.readdirSync(dirPath);
+    const data = [];
+
+    files.forEach((file) => {
+      const filepath = path.join(dirPath, file);
+      // get the last part of the path
+      data.push(path.basename(filepath));
+      // console.log('fileData', fileData.toString());
+    });
+    callback(null, data);
     return;
   }
 
   const filepath = path.join(process.cwd(), `/store/${nid}/${gid}/${key}`);
+  // console.log('GET filepath', filepath);
   fs.readFile(filepath, (err, data) => {
     if (err) {
+      // console.log('Error reading file:', err, configuration);
       callback(new Error(err), null);
     } else {
       const obj = deserialize(data.toString());

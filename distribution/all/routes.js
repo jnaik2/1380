@@ -23,11 +23,18 @@ function routes(config) {
   }
 
   /**
-   * @param {object} service
    * @param {string} name
    * @param {Callback} callback
    */
-  function rem(service, name, callback = () => {}) {}
+  function rem(name, callback = () => { }) {
+    global.distribution[context.gid].comm.send(
+        [name],
+        {service: 'routes', method: 'rem'},
+        (errorMap, responseMap) => {
+          callback(errorMap, responseMap);
+        },
+    );
+  }
 
   return {put, rem};
 }
