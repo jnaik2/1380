@@ -1,3 +1,4 @@
+
 const WebSocket = require('ws');
 const url = require('url');
 const log = require('../util/log');
@@ -51,7 +52,6 @@ const start = function(callback) {
             // console.log('reached here: ', e1);
             res.send(serialize({e: e1, r: {}}));
           } else {
-            // console.log("Reached here: ", s);
             x = s;
             if ('results' in args) {
               args = [args];

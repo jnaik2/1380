@@ -69,7 +69,7 @@ function send(message, remote, callback) {
     callBack(new Error('Method not specified'), null);
     return;
   }
-
+  
   let pathPrefix = '/local';
 
   if (remote.gid) {

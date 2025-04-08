@@ -26,6 +26,7 @@ function comm(config) {
     const responses = {};
     const errors = {};
     local.groups.get(context.gid, (_, group) => {
+      console.log(`Group ${context.gid} members:`, group);
       let numResponses = 0;
       for (const sid in group) {
         const node = group[sid];

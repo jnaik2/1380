@@ -64,6 +64,9 @@ groups.put = function(config, group, callback) {
   global.distribution[gid].mr = require('../all/mr')({
     gid: gid, hash: hash,
   });
+  global.distribution[gid].mr = require("../all/mr")({
+    gid: gid, hash: hash
+  });
 
 
   if (!nodeMap['all']) {

@@ -11,25 +11,25 @@ global.moreStatus = {
  * @param {Callback} callback
  * @return {void}
  */
-status.get = function (configuration, callback) {
-  let callBack = callback || console.log;
+status.get = function(configuration, callback) {
+  const callBack = callback || console.log;
   if (!configuration) {
-    callBack(new Error("Configuration not specified"), null);
+    callBack(new Error('Configuration not specified'), null);
     return;
   }
 
   switch (configuration) {
-    case "sid":
-    case "nid":
-    case "counts":
+    case 'sid':
+    case 'nid':
+    case 'counts':
       callBack(null, global.moreStatus[configuration]);
       break;
-    case "ip":
-    case "port":
+    case 'ip':
+    case 'port':
       callBack(null, global.nodeConfig[configuration]);
       break;
-    case "heapTotal":
-    case "heapUsed":
+    case 'heapTotal':
+    case 'heapUsed':
       callBack(null, process.memoryUsage()[configuration]);
       break;
     default:
@@ -39,8 +39,8 @@ status.get = function (configuration, callback) {
 };
 
 status.spawn =
-  require("@brown-ds/distribution/distribution/local/status").spawn;
+  require('@brown-ds/distribution/distribution/local/status').spawn;
 
-status.stop = require("@brown-ds/distribution/distribution/local/status").stop;
+status.stop = require('@brown-ds/distribution/distribution/local/status').stop;
 
 module.exports = status;

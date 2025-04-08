@@ -1,7 +1,3 @@
-#!/usr/bin/env node
-const nativeObjectsToStr = new Map();
-const strToNativeObjects = new Map();
-
 function populateNativeObjects() {
   const builtinLibs = require(`repl`)._builtinLibs;
   builtinLibs.forEach((pkg) => {

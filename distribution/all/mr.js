@@ -30,6 +30,8 @@ const id = require('../util/id');
   Note: The only method explicitly exposed in the `mr` service is `exec`.
   Other methods, such as `map`, `shuffle`, and `reduce`, should be dynamically
   installed on the remote nodes and not necessarily exposed to the user.
+
+  Orchestrator destroys services/endpoints on remote nodes upon completion of reduce (before running callback)
 */
 
 function mr(config) {

@@ -74,8 +74,13 @@ function rem(configuration, callback) {
   if (!routesMap[configuration]) {
     callBack(new Error('Value not accessible in service'), null);
   } else {
-    delete routesMap[configuration];
-    callBack(null, configuration);
+    if (!global.distribution[gid][thingToRemove]) {
+      callback(new Error(`Value not accessible in global service: ${thingToRemove} from gid ${gid}`), null);
+    } else {
+      // console.log("SUCCESSFULLY REMOVED FOM")
+      delete global.distribution[gid][thingToRemove];
+      callback(null, thingToRemove);
+    }
   }
 }
 

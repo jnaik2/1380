@@ -16,6 +16,7 @@ const n3 = {ip: '127.0.0.1', port: 7112};
 
 test('(20 pts) all.mr:ncdc', (done) => {
   const mapper = (key, value) => {
+    console.log(`IN MAPPER: key: ${key}, value: ${value}`);
     const words = value.split(/(\s+)/).filter((e) => e !== ' ');
     const out = {};
     out[words[1]] = parseInt(words[3]);
@@ -23,6 +24,7 @@ test('(20 pts) all.mr:ncdc', (done) => {
   };
 
   const reducer = (key, values) => {
+    console.log(`IN REDUCER: key: ${key}, value: ${values}`);
     const out = {};
     out[key] = values.reduce((a, b) => Math.max(a, b), -Infinity);
     return out;
@@ -49,11 +51,14 @@ test('(20 pts) all.mr:ncdc', (done) => {
     });
   };
 
+  console.log("Reached test");
+
   let cntr = 0;
   // Send the dataset to the cluster
   dataset.forEach((o) => {
     const key = Object.keys(o)[0];
     const value = o[key];
+    console.log("Reached inside dataset");
     distribution.ncdc.store.put(value, key, (e, v) => {
       cntr++;
       // Once the dataset is in place, run the map reduce
@@ -137,8 +142,10 @@ test('(25 pts) all.mr:cfreq', (done) => {
   };
 
   const reducer = (key, values) => {
+    console.log(`IN REDUCER WITH KEY: ${JSON.stringify(key)} and VALUES: ${JSON.stringify(values)}`);
     const out = {};
     out[key] = values.reduce((sum, v) => sum + v, 0);
+    console.log(JSON.stringify(out));
     return out;
   };
 
