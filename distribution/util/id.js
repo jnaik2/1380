@@ -33,44 +33,27 @@ function naiveHash(kid, nids) {
 }
 
 function consistentHash(kid, nids) {
-  console.log('IN CONSISTENT HASH');
-  console.log(nids);
-  const ring = [];
-  for (const nid of nids) {
-    ring.push({originalId: nid, val: idToNum(nid)});
+  const nidsNum = nids.map(idToNum);
+  nidsNum.sort((a, b) => a - b);
+  const kidNum = idToNum(kid);
+  let index = nidsNum.findIndex((nid) => nid >= kidNum); // return index of first element satisfying condition
+  if (index === -1) {
+    index = 0;
   }
-  // let newKid = kid.substring(0, 5);
-  // console.log(newKid);
-  ring.push({originalId: kid, val: idToNum(kid)});
-
-  ring.sort((a, b) => a.val-b.val);
-
-  const indexOfKid = ring.findIndex((elm) => elm.originalId === kid);
-
-  console.log(indexOfKid);
-  console.log(ring.length);
-  let indexNeeded;
-  if (indexOfKid === ring.length-1) {
-    indexNeeded = 0;
-  } else {
-    indexNeeded = indexOfKid+1;
-  }
-  console.log(`Ring is ${JSON.stringify(Object.values(ring))}`);
-  console.log(ring[indexNeeded].originalId);
-  return ring[indexNeeded].originalId;
+  const nidNum = nidsNum[index];
+  return nids.find((nid) => idToNum(nid) === nidNum);
 }
 
 
 function rendezvousHash(kid, nids) {
-  let max = 0;
-  let index = 0;
-  for (let i = 0; i < nids.length; i++) {
-    const hash = idToNum(getID(kid + nids[i]));
-    if (hash > max) {
-      index = i;
-      max = hash;
-    }
+  const lst = [];
+
+  for (const nid of nids) {
+    lst.push(idToNum(getID(kid + nid)));
   }
+
+  const max = Math.max(...lst);
+  const index = lst.indexOf(max);
   return nids[index];
 }
 

@@ -22,11 +22,7 @@ function comm(config) {
    * @param {Callback} callback
    */
   function send(message, configuration, callback) {
-    callback = callback || console.log;
-    console.log(
-        `Sending message ${JSON.stringify(message)} to ${context.gid} with configuration:`,
-        configuration,
-    );
+    const callBack = callback || console.log;
     const responses = {};
     const errors = {};
     local.groups.get(context.gid, (_, group) => {
@@ -46,7 +42,7 @@ function comm(config) {
               numResponses++;
 
               if (numResponses == Object.keys(group).length) {
-                callback(errors, responses);
+                callBack(errors, responses);
               }
             },
         );

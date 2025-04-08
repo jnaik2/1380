@@ -3,7 +3,6 @@
 function routes(config) {
   const context = {};
   context.gid = config.gid || 'all';
-  const comm = global.distribution[context.gid].comm;
 
   /**
    * @param {object} service
@@ -23,10 +22,18 @@ function routes(config) {
     );
   }
 
-  function rem(name, callback = () => { }) { // doesn't need service arg.
-    callback = callback || function() { };
-    console.log(`Removing ${name} from ${context.gid}`);
-    comm.send({nameToRemove: name, gid: 'context.gid'}, {service: 'routes', method: 'rem'}, callback);
+  /**
+   * @param {string} name
+   * @param {Callback} callback
+   */
+  function rem(name, callback = () => { }) {
+    global.distribution[context.gid].comm.send(
+        [name],
+        {service: 'routes', method: 'rem'},
+        (errorMap, responseMap) => {
+          callback(errorMap, responseMap);
+        },
+    );
   }
 
   return {put, rem};

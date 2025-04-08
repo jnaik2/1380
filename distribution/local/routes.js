@@ -66,34 +66,13 @@ function put(service, configuration, callback) {
  * @param {Callback} callback
  */
 function rem(configuration, callback) {
-  callback = callback || console.log;
-  console.log(`Removing ${configuration} in local routes rem`);
-  // console.log(routesMap);
-  // console.log(global.distribution['ncdc']);
-
-  let thingToRemove;
-  let gid;
-  if (typeof(configuration) === 'object') {
-     thingToRemove = configuration.nameToRemove;
-     gid = configuration.gid;
-  } else {
-    thingToRemove = configuration;
-    gid = 'local';
-  }
-  
-  console.log(`Removing ${thingToRemove} from ${gid}.This is global stuff: ${JSON.stringify(global.distribution[gid])} and tis is local stuff ${JSON.stringify(routesMap)}`);
-  if (!thingToRemove) {
+  const callBack = callback || console.log;
+  if (!configuration) {
     callback(new Error('Configuration not specified'), null);
     return;
   }
-
-  if (true) {
-    if (!routesMap[thingToRemove]) {
-      callback(new Error('Value not accessible in service'), null);
-    } else {
-      delete routesMap[thingToRemove];
-      callback(null, thingToRemove);
-    }
+  if (!routesMap[configuration]) {
+    callBack(new Error('Value not accessible in service'), null);
   } else {
     if (!global.distribution[gid][thingToRemove]) {
       callback(new Error(`Value not accessible in global service: ${thingToRemove} from gid ${gid}`), null);
