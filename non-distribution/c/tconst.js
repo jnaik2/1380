@@ -10,7 +10,7 @@ function getTconst(title) {
       })
       .then((data) => {
         if (data.Response === 'True') {
-          return data.imdbID;
+          return data.imdbID; // return type is STRING
         } else {
           throw new Error(data.Error);
         }
@@ -22,7 +22,7 @@ function getTconst(title) {
 }
 
 // testing code
-getTconst('Guardians of the Galaxy Vol. 69')
+getTconst('Guardians of the Galaxy Vol. 2')
     .then((tconst) => {
       console.log('The IMDb ID is: ', tconst);
     })
