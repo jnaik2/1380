@@ -142,7 +142,7 @@ test('(25 pts) all.mr:cfreq', (done) => {
   };
 
   const reducer = (key, values) => {
-    console.log(`IN REDUCER WITH KEY: ${JSON.stringify(key)} and VALUES: ${JSON.stringify(values)}`);
+    // console.log(`IN REDUCER WITH KEY: ${JSON.stringify(key)} and VALUES: ${JSON.stringify(values)}`);
     const out = {};
     out[key] = values.reduce((sum, v) => sum + v, 0);
     console.log(JSON.stringify(out));
