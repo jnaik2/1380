@@ -1,3 +1,7 @@
+#!/usr/bin/env node
+const nativeObjectsToStr = new Map();
+const strToNativeObjects = new Map();
+
 function populateNativeObjects() {
   const builtinLibs = require(`repl`)._builtinLibs;
   builtinLibs.forEach((pkg) => {
@@ -53,7 +57,7 @@ function serializeRecursive(object, referenceMap) {
       type = 'error';
       break;
   }
-  return {'type': type, 'id': id, 'value': value};
+  return {type: type, id: id, value: value};
 }
 
 function serializeObject(object, referenceMap) {
@@ -68,14 +72,19 @@ function serializeObject(object, referenceMap) {
       return ['reference', referenceMap.get(object)];
     }
     referenceMap.set(object, nextUIUD - 1);
-    return ['array', object.map((item) => serializeRecursive(item, referenceMap))];
+    return [
+      'array',
+      object.map((item) => serializeRecursive(item, referenceMap)),
+    ];
   } else {
     if (referenceMap.has(object)) {
       return ['reference', referenceMap.get(object)];
     }
     const newObject = {};
     referenceMap.set(object, nextUIUD - 1);
-    Object.entries(object).forEach(([k, v]) => newObject[k] = serializeRecursive(v, referenceMap));
+    Object.entries(object).forEach(
+        ([k, v]) => (newObject[k] = serializeRecursive(v, referenceMap)),
+    );
     return ['object', newObject];
   }
 }
@@ -86,7 +95,9 @@ function deserialize(string) {
 }
 
 function deserializeRecursive(json, referenceMap) {
-  const value = json['value']; const id = json['id']; const type = json['type'];
+  const value = json['value'];
+  const id = json['id'];
+  const type = json['type'];
   switch (type) {
     case 'number':
       return Number(value);
