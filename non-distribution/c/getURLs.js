@@ -4,7 +4,6 @@ const https = require('https');
 const {JSDOM} = require('jsdom');
 const {URL} = require('url');
 
-// get html content from page
 function fetchHTML(url, callback) {
   console.log('Getting content from url: ', url);
   https.get(url, (response) => { // use https to get html

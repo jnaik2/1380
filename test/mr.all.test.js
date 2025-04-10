@@ -51,14 +51,14 @@ test('(20 pts) all.mr:ncdc', (done) => {
     });
   };
 
-  console.log("Reached test");
+  console.log('Reached test');
 
   let cntr = 0;
   // Send the dataset to the cluster
   dataset.forEach((o) => {
     const key = Object.keys(o)[0];
     const value = o[key];
-    console.log("Reached inside dataset");
+    console.log('Reached inside dataset');
     distribution.ncdc.store.put(value, key, (e, v) => {
       cntr++;
       // Once the dataset is in place, run the map reduce

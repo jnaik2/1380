@@ -51,6 +51,11 @@ function mr(config) {
 
     // Map
     mrServiceObject.map = (keys, mapFunc, gid, jobID, callback) => {
+      // const deps = {
+      //   html: require('html'),
+      //   JSDOM: require('JSDOM'),
+      //   url: require('URL'),
+      // };
       const results = [];
       let count = 0;
       if (keys.length === 0) {
@@ -60,6 +65,7 @@ function mr(config) {
       for (const key of keys) {
         global.distribution.local.store.get({key: key, gid: gid}, (e, value) => {
           count++;
+          console.log(mapFunc);
           const result = mapFunc(key, value);
           if (Array.isArray(result)) {
             results.push(...result);
@@ -179,6 +185,9 @@ function mr(config) {
             node: groups[sid],
           };
           global.distribution.local.comm.send(mapArgs, mapRemote, (e, v) => {
+            if (e) {
+              console.error(e);
+            }
             mapResponses++;
             if (mapResponses == workerCount) {
               // Start shuffle phase
