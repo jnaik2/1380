@@ -81,7 +81,7 @@ function mr(config) {
                 // console.log(key);
                 // console.log(mapResult);
 
-                pendingOperations -= 1;
+                pendingOperations--;
                 // console.log("New pending operations is: ", pendingOperations);
                 checkCompletion();
               });
@@ -195,52 +195,69 @@ function mr(config) {
 
     // Reduce
     mrServiceObject.reduce = (gid, reduceFunc, callback) => {
-      global.distribution.local.store.get(
-        { key: null, gid: gid },
-        (e, keys) => {
-          // if (e) {
-          //   console.log("Error in store get for reduce: ", e);
-          // }
-          console.log("IN REDUCE PART OF MR");
-          console.log("keys is: ", keys);
-          let count = 0;
-          const results = [];
-          const reduceKeys = [];
-          for (const key of keys) {
-            if (`${key}`.startsWith("mr-shuffle-")) {
-              reduceKeys.push(key);
+      global.distribution.local.status.get("sid", (e, v) => {
+        const localSid = v;
+        global.distribution.local.store.get(
+          { key: null, gid: gid },
+          (e, keys) => {
+            // if (e) {
+            //   console.log("Error in store get for reduce: ", e);
+            // }
+            console.log("IN REDUCE PART OF MR");
+            console.log("keys is: ", keys);
+            let count = 0;
+            const results = [];
+            const reduceKeys = [];
+            for (const key of keys) {
+              if (`${key}`.startsWith("mr-shuffle-")) {
+                reduceKeys.push(key);
+              }
+            }
+            if (reduceKeys.length === 0) {
+              callback(null, null);
+              return;
+            }
+            for (const key of reduceKeys) {
+              global.distribution.local.store.get(
+                { key: key, gid: gid },
+                (e, value) => {
+                  count++;
+                  const result = reduceFunc(key.slice(11), value);
+                  if (Array.isArray(result)) {
+                    results.push(...result);
+                  } else {
+                    results.push(result);
+                  }
+
+                  global.distribution.local.store.del(
+                    { key: key, gid: gid },
+                    (e, v) => {
+                      // if (count === reduceKeys.length) {
+                      //   callback(null, results);
+                      //   return;
+                      // }
+                      global.distribution.local.store.put(
+                        results,
+                        {
+                          key: `local-index-${localSid}`,
+                          gid: "local",
+                          append: "true",
+                        },
+                        (e, v) => {
+                          if (count === reduceKeys.length) {
+                            callback(null, results);
+                            return;
+                          }
+                        }
+                      );
+                    }
+                  );
+                }
+              );
             }
           }
-          if (reduceKeys.length === 0) {
-            callback(null, null);
-            return;
-          }
-          for (const key of reduceKeys) {
-            global.distribution.local.store.get(
-              { key: key, gid: gid },
-              (e, value) => {
-                count++;
-                const result = reduceFunc(key.slice(11), value);
-                if (Array.isArray(result)) {
-                  results.push(...result);
-                } else {
-                  results.push(result);
-                }
-
-                global.distribution.local.store.del(
-                  { key: key, gid: gid },
-                  (e, v) => {
-                    if (count === reduceKeys.length) {
-                      callback(null, results);
-                      return;
-                    }
-                  }
-                );
-              }
-            );
-          }
-        }
-      );
+        );
+      });
     };
 
     // Partition Keys
