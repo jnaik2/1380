@@ -136,7 +136,7 @@ function mr(config) {
           // Collect all values that have the same key
           const collection = {};
           console.log("VALUES IN SHUFFLE IS: ", JSON.stringify(values));
-          values = values[0];
+          // values = values[0];
           // console.log(
           //   `IN SHUFFLE, results are ${JSON.stringify(
           //     values
@@ -146,18 +146,20 @@ function mr(config) {
           //   console.log(`IN SHUFFLE, results key is ${k} and value is ${v}`);
           //   console.log("\n");
           // }
-          values.forEach((value) => {
-            // console.log("Value in values loop: ", values);
-            const key = Object.keys(value)[0];
-            // console.log("key", key);
-            if (!collection[key]) {
-              collection[key] = [];
-            }
-            collection[key].push(value[key]);
-            // console.log(
-            //   "After adding key, we get: ",
-            //   JSON.stringify(collection)
-            // );
+          values.forEach((innerValue) => {
+            innerValue.forEach((value) => {
+              // console.log("Value in values loop: ", values);
+              const key = Object.keys(value)[0];
+              // console.log("key", key);
+              if (!collection[key]) {
+                collection[key] = [];
+              }
+              collection[key].push(value[key]);
+              // console.log(
+              //   "After adding key, we get: ",
+              //   JSON.stringify(collection)
+              // );
+            });
           });
 
           console.log("IN SHUFFLE COLLECTION");
