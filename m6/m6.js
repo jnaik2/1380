@@ -140,7 +140,7 @@ async function imdbMapper(key, value, callback) {
                   keyUrl: url_slice,
                   sourceURL: url,
                   sourceRating: rating,
-                  sourceMovieName: key,
+                  sourceName: key,
                 },
               });
             }
@@ -165,12 +165,11 @@ const reducer = (key, values) => {
   console.log("IN REDUCER");
   console.log(key);
   console.log(values);
-  const newKey = "https://www.imdb.com/title/" + key;
-  return { [newKey]: values };
+  return { [key]: values };
 };
 
 // Define 10 nodes
-const nodes = Array.from({ length: 1 }, (_, i) => ({
+const nodes = Array.from({ length: 5 }, (_, i) => ({
   ip: "127.0.0.1",
   port: 7110 + i,
 }));
@@ -181,7 +180,7 @@ nodes.forEach((node) => {
 });
 
 const groupConfig = { gid: "imdbGroup" };
-const dataset = [
+let dataset = [
   { "Kung Fu Panda 3": "https://www.imdb.com/title/tt2267968" },
   { "Kung Fu Panda": "https://www.imdb.com/title/tt0441773" },
 ];
@@ -215,6 +214,54 @@ const maxIterations = 10;
 //   );
 // }
 
+const visitedUrls = new Set();
+
+async function runIterations(localServer, maxIters = 2) {
+  for (let i = 0; i < maxIters; i++) {
+    console.log("Iteration:", i);
+
+    await new Promise((resolve) => {
+      let counter = 0;
+
+      dataset.forEach((entry) => {
+        const key = Object.keys(entry)[0];
+        const value = entry[key];
+
+        distribution.imdbGroup.store.put(value, key, () => {
+          counter++;
+          if (counter === dataset.length) {
+            distribution.imdbGroup.mr.exec(
+              { keys: keys, map: imdbMapper, reduce: reducer },
+              (err, result) => {
+                if (err) {
+                  console.error("MapReduce failed:", err);
+                } else {
+                  console.log("MapReduce result:", JSON.stringify(result));
+                  dataset = [];
+
+                  for (const value of result) {
+                    const key = Object.keys(value)[0];
+                    const keyUrl = value[key][0].keyUrl;
+
+                    if (!visitedUrls.has(keyUrl)) {
+                      visitedUrls.add(keyUrl);
+                      dataset.push({ [key]: keyUrl });
+                    }
+                  }
+                }
+
+                resolve();
+              }
+            );
+          }
+        });
+      });
+    });
+  }
+
+  shutdownAll(localServer);
+}
+
 function startNodes(cb) {
   const startNext = (index) => {
     if (index >= nodes.length) return cb();
@@ -229,32 +276,65 @@ distribution.node.start((localServer) => {
   startNodes(() => {
     distribution.local.groups.put(groupConfig, imdbGroup, () => {
       distribution.imdbGroup.groups.put(groupConfig, imdbGroup, () => {
+        //
         let counter = 0;
-        dataset.forEach((entry) => {
-          const key = Object.keys(entry)[0];
-          const value = entry[key];
-          distribution.imdbGroup.store.put(value, key, () => {
-            counter++;
-            if (counter === dataset.length) {
-              distribution.imdbGroup.mr.exec(
-                { keys: keys, map: imdbMapper, reduce: reducer },
-                (err, result) => {
-                  if (err) {
-                    console.error("MapReduce failed:", err);
-                  } else {
-                    console.log("MapReduce result:");
-                    for (const key in result) {
-                      console.log(key, result[key]);
-                    }
-                  }
-                  // Shutdown all nodes
-                  shutdownAll(localServer);
-                }
-              );
-              // runMapReduceLoop(localServer);
-            }
-          });
-        });
+        // for (let i = 0; i < 2; i++) {
+        //   console.log("index is: ", i);
+        //   dataset.forEach((entry) => {
+        //     const key = Object.keys(entry)[0];
+        //     const value = entry[key];
+        //     distribution.imdbGroup.store.put(value, key, () => {
+        //       counter++;
+        //       if (counter === dataset.length) {
+        //         distribution.imdbGroup.mr.exec(
+        //           { keys: keys, map: imdbMapper, reduce: reducer },
+        //           (err, result) => {
+        //             if (err) {
+        //               console.error("MapReduce failed:", err);
+        //             } else {
+        //               console.log("MapReduce result: ", JSON.stringify(result));
+        //               dataset = [];
+        //               for (const value of result) {
+        //                 console.log("Outer loop key is: ", value);
+        //                 // const indexResults = result[key];
+        //                 // console.log("Result key is: ", result[key])
+        //                 console.log("CHECKING");
+        //                 const key = Object.keys(value);
+        //                 // console.log(keys);
+        //                 // console.log(value[keys[0]][0].keyUrl);
+        //                 const keyUrl = value[key[0]][0].keyUrl;
+
+        //                 if (!visitedUrls.has(keyUrl)) {
+        //                   visitedUrls.add(keyUrl);
+        //                   dataset.push({ key: keyUrl });
+        //                 }
+
+        //                 // for (const k of Object.keys(value)) {
+        //                 //   console.log("Name inner loop: ", k);
+        //                 //   const keyURL = value[k].keyUrl;
+
+        //                 // }
+        //                 // loop over result[key]
+        //                 // extract keyUrl and sourceName
+        //                 // add to visited set
+        //                 // in next iteration, convert visited set to arrahy and pass that in as keys
+        //                 // console.log("key is: ", key);
+        //                 // console.log("Result is: ", result[key]);
+        //               }
+        //             }
+        //             // Shutdown all nodes
+        //             console.log("IM SHUTTING IT with index: ", i);
+        //             if (i == 1) {
+        //               shutdownAll(localServer);
+        //             }
+        //           }
+        //         );
+        //         // runMapReduceLoop(localServer);
+        //       }
+        //     });
+        //   });
+        // }
+        runIterations(localServer);
       });
     });
   });
