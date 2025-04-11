@@ -66,6 +66,7 @@ function mr(config) {
         global.distribution.local.store.get({key: key, gid: gid}, (e, value) => {
           count++;
           console.log(mapFunc);
+          console.log(typeof(mapFunc));
           const result = mapFunc(key, value);
           if (Array.isArray(result)) {
             results.push(...result);

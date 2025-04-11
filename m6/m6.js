@@ -5,21 +5,15 @@ const id = distribution.util.id;
 // Helper function to fetch HTML content (Refactored to return a Promise)
 
 
-const https = require('https');
-const {JSDOM} = require('jsdom');
-const {URL} = require('url');
 
-
-function imdbMapper(key, value, deps, callback) {
+function imdbMapper(key, value, callback) {
   console.log(`imdbMapper called with key=${key}, value=${value}`);
 
   // Use dependencies passed from the MapReduce framework
-//   const https = deps.https;
-//   const {JSDOM} = deps.JSDOM;
-//   const {URL} = deps.url;
 
   const url = value;
   function fetchHTML(url) {
+    const https = require('https');
     return new Promise((resolve, reject) => {
       console.log('Getting content from url: ', url);
       https.get(url, (response) => {
@@ -46,6 +40,8 @@ function imdbMapper(key, value, deps, callback) {
   // Fetch the HTML content and process it with Promises
   fetchHTML(url)
       .then((html) => {
+        const {JSDOM} = require('jsdom');
+        const {URL} = require('url');
         const dom = new JSDOM(html);
         const document = dom.window.document;
         const baseURL = getBaseURL(url);
@@ -122,6 +118,7 @@ function imdbMapper(key, value, deps, callback) {
         };
 
         console.log(`Returning result for ${url}:`, result);
+
         callback(null, [result]);
       })
       .catch((error) => {
@@ -172,7 +169,7 @@ distribution.node.start((localServer) => {
           distribution.imdbGroup.store.put(value, key, () => {
             counter++;
             if (counter === dataset.length) {
-              distribution.imdbGroup.mr.exec({keys: keys, map: imdbMapper.toString(), reduce: reducer.toString()}, (err, result) => {
+              distribution.imdbGroup.mr.exec({keys: keys, map: imdbMapper, reduce: reducer}, (err, result) => {
                 if (err) {
                   console.error('MapReduce failed:', err);
                 } else {
