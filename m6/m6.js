@@ -136,8 +136,8 @@ async function imdbMapper(key, value, callback) {
 
               url_slice = fullUrl.substring(0, fullUrl.lastIndexOf("/"));
               finalResult.push({
-                [url_slice]: {
-                  keyName: movieTitle,
+                [movieTitle]: {
+                  keyUrl: url_slice,
                   sourceURL: url,
                   sourceRating: rating,
                   sourceMovieName: key,

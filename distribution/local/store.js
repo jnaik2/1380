@@ -61,6 +61,7 @@ function put(state, configuration, callback) {
 }
 
 function get(configuration, callback) {
+  console.log("IM GETTING IT");
   const nid = global.moreStatus["nid"];
   let key = null;
   let gid = "local";
