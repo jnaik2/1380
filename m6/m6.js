@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const distribution = require("../config.js");
 const id = distribution.util.id;
 
@@ -180,12 +181,9 @@ nodes.forEach((node) => {
 });
 
 const groupConfig = { gid: "imdbGroup" };
-let dataset = [
-  { "Kung Fu Panda 3": "https://www.imdb.com/title/tt2267968" },
-  { "Kung Fu Panda": "https://www.imdb.com/title/tt0441773" },
-];
+let dataset = [{ "Kung Fu Panda 3": "https://www.imdb.com/title/tt2267968" }];
 // const dataset = [{ "Mickey 17": "https://www.imdb.com/title/tt12299608" }];
-const keys = dataset.map((o) => Object.keys(o)[0]);
+let keys = dataset.map((o) => Object.keys(o)[0]);
 
 let iteration = 0;
 const maxIterations = 10;
@@ -215,18 +213,24 @@ const maxIterations = 10;
 // }
 
 const visitedUrls = new Set();
+const visitedTitles = new Set();
 
 async function runIterations(localServer, maxIters = 10) {
   for (let i = 0; i < 10; i++) {
     console.log("Iteration:", i);
-    console.log(dataset);
+    // console.log(dataset);
+    // console.log("Visited URLs:", visitedUrls);
+    console.log("Visited Titles:", visitedTitles);
 
     await new Promise((resolve) => {
       let counter = 0;
-
+      keys = dataset.map((o) => Object.keys(o)[0]);
       dataset.forEach((entry) => {
         const key = Object.keys(entry)[0];
+
         const value = entry[key];
+        visitedUrls.add(value);
+        visitedTitles.add(key);
 
         distribution.imdbGroup.store.put(value, key, () => {
           counter++;
@@ -234,6 +238,11 @@ async function runIterations(localServer, maxIters = 10) {
             distribution.imdbGroup.mr.exec(
               { keys: keys, map: imdbMapper, reduce: reducer },
               (err, result) => {
+                for (const value of result) {
+                  console.log(value);
+                }
+                // console.log("we just MRed this", JSON.stringify(result));
+                // console.log("we visited this", visitedUrls);
                 if (err) {
                   console.error("MapReduce failed:", err);
                 } else {
@@ -243,9 +252,9 @@ async function runIterations(localServer, maxIters = 10) {
                   for (const value of result) {
                     const key = Object.keys(value)[0];
                     const keyUrl = value[key][0].keyUrl;
+                    const name = value[key][0].name;
 
                     if (!visitedUrls.has(keyUrl)) {
-                      visitedUrls.add(keyUrl);
                       dataset.push({ [key]: keyUrl });
                     }
                   }

@@ -69,6 +69,9 @@ function mr(config) {
             try {
               // Check if mapFunc returns a Promise
               const result = mapFunc(key, value, (err, mapResult) => {
+                if (key == "Snow White") {
+                  console.log("Here");
+                }
                 if (err) {
                   console.error("Mapper error:", err);
                 } else if (Array.isArray(mapResult)) {

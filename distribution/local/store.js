@@ -29,7 +29,7 @@ function put(state, configuration, callback) {
   const filepath = path.join(process.cwd(), `/store/${nid}/${gid}/${key}`);
   const dirPath = path.dirname(filepath);
 
-  console.log("IN STORE PUT, filepath is: ", filepath);
+  // console.log("IN STORE PUT, filepath is: ", filepath);
 
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
@@ -61,7 +61,7 @@ function put(state, configuration, callback) {
 }
 
 function get(configuration, callback) {
-  console.log("IM GETTING IT");
+  // console.log("IM GETTING IT");
   const nid = global.moreStatus["nid"];
   let key = null;
   let gid = "local";
