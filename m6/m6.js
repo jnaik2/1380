@@ -180,8 +180,39 @@ nodes.forEach((node) => {
 });
 
 const groupConfig = { gid: "imdbGroup" };
-const dataset = [{ "Mickey 17": "https://www.imdb.com/title/tt12299608" }];
+const dataset = [
+  { "Kung fu panda 3": "https://www.imdb.com/title/tt2267968" },
+  { "Kung fu panda 1": "https://www.imdb.com/title/tt0441773" },
+];
+// const dataset = [{ "Mickey 17": "https://www.imdb.com/title/tt12299608" }];
 const keys = dataset.map((o) => Object.keys(o)[0]);
+
+let iteration = 0;
+const maxIterations = 10;
+
+// function runMapReduceLoop(localServer) {
+//   console.log(`\n=== Running MapReduce Iteration ${iteration + 1} ===`);
+//   distribution.imdbGroup.mr.exec(
+//     { keys: keys, map: imdbMapper, reduce: reducer },
+//     (err, result) => {
+//       if (err) {
+//         console.error("MapReduce failed:", err);
+//       } else {
+//         console.log("MapReduce result:");
+//         for (const key in result) {
+//           console.log(key, result[key]);
+//         }
+//       }
+
+//       iteration++;
+//       if (iteration < maxIterations) {
+//         runMapReduceLoop(); // run the next iteration
+//       } else {
+//         shutdownAll(localServer); // done
+//       }
+//     }
+//   );
+// }
 
 function startNodes(cb) {
   const startNext = (index) => {
@@ -219,6 +250,7 @@ distribution.node.start((localServer) => {
                   shutdownAll(localServer);
                 }
               );
+              // runMapReduceLoop(localServer);
             }
           });
         });
@@ -244,6 +276,6 @@ function shutdownAll(localServer) {
   stopNext(0);
 }
 
-// kp2: kp1 this means that kp1 points to kp2 
+// kp2: kp1 this means that kp1 points to kp2
 
-// i thought we want to reeturn all movies that point to that moviegit 
+// i thought we want to reeturn all movies that point to that moviegit
