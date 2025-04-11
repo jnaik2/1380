@@ -1,4 +1,4 @@
-const local = require('../local/local');
+const local = require("../local/local");
 
 /** @typedef {import("../types").Callback} Callback */
 
@@ -14,7 +14,7 @@ const local = require('../local/local');
  */
 function comm(config) {
   const context = {};
-  context.gid = config.gid || 'all';
+  context.gid = config.gid || "all";
 
   /**
    * @param {Array} message
@@ -26,31 +26,31 @@ function comm(config) {
     const responses = {};
     const errors = {};
     local.groups.get(context.gid, (_, group) => {
-      console.log(`Group ${context.gid} members:`, group);
+      // console.log(`Group ${context.gid} members:`, group);
       let numResponses = 0;
       for (const sid in group) {
         const node = group[sid];
         local.comm.send(
-            message,
-            {...configuration, node: node},
-            (error, response) => {
-              if (error) {
-                errors[sid] = error;
-              } else {
-                responses[sid] = response;
-              }
-              numResponses++;
+          message,
+          { ...configuration, node: node },
+          (error, response) => {
+            if (error) {
+              errors[sid] = error;
+            } else {
+              responses[sid] = response;
+            }
+            numResponses++;
 
-              if (numResponses == Object.keys(group).length) {
-                callBack(errors, responses);
-              }
-            },
+            if (numResponses == Object.keys(group).length) {
+              callBack(errors, responses);
+            }
+          }
         );
       }
     });
   }
 
-  return {send};
+  return { send };
 }
 
 module.exports = comm;
