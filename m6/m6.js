@@ -164,7 +164,8 @@ const reducer = (key, values) => {
   console.log("IN REDUCER");
   console.log(key);
   console.log(values);
-  return { [key]: values };
+  const newKey = "https://www.imdb.com/title/" + key;
+  return { [newKey]: values };
 };
 
 // Define 10 nodes
@@ -209,7 +210,10 @@ distribution.node.start((localServer) => {
                   if (err) {
                     console.error("MapReduce failed:", err);
                   } else {
-                    console.log("MapReduce result:", result);
+                    console.log("MapReduce result:");
+                    for (const key in result) {
+                      console.log(key, result[key]);
+                    }
                   }
                   // Shutdown all nodes
                   shutdownAll(localServer);
@@ -239,3 +243,7 @@ function shutdownAll(localServer) {
 
   stopNext(0);
 }
+
+// kp2: kp1 this means that kp1 points to kp2 
+
+// i thought we want to reeturn all movies that point to that moviegit 
