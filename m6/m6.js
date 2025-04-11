@@ -97,6 +97,7 @@ async function imdbMapper(key, value, callback) {
     console.log(`Found ${moreLikeThisMovies.length} similar movies`);
     const similarMovies = [];
 
+    const finalResult = [];
     moreLikeThisMovies.forEach((link) => {
       if (link.hasAttribute('href')) {
         const href = link.getAttribute('href');
@@ -109,9 +110,17 @@ async function imdbMapper(key, value, callback) {
               const fullUrl = new URL(href, baseURL).href;
               let movieTitle = link.getAttribute('aria-label') || link.textContent.trim();
               movieTitle = movieTitle.replace('View title page for ', '');
-              similarMovies.push({
-                url: fullUrl,
-                name: movieTitle,
+              //   similarMovies.push({
+              //     url: fullUrl,
+              //     name: movieTitle,
+              // //   });
+              //   similarMovies.push({url: fullUrl});
+              finalResult.push({
+                [(fullUrl[-16] == '?') ? fullUrl.slice(0, -16) : fullUrl.slice(0, -17)]: {
+                  nextMovieName: movieTitle,
+                  originalURL: url,
+                  originalMovieRating: rating,
+                },
               });
             }
           }
@@ -119,13 +128,9 @@ async function imdbMapper(key, value, callback) {
       }
     });
 
-    const objKey = JSON.stringify({url: url, rating: rating});
-    const result = {
-      [objKey]: similarMovies,
-    };
 
-    console.log(`Returning result for ${url}:`, result);
-    callback(null, [result]); // Use callback to signal completion with the result
+    console.log(`Returning result for ${url}:`, finalResult);
+    callback(null, [finalResult]); // Use callback to signal completion with the result
   } catch (error) {
     console.error('Error fetching or processing HTML:', error);
     callback(null, [{
@@ -150,7 +155,7 @@ nodes.forEach((node) => {
 });
 
 const groupConfig = {gid: 'imdbGroup'};
-const dataset = [{'imdb': 'https://www.imdb.com/title/tt12299608'}];
+const dataset = [{'Mickey 17': 'https://www.imdb.com/title/tt12299608'}];
 const keys = dataset.map((o) => Object.keys(o)[0]);
 
 function startNodes(cb) {
