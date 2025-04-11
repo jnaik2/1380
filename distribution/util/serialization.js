@@ -5,14 +5,14 @@ const strToNativeObjects = new Map();
 function populateNativeObjects() {
   const builtinLibs = require(`repl`)._builtinLibs;
   builtinLibs.forEach((pkg) => {
-    if (!(pkg == 'sys' || pkg == 'wasi')) {
+    if (!(pkg == "sys" || pkg == "wasi")) {
       const rootObj = require(pkg);
       switch (typeof rootObj) {
-        case 'function':
+        case "function":
           strToNativeObjects.set(pkg, rootObj);
           nativeObjectsToStr.set(rootObj, pkg);
           break;
-        case 'object':
+        case "object":
           for (const [k, v] of Object.entries(rootObj)) {
             strToNativeObjects.set(`${pkg}.${k}`, v);
             nativeObjectsToStr.set(v, `${pkg}.${k}`);
@@ -37,55 +37,59 @@ function serializeRecursive(object, referenceMap) {
   let value;
   const id = nextUIUD++;
   switch (type) {
-    case 'string':
-    case 'number':
-    case 'boolean':
-    case 'function':
+    case "string":
+    case "number":
+    case "boolean":
+    case "function":
       value = object.toString();
       break;
-    case 'undefined':
-      value = '';
+    case "undefined":
+      value = "";
       break;
-    case 'object':
+    case "object":
       [type, value] = serializeObject(object, referenceMap);
       break;
     default:
-      // if (nativeObjectsToStr.has(object)) {
-      //   return {'type': 'native', 'id': nextUIUD++, 'value': nativeObjectsToStr.get(object)};
-      // }
+      if (nativeObjectsToStr.has(object)) {
+        return {
+          type: "native",
+          id: nextUIUD++,
+          value: nativeObjectsToStr.get(object),
+        };
+      }
       value = `tried to serialize a type that is not supported: ${type}`;
-      type = 'error';
+      type = "error";
       break;
   }
-  return {type: type, id: id, value: value};
+  return { type: type, id: id, value: value };
 }
 
 function serializeObject(object, referenceMap) {
   if (object == null) {
-    return ['null', ''];
+    return ["null", ""];
   } else if (object instanceof Date) {
-    return ['date', object.toISOString()];
+    return ["date", object.toISOString()];
   } else if (object instanceof Error) {
-    return ['error', object.message];
+    return ["error", object.message];
   } else if (object instanceof Array) {
     if (referenceMap.has(object)) {
-      return ['reference', referenceMap.get(object)];
+      return ["reference", referenceMap.get(object)];
     }
     referenceMap.set(object, nextUIUD - 1);
     return [
-      'array',
+      "array",
       object.map((item) => serializeRecursive(item, referenceMap)),
     ];
   } else {
     if (referenceMap.has(object)) {
-      return ['reference', referenceMap.get(object)];
+      return ["reference", referenceMap.get(object)];
     }
     const newObject = {};
     referenceMap.set(object, nextUIUD - 1);
     Object.entries(object).forEach(
-        ([k, v]) => (newObject[k] = serializeRecursive(v, referenceMap)),
+      ([k, v]) => (newObject[k] = serializeRecursive(v, referenceMap))
     );
-    return ['object', newObject];
+    return ["object", newObject];
   }
 }
 
@@ -95,32 +99,32 @@ function deserialize(string) {
 }
 
 function deserializeRecursive(json, referenceMap) {
-  const value = json['value'];
-  const id = json['id'];
-  const type = json['type'];
+  const value = json["value"];
+  const id = json["id"];
+  const type = json["type"];
   switch (type) {
-    case 'number':
+    case "number":
       return Number(value);
-    case 'boolean':
-    case 'string':
+    case "boolean":
+    case "string":
       return value;
-    case 'undefined':
+    case "undefined":
       return undefined;
-    case 'null':
+    case "null":
       return null;
-    case 'function':
-      return new Function('return ' + value)();
-    case 'date':
+    case "function":
+      return new Function("require", "return " + value)(require);
+    case "date":
       return new Date(value);
-    case 'error':
+    case "error":
       return new Error(value);
-    case 'array':
+    case "array":
       return value.map((item) => deserializeRecursive(item, referenceMap));
-    case 'native':
+    case "native":
       return strToNativeObjects.get(value);
-    case 'reference':
+    case "reference":
       return referenceMap.get(value);
-    case 'object':
+    case "object":
       referenceMap.set(id, value);
       for (const [k, v] of Object.entries(value)) {
         value[k] = deserializeRecursive(v, referenceMap);
