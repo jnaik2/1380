@@ -109,7 +109,7 @@ function mr(config) {
 
       function checkCompletion() {
         if (pendingOperations === 0) {
-          console.log("Results in checking completion map: ", results);
+          // console.log("Results in checking completion map: ", results);
           global.distribution.local.store.put(
             results,
             { key: `mr-map-${jobID}`, gid: gid },
@@ -123,7 +123,7 @@ function mr(config) {
 
     // Shuffle
     mrServiceObject.shuffle = (gid, jobID, callback) => {
-      console.log("IN SHUFFLE");
+      // console.log("IN SHUFFLE");
       // Retrieve map results
       global.distribution.local.store.get(
         { key: `mr-map-${jobID}`, gid: gid },
@@ -135,7 +135,7 @@ function mr(config) {
           // console.log(`IN SHUFFLE, results are ${JSON.stringify(values)}`);
           // Collect all values that have the same key
           const collection = {};
-          console.log("VALUES IN SHUFFLE IS: ", JSON.stringify(values));
+          // console.log("VALUES IN SHUFFLE IS: ", JSON.stringify(values));
           // values = values[0];
           // console.log(
           //   `IN SHUFFLE, results are ${JSON.stringify(
@@ -162,21 +162,21 @@ function mr(config) {
             });
           });
 
-          console.log("IN SHUFFLE COLLECTION");
-          console.log(collection);
+          // console.log("IN SHUFFLE COLLECTION");
+          // console.log(collection);
           // Store the collection in the distributed store
           let count = 0;
           for (const key in collection) {
-            console.log("Trying to store key: ", key);
+            // console.log("Trying to store key: ", key);
             const lastIndex = key.lastIndexOf("/");
             const tConst = key.substring(lastIndex + 1);
-            console.log(tConst);
+            // console.log(tConst);
             global.distribution[gid].store.put(
               collection[key],
               { key: `mr-shuffle-${tConst}`, append: "true" },
               (e, v) => {
-                console.log("IN STORE");
-                console.log(e);
+                // console.log("IN STORE");
+                // console.log(e);
                 count++;
                 if (count === Object.keys(collection).length) {
                   global.distribution.local.store.del(
@@ -203,8 +203,8 @@ function mr(config) {
             // if (e) {
             //   console.log("Error in store get for reduce: ", e);
             // }
-            console.log("IN REDUCE PART OF MR");
-            console.log("keys is: ", keys);
+            // console.log("IN REDUCE PART OF MR");
+            // console.log("keys is: ", keys);
             let count = 0;
             const results = [];
             const reduceKeys = [];

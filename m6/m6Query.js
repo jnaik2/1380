@@ -6,7 +6,7 @@ const movieName = process.argv[2];
 console.log(movieName);
 
 // Define 10 nodes
-const nodes = Array.from({ length: 1 }, (_, i) => ({
+const nodes = Array.from({ length: 5 }, (_, i) => ({
   ip: "127.0.0.1",
   port: 7110 + i,
 }));

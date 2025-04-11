@@ -79,7 +79,7 @@ async function imdbMapper(key, value, callback) {
     }
 
     const rating = ratingElement ? ratingElement.textContent.trim() : "N/A";
-    console.log(`Found rating: ${rating}`);
+    // console.log(`Found rating: ${rating}`);
 
     let moreLikeThisMovies = document.querySelectorAll(
       "a.ipc-poster-card__title"
@@ -111,7 +111,7 @@ async function imdbMapper(key, value, callback) {
       }
     }
 
-    console.log(`Found ${moreLikeThisMovies.length} similar movies`);
+    // console.log(`Found ${moreLikeThisMovies.length} similar movies`);
     const similarMovies = [];
 
     const finalResult = [];
@@ -162,9 +162,9 @@ async function imdbMapper(key, value, callback) {
 }
 
 const reducer = (key, values) => {
-  console.log("IN REDUCER");
-  console.log(key);
-  console.log(values);
+  // console.log("IN REDUCER");
+  // console.log(key);
+  // console.log(values);
   return { [key]: values };
 };
 
@@ -216,9 +216,10 @@ const maxIterations = 10;
 
 const visitedUrls = new Set();
 
-async function runIterations(localServer, maxIters = 2) {
-  for (let i = 0; i < maxIters; i++) {
+async function runIterations(localServer, maxIters = 10) {
+  for (let i = 0; i < 10; i++) {
     console.log("Iteration:", i);
+    console.log(dataset);
 
     await new Promise((resolve) => {
       let counter = 0;
@@ -236,7 +237,7 @@ async function runIterations(localServer, maxIters = 2) {
                 if (err) {
                   console.error("MapReduce failed:", err);
                 } else {
-                  console.log("MapReduce result:", JSON.stringify(result));
+                  // console.log("MapReduce result:", JSON.stringify(result));
                   dataset = [];
 
                   for (const value of result) {
