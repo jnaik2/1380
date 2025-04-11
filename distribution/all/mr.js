@@ -59,8 +59,10 @@ function mr(config) {
 
       // Keep track of pending operations
       let pendingOperations = keys.length;
+      console.log("IN MAP, pendingOperations is: ", pendingOperations);
 
       for (const key of keys) {
+        console.log("Current key is: ", key);
         global.distribution.local.store.get(
           { key: key, gid: gid },
           async (e, value) => {
@@ -75,7 +77,12 @@ function mr(config) {
                   results.push(mapResult);
                 }
 
-                pendingOperations--;
+                console.log("I am in the mapFUnc part");
+                console.log(key);
+                console.log(mapResult);
+
+                pendingOperations -= 1;
+                console.log("New pending operations is: ", pendingOperations);
                 checkCompletion();
               });
 
@@ -102,6 +109,7 @@ function mr(config) {
 
       function checkCompletion() {
         if (pendingOperations === 0) {
+          console.log("Results in checking completion map: ", results);
           global.distribution.local.store.put(
             results,
             { key: `mr-map-${jobID}`, gid: gid },
@@ -127,6 +135,7 @@ function mr(config) {
           // console.log(`IN SHUFFLE, results are ${JSON.stringify(values)}`);
           // Collect all values that have the same key
           const collection = {};
+          console.log("VALUES IN SHUFFLE IS: ", JSON.stringify(values));
           values = values[0];
           // console.log(
           //   `IN SHUFFLE, results are ${JSON.stringify(
