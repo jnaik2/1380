@@ -51,36 +51,59 @@ function mr(config) {
 
     // Map
     mrServiceObject.map = (keys, mapFunc, gid, jobID, callback) => {
-      // const deps = {
-      //   html: require('html'),
-      //   JSDOM: require('JSDOM'),
-      //   url: require('URL'),
-      // };
       const results = [];
-      let count = 0;
+      const count = 0;
       if (keys.length === 0) {
         callback(null, []);
         return;
       }
-      for (const key of keys) {
-        global.distribution.local.store.get({key: key, gid: gid}, (e, value) => {
-          count++;
-          console.log(mapFunc);
-          console.log(typeof(mapFunc));
-          const result = mapFunc(key, value);
-          if (Array.isArray(result)) {
-            results.push(...result);
-          } else {
-            results.push(result);
-          }
 
-          // Once all keys are processed, locally store results for shuffle
-          if (count === keys.length) {
-            global.distribution.local.store.put(results, {key: `mr-map-${jobID}`, gid: gid}, (e, v) => {
-              callback(null, results);
+      // Keep track of pending operations
+      let pendingOperations = keys.length;
+
+      for (const key of keys) {
+        global.distribution.local.store.get({key: key, gid: gid}, async (e, value) => {
+          try {
+            // Check if mapFunc returns a Promise
+            const result = mapFunc(key, value, (err, mapResult) => {
+              if (err) {
+                console.error('Mapper error:', err);
+              } else if (Array.isArray(mapResult)) {
+                results.push(...mapResult);
+              } else {
+                results.push(mapResult);
+              }
+
+              pendingOperations--;
+              checkCompletion();
             });
+
+            // If mapFunc didn't use the callback (returned a value or Promise)
+            if (result !== undefined) {
+              const resolvedResult = await Promise.resolve(result);
+              if (Array.isArray(resolvedResult)) {
+                results.push(...resolvedResult);
+              } else {
+                results.push(resolvedResult);
+              }
+
+              pendingOperations--;
+              checkCompletion();
+            }
+          } catch (error) {
+            console.error('Error in mapper:', error);
+            pendingOperations--;
+            checkCompletion();
           }
         });
+      }
+
+      function checkCompletion() {
+        if (pendingOperations === 0) {
+          global.distribution.local.store.put(results, {key: `mr-map-${jobID}`, gid: gid}, (e, v) => {
+            callback(null, results);
+          });
+        }
       }
     };
 

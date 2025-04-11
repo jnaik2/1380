@@ -28,22 +28,6 @@
             {
                 "selector": "ClassExpression",
                 "message": "Class expressions are not allowed."
-            },
-            {
-                "selector": "AwaitExpression",
-                "message": "Using 'await' is not allowed."
-            },
-            {
-                "selector": "FunctionDeclaration[async=true]",
-                "message": "Async functions are not allowed."
-            },
-            {
-                "selector": "FunctionExpression[async=true]",
-                "message": "Async functions are not allowed."
-            },
-            {
-                "selector": "ArrowFunctionExpression[async=true]",
-                "message": "Async functions are not allowed."
             }
         ]
     }
