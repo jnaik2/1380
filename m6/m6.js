@@ -137,9 +137,10 @@ async function imdbMapper(key, value, callback) {
               url_slice = fullUrl.substring(0, fullUrl.lastIndexOf("/"));
               finalResult.push({
                 [url_slice]: {
-                  nextMovieName: movieTitle,
-                  originalURL: url,
-                  originalMovieRating: rating,
+                  keyName: movieTitle,
+                  sourceURL: url,
+                  sourceRating: rating,
+                  sourceMovieName: key,
                 },
               });
             }
@@ -181,8 +182,8 @@ nodes.forEach((node) => {
 
 const groupConfig = { gid: "imdbGroup" };
 const dataset = [
-  { "Kung fu panda 3": "https://www.imdb.com/title/tt2267968" },
-  { "Kung fu panda 1": "https://www.imdb.com/title/tt0441773" },
+  { "Kung Fu Panda 3": "https://www.imdb.com/title/tt2267968" },
+  { "Kung Fu Panda": "https://www.imdb.com/title/tt0441773" },
 ];
 // const dataset = [{ "Mickey 17": "https://www.imdb.com/title/tt12299608" }];
 const keys = dataset.map((o) => Object.keys(o)[0]);
