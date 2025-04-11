@@ -59,10 +59,10 @@ function mr(config) {
 
       // Keep track of pending operations
       let pendingOperations = keys.length;
-      console.log("IN MAP, pendingOperations is: ", pendingOperations);
+      // console.log("IN MAP, pendingOperations is: ", pendingOperations);
 
       for (const key of keys) {
-        console.log("Current key is: ", key);
+        // console.log("Current key is: ", key);
         global.distribution.local.store.get(
           { key: key, gid: gid },
           async (e, value) => {
@@ -77,27 +77,27 @@ function mr(config) {
                   results.push(mapResult);
                 }
 
-                console.log("I am in the mapFUnc part");
-                console.log(key);
-                console.log(mapResult);
+                // console.log("I am in the mapFunc part");
+                // console.log(key);
+                // console.log(mapResult);
 
                 pendingOperations -= 1;
-                console.log("New pending operations is: ", pendingOperations);
+                // console.log("New pending operations is: ", pendingOperations);
                 checkCompletion();
               });
 
               // If mapFunc didn't use the callback (returned a value or Promise)
-              if (result !== undefined) {
-                const resolvedResult = await Promise.resolve(result);
-                if (Array.isArray(resolvedResult)) {
-                  results.push(...resolvedResult);
-                } else {
-                  results.push(resolvedResult);
-                }
+              // if (result !== undefined) {
+              //   const resolvedResult = await Promise.resolve(result);
+              //   if (Array.isArray(resolvedResult)) {
+              //     results.push(...resolvedResult);
+              //   } else {
+              //     results.push(resolvedResult);
+              //   }
 
-                pendingOperations--;
-                checkCompletion();
-              }
+              //   pendingOperations--;
+              //   checkCompletion();
+              // }
             } catch (error) {
               console.error("Error in mapper:", error);
               pendingOperations--;

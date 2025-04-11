@@ -5,7 +5,7 @@ const id = distribution.util.id;
 // Helper function to fetch HTML content (Refactored to return a Promise)
 
 async function imdbMapper(key, value, callback) {
-  console.log(`imdbMapper called with key=${key}, value=${value}`);
+  // console.log(`imdbMapper called with key=${key}, value=${value}`);
 
   // Use dependencies passed from the MapReduce framework
   const url = value;
@@ -149,7 +149,7 @@ async function imdbMapper(key, value, callback) {
       }
     });
 
-    console.log(`Returning result for ${url}:`, finalResult);
+    // console.log(`Returning result for ${url}:`, finalResult);
     callback(null, [finalResult]); // Use callback to signal completion with the result
   } catch (error) {
     console.error("Error fetching or processing HTML:", error);
