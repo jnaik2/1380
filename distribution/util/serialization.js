@@ -50,9 +50,13 @@ function serializeRecursive(object, referenceMap) {
       [type, value] = serializeObject(object, referenceMap);
       break;
     default:
-      // if (nativeObjectsToStr.has(object)) {
-      //   return {'type': 'native', 'id': nextUIUD++, 'value': nativeObjectsToStr.get(object)};
-      // }
+      if (nativeObjectsToStr.has(object)) {
+        return {
+          type: 'native',
+          id: nextUIUD++,
+          value: nativeObjectsToStr.get(object),
+        };
+      }
       value = `tried to serialize a type that is not supported: ${type}`;
       type = 'error';
       break;
@@ -109,7 +113,7 @@ function deserializeRecursive(json, referenceMap) {
     case 'null':
       return null;
     case 'function':
-      return new Function('return ' + value)();
+      return new Function('require', 'return ' + value)(require);
     case 'date':
       return new Date(value);
     case 'error':

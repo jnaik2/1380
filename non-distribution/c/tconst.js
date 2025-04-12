@@ -29,4 +29,3 @@ getTconst('Guardians of the Galaxy Vol. 2')
     .catch((error) => {
       console.error('Failed to get IMDb ID: ', error.message);
     });
-

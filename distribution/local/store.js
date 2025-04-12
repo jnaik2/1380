@@ -3,22 +3,21 @@
 - Use absolute paths to make sure they are agnostic to where your code is running from!
   Use the `path` module for that.
 */
-const {id, serialize, deserialize} = require('../util/util');
-const fs = require('fs');
-const path = require('path');
-
+const { id, serialize, deserialize } = require("../util/util");
+const fs = require("fs");
+const path = require("path");
 
 function put(state, configuration, callback) {
-  const nid = global.moreStatus['nid'];
+  const nid = global.moreStatus["nid"];
   let key;
-  let gid = 'local';
+  let gid = "local";
   let append = false;
-  if (typeof configuration === 'string') {
+  if (typeof configuration === "string") {
     key = configuration;
   } else if (configuration != null) {
     key = configuration.key;
     gid = configuration.gid;
-    if (configuration.append == 'true') {
+    if (configuration.append == "true") {
       append = true;
     }
   }
@@ -27,12 +26,13 @@ function put(state, configuration, callback) {
     key = id.getID(state);
   }
 
-
   const filepath = path.join(process.cwd(), `/store/${nid}/${gid}/${key}`);
   const dirPath = path.dirname(filepath);
 
+  // console.log("IN STORE PUT, filepath is: ", filepath);
+
   if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, {recursive: true});
+    fs.mkdirSync(dirPath, { recursive: true });
   }
 
   if (append) {
@@ -61,10 +61,11 @@ function put(state, configuration, callback) {
 }
 
 function get(configuration, callback) {
-  const nid = global.moreStatus['nid'];
+  // console.log("IM GETTING IT");
+  const nid = global.moreStatus["nid"];
   let key = null;
-  let gid = 'local';
-  if (typeof configuration === 'string') {
+  let gid = "local";
+  if (typeof configuration === "string") {
     key = configuration;
   } else if (configuration != null) {
     key = configuration.key;
@@ -75,7 +76,7 @@ function get(configuration, callback) {
     // return all possible keys
     const dirPath = path.join(process.cwd(), `/store/${nid}/${gid}`);
     if (!fs.existsSync(dirPath)) {
-      callback(new Error('No value found for key: ' + configuration), null);
+      callback(new Error("No value found for key: " + configuration), null);
       return;
     }
     const files = fs.readdirSync(dirPath);
@@ -105,23 +106,23 @@ function get(configuration, callback) {
 }
 
 function del(configuration, callback) {
-  const nid = global.moreStatus['nid'];
+  const nid = global.moreStatus["nid"];
   let key;
-  let gid = 'local';
-  if (typeof configuration === 'string') {
+  let gid = "local";
+  if (typeof configuration === "string") {
     key = configuration;
   } else if (configuration != null) {
     key = configuration.key;
     gid = configuration.gid;
   } else if (configuration == null) {
-    callback(new Error('Configuration not specified'), null);
+    callback(new Error("Configuration not specified"), null);
     return;
   }
 
   const filepath = path.join(process.cwd(), `/store/${nid}/${gid}/${key}`);
 
   if (!fs.existsSync(filepath)) {
-    callback(new Error('No value found for key: ' + configuration), null);
+    callback(new Error("No value found for key: " + configuration), null);
     return;
   } else {
     get(configuration, (err, data) => {
@@ -140,4 +141,4 @@ function del(configuration, callback) {
   }
 }
 
-module.exports = {put, get, del};
+module.exports = { put, get, del };

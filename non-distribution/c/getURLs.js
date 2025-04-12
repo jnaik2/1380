@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-const https = require('https');
-const {JSDOM} = require('jsdom');
-const {URL} = require('url');
+// const https = require('https');
+// const {JSDOM} = require('jsdom');
+// const {URL} = require('url');
 
-// get html content from page
 function fetchHTML(url, callback) {
+  const https = require('https');
   console.log('Getting content from url: ', url);
   https.get(url, (response) => { // use https to get html
     if (response.statusCode !== 200) {
@@ -32,6 +32,8 @@ function getBaseURL(url) {
 }
 
 function extractIMDbInfo(url, callback) {
+  const {JSDOM} = require('jsdom');
+  const {URL} = require('url');
   callback = callback || function() {};
   fetchHTML(url, (err, html) => {
     if (err) {
