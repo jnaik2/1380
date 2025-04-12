@@ -49,109 +49,64 @@ async function imdbMapper(key, value, callback) {
   }
 
   try {
-    // Await the HTML fetch
-    // console.log('Starting HTML fetch...');
     const html = await fetchHTML(url);
-    // console.log('IN THE THEN PART');
 
     const { JSDOM } = require("jsdom");
     const { URL } = require("url");
     const dom = new JSDOM(html);
     const document = dom.window.document;
     const baseURL = getBaseURL(url);
-    const seenMovies = new Set();
 
-    let ratingElement =
-      document.querySelector("span.sc-d541859f-1.imUuxf") ||
-      document.querySelector(
-        '[data-testid="hero-rating-bar__aggregate-rating__score"] span'
-      ) ||
-      document.querySelector(".ratings_wrapper .rating span");
+    let ratingElement = document.querySelector("div.allmovie-rating");
 
     if (!ratingElement) {
-      const spans = document.querySelectorAll("span");
-      for (const span of spans) {
-        const text = span.textContent.trim();
-        if (/^\d+\.\d+(\s*\/\s*10)?$/.test(text)) {
-          ratingElement = span;
-          break;
-        }
+      // Critical error
+      console.error("Rating element not found on the page.", url);
+      callback(new Error("Rating element not found"), null);
+      return;
+    }
+
+    // Text Content of the form 4.1 (194 ratings)
+    const rating = Number(ratingElement.textContent.split(" ")[0]);
+
+    const moreLikeThis = document.querySelectorAll("a.poster-link");
+
+    if (moreLikeThis.length === 0) {
+      // Critical error, no related books
+      console.error("No related books found on the page.");
+      callback(new Error("No related books found"), null);
+      return;
+    }
+
+    const similar = [];
+
+    moreLikeThis.forEach((link) => {
+      if (!link) {
+        // Handle the case where the link is null or undefined
+        console.error("Link is null or undefined");
+        callback(new Error("Link is null or undefined"), null);
+        return;
       }
-    }
-
-    const rating = ratingElement ? ratingElement.textContent.trim() : "N/A";
-    // console.log(`Found rating: ${rating}`);
-
-    let moreLikeThisMovies = document.querySelectorAll(
-      "a.ipc-poster-card__title"
-    );
-
-    if (moreLikeThisMovies.length === 0) {
-      moreLikeThisMovies = document.querySelectorAll(
-        '[data-testid="MoreLikeThis"] a'
-      );
-    }
-
-    if (moreLikeThisMovies.length === 0) {
-      const headings = document.querySelectorAll("h2, h3");
-      for (const heading of headings) {
-        if (
-          /More like this|Similar movies|You may also like/i.test(
-            heading.textContent
-          )
-        ) {
-          let section = heading.nextElementSibling;
-          while (section && !section.querySelectorAll) {
-            section = section.nextElementSibling;
-          }
-          if (section) {
-            moreLikeThisMovies = section.querySelectorAll('a[href*="/title/"]');
-          }
-          break;
-        }
-      }
-    }
-
-    // console.log(`Found ${moreLikeThisMovies.length} similar movies`);
-    const similarMovies = [];
-
-    const finalResult = [];
-    moreLikeThisMovies.forEach((link) => {
       if (link.hasAttribute("href")) {
         const href = link.getAttribute("href");
-        if (href.includes("/title/")) {
-          const titleMatch = href.match(/\/title\/(tt\d+)/);
-          if (titleMatch) {
-            const titleId = titleMatch[1];
-            if (!seenMovies.has(titleId)) {
-              seenMovies.add(titleId);
-              const fullUrl = new URL(href, baseURL).href;
-              let movieTitle =
-                link.getAttribute("aria-label") || link.textContent.trim();
-              movieTitle = movieTitle.replace("View title page for ", "");
-              //   similarMovies.push({
-              //     url: fullUrl,
-              //     name: movieTitle,
-              // //   });
-              //   similarMovies.push({url: fullUrl});
+        const url_slice = new URL(href, baseURL).href;
+        const title = link.getAttribute("title");
 
-              url_slice = fullUrl.substring(0, fullUrl.lastIndexOf("/"));
-              finalResult.push({
-                [movieTitle]: {
-                  keyUrl: url_slice,
-                  sourceURL: url,
-                  sourceRating: rating,
-                  sourceName: key,
-                },
-              });
-            }
-          }
-        }
+        similar.push({
+          [title]: {
+            keyUrl: url_slice,
+            sourceURL: url,
+            sourceRating: rating,
+            sourceName: key,
+          },
+        });
+      } else {
+        console.error("Link without href attribute found:", link);
+        callback(new Error("Link without href attribute found"), null);
+        return;
       }
     });
-
-    // console.log(`Returning result for ${url}:`, finalResult);
-    callback(null, [finalResult]); // Use callback to signal completion with the result
+    callback(null, [similar]); // Use callback to signal completion with the result
   } catch (error) {
     console.error("Error fetching or processing HTML:", error);
     callback(null, [
@@ -163,16 +118,12 @@ async function imdbMapper(key, value, callback) {
 }
 
 const reducer = (key, values) => {
-  // console.log("IN REDUCER");
-  // console.log(key);
-  // console.log(values);
   return { [key]: values };
 };
 
-// Define 10 nodes
 const nodes = Array.from({ length: 5 }, (_, i) => ({
   ip: "127.0.0.1",
-  port: 7110 + i,
+  port: 7210 + i,
 }));
 
 const imdbGroup = {};
@@ -181,36 +132,10 @@ nodes.forEach((node) => {
 });
 
 const groupConfig = { gid: "imdbGroup" };
-let dataset = [{ "Kung Fu Panda 3": "https://www.imdb.com/title/tt2267968" }];
-// const dataset = [{ "Mickey 17": "https://www.imdb.com/title/tt12299608" }];
+let dataset = [
+  { "The Amateur": "https://www.allmovie.com/movie/the-amateur-am612871" },
+];
 let keys = dataset.map((o) => Object.keys(o)[0]);
-
-let iteration = 0;
-const maxIterations = 10;
-
-// function runMapReduceLoop(localServer) {
-//   console.log(`\n=== Running MapReduce Iteration ${iteration + 1} ===`);
-//   distribution.imdbGroup.mr.exec(
-//     { keys: keys, map: imdbMapper, reduce: reducer },
-//     (err, result) => {
-//       if (err) {
-//         console.error("MapReduce failed:", err);
-//       } else {
-//         console.log("MapReduce result:");
-//         for (const key in result) {
-//           console.log(key, result[key]);
-//         }
-//       }
-
-//       iteration++;
-//       if (iteration < maxIterations) {
-//         runMapReduceLoop(); // run the next iteration
-//       } else {
-//         shutdownAll(localServer); // done
-//       }
-//     }
-//   );
-// }
 
 const visitedUrls = new Set();
 const visitedTitles = new Set();
@@ -218,13 +143,12 @@ const visitedTitles = new Set();
 async function runIterations(localServer, maxIters = 10) {
   for (let i = 0; i < 10; i++) {
     console.log("Iteration:", i);
-    // console.log(dataset);
-    // console.log("Visited URLs:", visitedUrls);
-    console.log("Visited Titles:", visitedTitles);
+    console.log("Visited Titles:", visitedTitles.size);
 
     await new Promise((resolve) => {
       let counter = 0;
       keys = dataset.map((o) => Object.keys(o)[0]);
+      console.log("Size of dataset:", dataset.length);
       dataset.forEach((entry) => {
         const key = Object.keys(entry)[0];
 
@@ -238,15 +162,9 @@ async function runIterations(localServer, maxIters = 10) {
             distribution.imdbGroup.mr.exec(
               { keys: keys, map: imdbMapper, reduce: reducer },
               (err, result) => {
-                for (const value of result) {
-                  console.log(value);
-                }
-                // console.log("we just MRed this", JSON.stringify(result));
-                // console.log("we visited this", visitedUrls);
                 if (err) {
                   console.error("MapReduce failed:", err);
                 } else {
-                  // console.log("MapReduce result:", JSON.stringify(result));
                   dataset = [];
 
                   for (const value of result) {
@@ -286,64 +204,6 @@ distribution.node.start((localServer) => {
   startNodes(() => {
     distribution.local.groups.put(groupConfig, imdbGroup, () => {
       distribution.imdbGroup.groups.put(groupConfig, imdbGroup, () => {
-        //
-        let counter = 0;
-        // for (let i = 0; i < 2; i++) {
-        //   console.log("index is: ", i);
-        //   dataset.forEach((entry) => {
-        //     const key = Object.keys(entry)[0];
-        //     const value = entry[key];
-        //     distribution.imdbGroup.store.put(value, key, () => {
-        //       counter++;
-        //       if (counter === dataset.length) {
-        //         distribution.imdbGroup.mr.exec(
-        //           { keys: keys, map: imdbMapper, reduce: reducer },
-        //           (err, result) => {
-        //             if (err) {
-        //               console.error("MapReduce failed:", err);
-        //             } else {
-        //               console.log("MapReduce result: ", JSON.stringify(result));
-        //               dataset = [];
-        //               for (const value of result) {
-        //                 console.log("Outer loop key is: ", value);
-        //                 // const indexResults = result[key];
-        //                 // console.log("Result key is: ", result[key])
-        //                 console.log("CHECKING");
-        //                 const key = Object.keys(value);
-        //                 // console.log(keys);
-        //                 // console.log(value[keys[0]][0].keyUrl);
-        //                 const keyUrl = value[key[0]][0].keyUrl;
-
-        //                 if (!visitedUrls.has(keyUrl)) {
-        //                   visitedUrls.add(keyUrl);
-        //                   dataset.push({ key: keyUrl });
-        //                 }
-
-        //                 // for (const k of Object.keys(value)) {
-        //                 //   console.log("Name inner loop: ", k);
-        //                 //   const keyURL = value[k].keyUrl;
-
-        //                 // }
-        //                 // loop over result[key]
-        //                 // extract keyUrl and sourceName
-        //                 // add to visited set
-        //                 // in next iteration, convert visited set to arrahy and pass that in as keys
-        //                 // console.log("key is: ", key);
-        //                 // console.log("Result is: ", result[key]);
-        //               }
-        //             }
-        //             // Shutdown all nodes
-        //             console.log("IM SHUTTING IT with index: ", i);
-        //             if (i == 1) {
-        //               shutdownAll(localServer);
-        //             }
-        //           }
-        //         );
-        //         // runMapReduceLoop(localServer);
-        //       }
-        //     });
-        //   });
-        // }
         runIterations(localServer);
       });
     });
@@ -366,7 +226,3 @@ function shutdownAll(localServer) {
 
   stopNext(0);
 }
-
-// kp2: kp1 this means that kp1 points to kp2
-
-// i thought we want to reeturn all movies that point to that moviegit
