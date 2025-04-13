@@ -6,41 +6,72 @@ const id = distribution.util.id;
 // Helper function to fetch HTML content (Refactored to return a Promise)
 
 async function imdbMapper(key, value, callback) {
-  // console.log(`imdbMapper called with key=${key}, value=${value}`);
-
-  // Use dependencies passed from the MapReduce framework
   const url = value;
 
-  // Helper function to fetch HTML content (Refactored to return a Promise)
+  function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   function fetchHTML(url) {
     const https = require("https");
-    return new Promise((resolve, reject) => {
-      //   console.log('Getting content from url: ', url);
-      https
-        .get(url, (response) => {
-          if (response.statusCode !== 200) {
-            reject(
-              new Error(
-                `Failed to load page, status code: ${response.statusCode}`
-              )
-            );
-            return;
-          }
 
-          let data = "";
-          response.on("data", (chunk) => {
-            //   console.log('GETTING DATA');
-            data += chunk;
-          });
-          response.on("end", () => {
-            //   console.log('GOT ALL DATA');
-            resolve(data);
-          });
-        })
-        .on("error", (err) => {
-          reject(err);
+    const userAgents = [
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/112.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Version/14.1.2 Safari/605.1.15",
+      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/113.0.0.0 Safari/537.36",
+    ];
+
+    const headers = {
+      "User-Agent": userAgents[Math.floor(Math.random() * userAgents.length)],
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language": "en-US,en;q=0.5",
+      Connection: "keep-alive",
+    };
+
+    return new Promise((resolve, reject) => {
+      const request = https.get(url, { headers }, (response) => {
+        if (response.statusCode !== 200) {
+          reject(
+            new Error(
+              `Failed to load page, status code: ${response.statusCode}. Url: ${url}`
+            )
+          );
+          return;
+        }
+
+        let data = "";
+        response.on("data", (chunk) => {
+          data += chunk;
         });
+        response.on("end", () => {
+          resolve(data);
+        });
+      });
+
+      request.on("error", (err) => {
+        reject(err);
+      });
+
+      request.setTimeout(10000, () => {
+        request.abort();
+        reject(new Error("Request timed out"));
+      });
     });
+  }
+
+  async function fetchHTMLWithRetry(url, attempts = 2) {
+    try {
+      return await fetchHTML(url);
+    } catch (err) {
+      if (attempts > 1) {
+        console.warn(`Fetch failed, retrying after long delay... (${url})`);
+        // Delay more significantly before retrying
+        await delay(20000 + Math.pow(Math.random(), 2) * 100000);
+        return fetchHTMLWithRetry(url, attempts - 1);
+      } else {
+        throw err;
+      }
+    }
   }
 
   function getBaseURL(url) {
@@ -49,7 +80,10 @@ async function imdbMapper(key, value, callback) {
   }
 
   try {
-    const html = await fetchHTML(url);
+    // Initial random polite delay
+    await delay(500 + Math.random() * 2000);
+
+    const html = await fetchHTMLWithRetry(url);
 
     const { JSDOM } = require("jsdom");
     const { URL } = require("url");
@@ -60,19 +94,16 @@ async function imdbMapper(key, value, callback) {
     let ratingElement = document.querySelector("div.allmovie-rating");
 
     if (!ratingElement) {
-      // Critical error
       console.error("Rating element not found on the page.", url);
       callback(new Error("Rating element not found"), null);
       return;
     }
 
-    // Text Content of the form 4.1 (194 ratings)
     const rating = Number(ratingElement.textContent.split(" ")[0]);
 
     const moreLikeThis = document.querySelectorAll("a.poster-link");
 
     if (moreLikeThis.length === 0) {
-      // Critical error, no related books
       console.error("No related books found on the page.");
       callback(new Error("No related books found"), null);
       return;
@@ -82,11 +113,11 @@ async function imdbMapper(key, value, callback) {
 
     moreLikeThis.forEach((link) => {
       if (!link) {
-        // Handle the case where the link is null or undefined
         console.error("Link is null or undefined");
         callback(new Error("Link is null or undefined"), null);
         return;
       }
+
       if (link.hasAttribute("href")) {
         const href = link.getAttribute("href");
         const url_slice = new URL(href, baseURL).href;
@@ -106,7 +137,8 @@ async function imdbMapper(key, value, callback) {
         return;
       }
     });
-    callback(null, [similar]); // Use callback to signal completion with the result
+
+    callback(null, [similar]);
   } catch (error) {
     console.error("Error fetching or processing HTML:", error);
     callback(null, [
@@ -121,9 +153,9 @@ const reducer = (key, values) => {
   return { [key]: values };
 };
 
-const nodes = Array.from({ length: 5 }, (_, i) => ({
+const nodes = Array.from({ length: 100 }, (_, i) => ({
   ip: "127.0.0.1",
-  port: 7210 + i,
+  port: 7110 + i,
 }));
 
 const imdbGroup = {};
@@ -134,6 +166,11 @@ nodes.forEach((node) => {
 const groupConfig = { gid: "imdbGroup" };
 let dataset = [
   { "The Amateur": "https://www.allmovie.com/movie/the-amateur-am612871" },
+  {
+    "A Minecraft Movie":
+      "https://www.allmovie.com/movie/a-minecraft-movie-am125648",
+  },
+  { "Om Shanti Om": "https://www.allmovie.com/movie/om-shanti-om-am9195" },
 ];
 let keys = dataset.map((o) => Object.keys(o)[0]);
 
@@ -143,12 +180,17 @@ const visitedTitles = new Set();
 async function runIterations(localServer, maxIters = 10) {
   for (let i = 0; i < 10; i++) {
     console.log("Iteration:", i);
-    console.log("Visited Titles:", visitedTitles.size);
+    // Change this to log to a file instead of the console
 
     await new Promise((resolve) => {
       let counter = 0;
       keys = dataset.map((o) => Object.keys(o)[0]);
-      console.log("Size of dataset:", dataset.length);
+      const fs = require("fs");
+      const logStream = fs.createWriteStream("log.txt", { flags: "a" });
+      logStream.write(`Iteration ${i}:\n`);
+      logStream.write("Dataset Size: " + dataset.length + "\n");
+      logStream.write("Visited URL Size: " + visitedUrls.size + "\n");
+      logStream.end();
       dataset.forEach((entry) => {
         const key = Object.keys(entry)[0];
 

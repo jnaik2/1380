@@ -34,6 +34,7 @@ const start = function (callback) {
     const service = urlArr[urlArr.length - 2];
     const method = urlArr[urlArr.length - 1];
 
+    res.removeAllListeners("message");
     res.on("message", (message) => {
       // let x;
       let args;
