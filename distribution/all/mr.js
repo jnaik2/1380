@@ -150,21 +150,25 @@ function mr(config) {
           //   console.log(`IN SHUFFLE, results key is ${k} and value is ${v}`);
           //   console.log("\n");
           // }
-          values.forEach((innerValue) => {
-            innerValue.forEach((value) => {
-              // console.log("Value in values loop: ", values);
-              const key = Object.keys(value)[0];
-              // console.log("key", key);
-              if (!collection[key]) {
-                collection[key] = [];
-              }
-              collection[key].push(value[key]);
-              // console.log(
-              //   "After adding key, we get: ",
-              //   JSON.stringify(collection)
-              // );
+          if (values.length !== 0) {
+            values.forEach((innerValue) => {
+              // console.log(innerValue);
+
+              innerValue.forEach((value) => {
+                // console.log("Value in values loop: ", values);
+                const key = Object.keys(value)[0];
+                // console.log("key", key);
+                if (!collection[key]) {
+                  collection[key] = [];
+                }
+                collection[key].push(value[key]);
+                // console.log(
+                //   "After adding key, we get: ",
+                //   JSON.stringify(collection)
+                // );
+              });
             });
-          });
+          }
 
           // console.log("IN SHUFFLE COLLECTION");
           // console.log(collection);

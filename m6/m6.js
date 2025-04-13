@@ -84,7 +84,7 @@ async function imdbMapper(key, value, callback) {
     // Initial random polite delay
     await delay(500 + Math.random() * 2000);
 
-    console.log(`URL being passed into fetchHTML is ${url}`);
+    // console.log(`URL being passed into fetchHTML is ${url}`);
     const html = await fetchHTMLWithRetry(url);
 
     const { JSDOM } = require("jsdom");
@@ -164,7 +164,7 @@ async function imdbMapper(key, value, callback) {
 
     // If we have a URL to fetch similar books, do so
     if (similarBooksUrl) {
-      console.log(`Fetching similar books from: ${similarBooksUrl}`);
+      // console.log(`Fetching similar books from: ${similarBooksUrl}`);
 
       // Add a delay before making the second request
       await delay(2000 + Math.random() * 3000);
@@ -291,7 +291,7 @@ const reducer = (key, values) => {
   return { [key]: values };
 };
 
-const nodes = Array.from({ length: 1 }, (_, i) => ({
+const nodes = Array.from({ length: 100 }, (_, i) => ({
   ip: "127.0.0.1",
   port: 7110 + i,
 }));
@@ -314,6 +314,26 @@ let dataset = [
   {
     "Frankenstein; Or, The Modern Prometheus by Mary Wollstonecraft Shelley":
       "https://www.gutenberg.org/ebooks/84",
+  },
+  {
+    "Crime and Punishment by Fyodor Dostoyevsky":
+      "https://www.gutenberg.org/ebooks/2554",
+  },
+  {
+    "Alice's Adventures in Wonderland by Lewis Carroll":
+      "https://www.gutenberg.org/ebooks/11",
+  },
+  {
+    "Romeo and Juliet by William Shakespeare":
+      "https://www.gutenberg.org/ebooks/1513",
+  },
+  {
+    "The trail of the serpent by M. E. Braddon":
+      "https://www.gutenberg.org/ebooks/75840",
+  },
+  {
+    "De jongfryske biweging by Douwe Kalma":
+      "https://www.gutenberg.org/ebooks/75842",
   },
 ];
 let keys = dataset.map((o) => Object.keys(o)[0]);
@@ -354,7 +374,7 @@ async function runIterations(localServer, maxIters = 10) {
                   dataset = [];
 
                   for (const value of result) {
-                    console.log(value);
+                    // console.log(value);
                     const key = Object.keys(value)[0];
                     const keyUrl = value[key][0].similarBookUrl;
                     // const name = value[key][0].name;
