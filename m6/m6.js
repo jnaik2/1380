@@ -90,6 +90,7 @@ async function imdbMapper(key, value, callback) {
     const dom = new JSDOM(html);
     const document = dom.window.document;
     const baseURL = getBaseURL(url);
+    fs.writeFileSync("textContent.txt", document.body.innerHTML);
 
     let ratingElement = document.querySelector("div.allmovie-rating");
 
@@ -153,7 +154,7 @@ const reducer = (key, values) => {
   return { [key]: values };
 };
 
-const nodes = Array.from({ length: 100 }, (_, i) => ({
+const nodes = Array.from({ length: 1 }, (_, i) => ({
   ip: "127.0.0.1",
   port: 7110 + i,
 }));
@@ -164,14 +165,15 @@ nodes.forEach((node) => {
 });
 
 const groupConfig = { gid: "imdbGroup" };
-let dataset = [
-  { "The Amateur": "https://www.allmovie.com/movie/the-amateur-am612871" },
-  {
-    "A Minecraft Movie":
-      "https://www.allmovie.com/movie/a-minecraft-movie-am125648",
-  },
-  { "Om Shanti Om": "https://www.allmovie.com/movie/om-shanti-om-am9195" },
-];
+// let dataset = [
+//   { "The Amateur": "https://www.allmovie.com/movie/the-amateur-am612871" },
+//   {
+//     "A Minecraft Movie":
+//       "https://www.allmovie.com/movie/a-minecraft-movie-am125648",
+//   },
+//   { "Om Shanti Om": "https://www.allmovie.com/movie/om-shanti-om-am9195" },
+// ];
+let dataset = [{ Frankenstein: "https://www.gutenberg.org/ebooks/84" }];
 let keys = dataset.map((o) => Object.keys(o)[0]);
 
 const visitedUrls = new Set();

@@ -23,6 +23,10 @@
   "license": "ISC",
   "dependencies": {
     "@brown-ds/distribution": "^0.1.23",
+    "cheerio": "^1.0.0",
+    "pupeteer": "^0.0.1",
+    "puppeteer": "^24.6.1",
+    "undici": "^7.8.0",
     "yargs": "^17.7.2"
   },
   "report": {

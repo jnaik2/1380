@@ -8,9 +8,13 @@
   },
   "description": "A set of components for cs1380's search engine.",
   "dependencies": {
+    "cheerio": "^1.0.0",
     "html-to-text": "^9.0.5",
     "jsdom": "^23.2.0",
-    "natural": "^6.10.4"
+    "natural": "^6.10.4",
+    "pupeteer": "^0.0.1",
+    "puppeteer": "^24.6.1",
+    "undici": "^7.8.0"
   },
   "scripts": {
     "pretest": "../scripts/pretest.sh",
@@ -32,8 +36,16 @@
       "ssd-gb": 59
     },
     "throughput": {
-      "dev": [676, 342, 337],
-      "aws": [1206, 1362, 1030],
+      "dev": [
+        676,
+        342,
+        337
+      ],
+      "aws": [
+        1206,
+        1362,
+        1030
+      ],
       "gs": []
     },
     "dloc": 3000
