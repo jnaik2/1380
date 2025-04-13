@@ -84,6 +84,7 @@ async function imdbMapper(key, value, callback) {
     // Initial random polite delay
     await delay(500 + Math.random() * 2000);
 
+    console.log(`URL being passed into fetchHTML is ${url}`);
     const html = await fetchHTMLWithRetry(url);
 
     const { JSDOM } = require("jsdom");
@@ -91,17 +92,20 @@ async function imdbMapper(key, value, callback) {
     const dom = new JSDOM(html);
     const document = dom.window.document;
     const baseURL = getBaseURL(url);
-    fs.writeFileSync("textContent.txt", document.body.innerHTML);
+    // fs.writeFileSync("textContent.txt", document.body.innerHTML);
     const bookTitle = document
       .querySelector('td[itemprop="headline"]')
       ?.textContent.trim();
     const bookId = url.match(/\/ebooks\/(\d+)/)?.[1] || "Unknown";
+
+    // Find the downloads count
     const downloadsRow = Array.from(document.querySelectorAll("tr")).find(
       (row) => row.querySelector("th")?.textContent === "Downloads"
     );
 
-    let downloadCount = "0";
+    let downloadCount = 0;
     let downloadPeriod = "unknown time period";
+    let dayCount = 30; // Default to 30 days if not specified
 
     if (downloadsRow) {
       const downloadText = downloadsRow.querySelector(
@@ -110,72 +114,29 @@ async function imdbMapper(key, value, callback) {
       if (downloadText) {
         // Extract the download count using regex
         const match = downloadText.match(
-          /(\d+)\s+downloads in the last (\d+\s+\w+)/i
+          /(\d+)\s+downloads in the last (\d+)\s+(\w+)/i
         );
         if (match) {
-          downloadCount = match[1];
-          downloadPeriod = match[2];
+          downloadCount = parseInt(match[1].replace(/,/g, ""), 10);
+          dayCount = parseInt(match[2], 10);
+          downloadPeriod = `${match[2]} ${match[3]}`;
         } else {
           // If regex fails, just use the raw text
-          downloadCount = downloadText.trim();
+          downloadCount = parseInt(downloadText.replace(/\D/g, ""), 10) || 0;
         }
       }
     }
 
-    // let ratingElement = document.querySelector("div.allmovie-rating");
+    // Calculate rating: downloads per day
+    const downloadRating = dayCount > 0 ? downloadCount / dayCount : 0;
 
-    // if (!ratingElement) {
-    //   console.error("Rating element not found on the page.", url);
-    //   callback(new Error("Rating element not found"), null);
-    //   return;
-    // }
-
-    // const rating = Number(ratingElement.textContent.split(" ")[0]);
-
-    // const moreLikeThis = document.querySelectorAll("a.poster-link");
-
-    // if (moreLikeThis.length === 0) {
-    //   console.error("No related books found on the page.");
-    //   callback(new Error("No related books found"), null);
-    //   return;
-    // }
-
-    // const similar = [];
-
-    // moreLikeThis.forEach((link) => {
-    //   if (!link) {
-    //     console.error("Link is null or undefined");
-    //     callback(new Error("Link is null or undefined"), null);
-    //     return;
-    //   }
-
-    //   if (link.hasAttribute("href")) {
-    //     const href = link.getAttribute("href");
-    //     const url_slice = new URL(href, baseURL).href;
-    //     const title = link.getAttribute("title");
-
-    //     similar.push({
-    //       [title]: {
-    //         keyUrl: url_slice,
-    //         sourceURL: url,
-    //         sourceRating: rating,
-    //         sourceName: key,
-    //       },
-    //     });
-    //   } else {
-    //     console.error("Link without href attribute found:", link);
-    //     callback(new Error("Link without href attribute found"), null);
-    //     return;
-    //   }
-    // });
-
-    // callback(null, [similar]);
     // Also extract author for additional context
     const authorElement = document.querySelector('a[rel="marcrel:aut"]');
     const author = authorElement
       ? authorElement.textContent.trim()
       : "Unknown author";
 
+    // Look for the "Similar Books" header and associated link
     const similarBooksHeader = document.querySelector("h2.header");
     let similarBooksUrl = null;
 
@@ -199,7 +160,7 @@ async function imdbMapper(key, value, callback) {
       similarBooksUrl = `${baseURL}/ebooks/${bookId}/also/`;
     }
 
-    let similarBooks = [];
+    let similarBooksOutput = [];
 
     // If we have a URL to fetch similar books, do so
     if (similarBooksUrl) {
@@ -212,9 +173,6 @@ async function imdbMapper(key, value, callback) {
         // Fetch the similar books page
         const similarBooksHtml = await fetchHTMLWithRetry(similarBooksUrl);
 
-        // Optional: Save the HTML content to a file for debugging if needed
-        // fs.writeFileSync("similar-books-debug.txt", similarBooksHtml);
-
         // Parse the similar books page
         const similarBooksDom = new JSDOM(similarBooksHtml);
         const similarBooksDoc = similarBooksDom.window.document;
@@ -225,26 +183,25 @@ async function imdbMapper(key, value, callback) {
         if (bookElements.length > 0) {
           bookElements.forEach((bookElement) => {
             const titleElement = bookElement.querySelector(".title");
-            const authorElement = bookElement.querySelector(".subtitle");
             const linkElement = bookElement.querySelector("a");
 
             if (titleElement && linkElement) {
-              const title = titleElement.textContent.trim();
-              const author = authorElement
-                ? authorElement.textContent.trim()
-                : "Unknown";
+              const similarBookTitle = titleElement.textContent.trim();
               const href = linkElement.getAttribute("href");
-              const bookUrl = href ? new URL(href, baseURL).href : null;
-              const bookIdMatch = bookUrl
-                ? bookUrl.match(/\/ebooks\/(\d+)/)
-                : null;
+              const similarBookUrl = href ? new URL(href, baseURL).href : null;
 
-              similarBooks.push({
-                title: title,
-                author: author,
-                url: bookUrl,
-                id: bookIdMatch ? bookIdMatch[1] : "unknown",
-              });
+              if (similarBookUrl) {
+                const outputObject = {
+                  [similarBookTitle]: {
+                    similarBookUrl: similarBookUrl,
+                    originalBookUrl: url,
+                    originalBookTitle: bookTitle,
+                    originalBookRating: downloadRating,
+                  },
+                };
+
+                similarBooksOutput.push(outputObject);
+              }
             }
           });
         } else {
@@ -255,32 +212,31 @@ async function imdbMapper(key, value, callback) {
 
           bookRows.forEach((row) => {
             const titleElement = row.querySelector("a");
-            const authorElement = row.querySelector("span.subtitle, .author");
 
             if (titleElement) {
-              const title = titleElement.textContent.trim();
-              const author = authorElement
-                ? authorElement.textContent.trim()
-                : "Unknown";
+              const similarBookTitle = titleElement.textContent.trim();
               const href = titleElement.getAttribute("href");
-              const bookUrl = href ? new URL(href, baseURL).href : null;
-              const bookIdMatch = bookUrl
-                ? bookUrl.match(/\/ebooks\/(\d+)/)
-                : null;
+              const similarBookUrl = href ? new URL(href, baseURL).href : null;
 
-              similarBooks.push({
-                title: title,
-                author: author,
-                url: bookUrl,
-                id: bookIdMatch ? bookIdMatch[1] : "unknown",
-              });
+              if (similarBookUrl) {
+                const outputObject = {
+                  [similarBookTitle]: {
+                    similarBookUrl: similarBookUrl,
+                    originalBookUrl: url,
+                    originalBookTitle: bookTitle,
+                    originalBookRating: downloadRating,
+                  },
+                };
+
+                similarBooksOutput.push(outputObject);
+              }
             }
           });
         }
 
         // If we still can't find books with the structured approach,
         // try getting all links that look like book links
-        if (similarBooks.length === 0) {
+        if (similarBooksOutput.length === 0) {
           const possibleBookLinks = Array.from(
             similarBooksDoc.querySelectorAll('a[href*="/ebooks/"]')
           );
@@ -290,45 +246,37 @@ async function imdbMapper(key, value, callback) {
             const bookIdMatch = href.match(/\/ebooks\/(\d+)/);
 
             if (bookIdMatch) {
-              const bookUrl = new URL(href, baseURL).href;
+              const similarBookTitle = link.textContent.trim();
+              const similarBookUrl = new URL(href, baseURL).href;
 
-              similarBooks.push({
-                title: link.textContent.trim(),
-                author: "Unknown",
-                url: bookUrl,
-                id: bookIdMatch[1],
-              });
+              const outputObject = {
+                [similarBookTitle]: {
+                  similarBookUrl: similarBookUrl,
+                  originalBookUrl: url,
+                  originalBookTitle: bookTitle,
+                  originalBookRating: downloadRating,
+                },
+              };
+
+              similarBooksOutput.push(outputObject);
             }
           });
         }
 
-        console.log(`Found ${similarBooks.length} similar books`);
+        console.log(`Found ${similarBooksOutput.length} similar books`);
       } catch (error) {
         console.error("Error fetching similar books:", error);
       }
     }
 
-    // Create the result object
-    const result = {
-      book: {
-        id: bookId,
-        title: bookTitle,
-        author: author,
-        downloads: {
-          count: parseInt(downloadCount.replace(/,/g, ""), 10) || 0,
-          period: downloadPeriod,
-          sourceURL: url,
-        },
-        similarBooks: similarBooks,
-      },
-    };
+    // console.log(`Book ID: ${bookId}, Title: ${bookTitle}`);
+    // console.log(`Downloads: ${downloadCount} in ${downloadPeriod}`);
+    // console.log(`Rating (downloads per day): ${downloadRating}`);
+    // console.log(`Similar books count: ${similarBooksOutput.length}`);
+    // console.log(`similarBooksOutput is: `, JSON.stringify(similarBooksOutput));
 
-    console.log(`Book ID: ${bookId}, Title: ${bookTitle}`);
-    console.log(`Downloads: ${downloadCount} in ${downloadPeriod}`);
-    console.log(`Similar books count: ${similarBooks.length}`);
-    console.log(`Similar books are: ${JSON.stringify(similarBooks)}`);
-
-    callback(null, [result]);
+    // Return the array of similar books in the requested format
+    callback(null, [similarBooksOutput]);
   } catch (error) {
     console.error("Error fetching or processing HTML:", error);
     callback(null, [
@@ -362,7 +310,12 @@ const groupConfig = { gid: "imdbGroup" };
 //   },
 //   { "Om Shanti Om": "https://www.allmovie.com/movie/om-shanti-om-am9195" },
 // ];
-let dataset = [{ Frankenstein: "https://www.gutenberg.org/ebooks/84" }];
+let dataset = [
+  {
+    "Frankenstein; Or, The Modern Prometheus by Mary Wollstonecraft Shelley":
+      "https://www.gutenberg.org/ebooks/84",
+  },
+];
 let keys = dataset.map((o) => Object.keys(o)[0]);
 
 const visitedUrls = new Set();
@@ -401,9 +354,10 @@ async function runIterations(localServer, maxIters = 10) {
                   dataset = [];
 
                   for (const value of result) {
+                    console.log(value);
                     const key = Object.keys(value)[0];
-                    const keyUrl = value[key][0].keyUrl;
-                    const name = value[key][0].name;
+                    const keyUrl = value[key][0].similarBookUrl;
+                    // const name = value[key][0].name;
 
                     if (!visitedUrls.has(keyUrl)) {
                       dataset.push({ [key]: keyUrl });

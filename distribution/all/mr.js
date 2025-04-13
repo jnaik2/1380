@@ -69,9 +69,9 @@ function mr(config) {
             try {
               // Check if mapFunc returns a Promise
               const result = mapFunc(key, value, (err, mapResult) => {
-                if (key == "Snow White") {
-                  console.log("Here");
-                }
+                // if (key == "Snow White") {
+                //   console.log("Here");
+                // }
                 if (err) {
                   console.error("Mapper error:", err);
                 } else if (Array.isArray(mapResult)) {
@@ -136,6 +136,7 @@ function mr(config) {
             return;
           }
           // console.log(`IN SHUFFLE, results are ${JSON.stringify(values)}`);
+          // console.log(`IN SHUFFLE, results length is: ${values.length}`);
           // Collect all values that have the same key
           const collection = {};
           // console.log("VALUES IN SHUFFLE IS: ", JSON.stringify(values));
