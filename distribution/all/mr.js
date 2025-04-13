@@ -50,8 +50,8 @@ function mr(config) {
 
     // Map
     mrServiceObject.map = (keys, mapFunc, gid, jobID, callback) => {
+      // console.log("IN MAP with this many keys", keys.length);
       const results = [];
-      const count = 0;
       if (keys.length === 0) {
         callback(null, []);
         return;
@@ -59,19 +59,12 @@ function mr(config) {
 
       // Keep track of pending operations
       let pendingOperations = keys.length;
-      // console.log("IN MAP, pendingOperations is: ", pendingOperations);
-
       for (const key of keys) {
-        // console.log("Current key is: ", key);
         global.distribution.local.store.get(
           { key: key, gid: gid },
           async (e, value) => {
             try {
-              // Check if mapFunc returns a Promise
               const result = mapFunc(key, value, (err, mapResult) => {
-                if (key == "Snow White") {
-                  console.log("Here");
-                }
                 if (err) {
                   console.error("Mapper error:", err);
                 } else if (Array.isArray(mapResult)) {
@@ -79,28 +72,9 @@ function mr(config) {
                 } else {
                   results.push(mapResult);
                 }
-
-                // console.log("I am in the mapFunc part");
-                // console.log(key);
-                // console.log(mapResult);
-
                 pendingOperations--;
-                // console.log("New pending operations is: ", pendingOperations);
                 checkCompletion();
               });
-
-              // If mapFunc didn't use the callback (returned a value or Promise)
-              // if (result !== undefined) {
-              //   const resolvedResult = await Promise.resolve(result);
-              //   if (Array.isArray(resolvedResult)) {
-              //     results.push(...resolvedResult);
-              //   } else {
-              //     results.push(resolvedResult);
-              //   }
-
-              //   pendingOperations--;
-              //   checkCompletion();
-              // }
             } catch (error) {
               console.error("Error in mapper:", error);
               pendingOperations--;
@@ -112,7 +86,6 @@ function mr(config) {
 
       function checkCompletion() {
         if (pendingOperations === 0) {
-          // console.log("Results in checking completion map: ", results);
           global.distribution.local.store.put(
             results,
             { key: `mr-map-${jobID}`, gid: gid },
@@ -126,7 +99,6 @@ function mr(config) {
 
     // Shuffle
     mrServiceObject.shuffle = (gid, jobID, callback) => {
-      // console.log("IN SHUFFLE");
       // Retrieve map results
       global.distribution.local.store.get(
         { key: `mr-map-${jobID}`, gid: gid },
@@ -135,20 +107,13 @@ function mr(config) {
             callback(e, null);
             return;
           }
-          // console.log(`IN SHUFFLE, results are ${JSON.stringify(values)}`);
-          // Collect all values that have the same key
-          const collection = {};
-          // console.log("VALUES IN SHUFFLE IS: ", JSON.stringify(values));
-          // values = values[0];
+
           // console.log(
-          //   `IN SHUFFLE, results are ${JSON.stringify(
-          //     values
-          //   )} and its size is ${values.length}`
+          //   "IN SHUFFLE with this many values",
+          //   values ? values.length : 0
           // );
-          // for (const [k, v] in Object.entries(values)) {
-          //   console.log(`IN SHUFFLE, results key is ${k} and value is ${v}`);
-          //   console.log("\n");
-          // }
+
+          const collection = {};
           values.forEach((innerValue) => {
             innerValue.forEach((value) => {
               // console.log("Value in values loop: ", values);
@@ -158,19 +123,10 @@ function mr(config) {
                 collection[key] = [];
               }
               collection[key].push(value[key]);
-              // console.log(
-              //   "After adding key, we get: ",
-              //   JSON.stringify(collection)
-              // );
             });
           });
-
-          // console.log("IN SHUFFLE COLLECTION");
-          // console.log(collection);
-          // Store the collection in the distributed store
           let count = 0;
           for (const key in collection) {
-            // console.log("Trying to store key: ", key);
             const lastIndex = key.lastIndexOf("/");
             const tConst = key.substring(lastIndex + 1);
             // console.log(tConst);
@@ -178,8 +134,6 @@ function mr(config) {
               collection[key],
               { key: `mr-shuffle-${tConst}`, append: "true" },
               (e, v) => {
-                // console.log("IN STORE");
-                // console.log(e);
                 count++;
                 if (count === Object.keys(collection).length) {
                   global.distribution.local.store.del(
@@ -198,16 +152,12 @@ function mr(config) {
 
     // Reduce
     mrServiceObject.reduce = (gid, reduceFunc, callback) => {
+      // console.log("IN REDUCE");
       global.distribution.local.status.get("sid", (e, v) => {
         const localSid = v;
         global.distribution.local.store.get(
           { key: null, gid: gid },
           (e, keys) => {
-            // if (e) {
-            //   console.log("Error in store get for reduce: ", e);
-            // }
-            // console.log("IN REDUCE PART OF MR");
-            // console.log("keys is: ", keys);
             let count = 0;
             const results = [];
             const reduceKeys = [];
@@ -235,10 +185,6 @@ function mr(config) {
                   global.distribution.local.store.del(
                     { key: key, gid: gid },
                     (e, v) => {
-                      // if (count === reduceKeys.length) {
-                      //   callback(null, results);
-                      //   return;
-                      // }
                       global.distribution.local.store.put(
                         results,
                         {
