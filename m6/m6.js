@@ -176,6 +176,138 @@ async function imdbMapper(key, value, callback) {
       ? authorElement.textContent.trim()
       : "Unknown author";
 
+    const similarBooksHeader = document.querySelector("h2.header");
+    let similarBooksUrl = null;
+
+    if (
+      similarBooksHeader &&
+      similarBooksHeader.textContent.trim() === "Similar Books"
+    ) {
+      // Look for a link in a div that follows the header
+      const navlinkDiv = similarBooksHeader.nextElementSibling;
+      if (navlinkDiv && navlinkDiv.classList.contains("navlink")) {
+        const link = navlinkDiv.querySelector("a");
+        if (link && link.hasAttribute("href")) {
+          const hrefPath = link.getAttribute("href");
+          similarBooksUrl = new URL(hrefPath, baseURL).href;
+        }
+      }
+    }
+
+    // If we couldn't find the link, construct it based on the book ID
+    if (!similarBooksUrl && bookId !== "Unknown") {
+      similarBooksUrl = `${baseURL}/ebooks/${bookId}/also/`;
+    }
+
+    let similarBooks = [];
+
+    // If we have a URL to fetch similar books, do so
+    if (similarBooksUrl) {
+      console.log(`Fetching similar books from: ${similarBooksUrl}`);
+
+      // Add a delay before making the second request
+      await delay(2000 + Math.random() * 3000);
+
+      try {
+        // Fetch the similar books page
+        const similarBooksHtml = await fetchHTMLWithRetry(similarBooksUrl);
+
+        // Optional: Save the HTML content to a file for debugging if needed
+        // fs.writeFileSync("similar-books-debug.txt", similarBooksHtml);
+
+        // Parse the similar books page
+        const similarBooksDom = new JSDOM(similarBooksHtml);
+        const similarBooksDoc = similarBooksDom.window.document;
+
+        // Extract the list of similar books
+        const bookElements = similarBooksDoc.querySelectorAll(".booklink");
+
+        if (bookElements.length > 0) {
+          bookElements.forEach((bookElement) => {
+            const titleElement = bookElement.querySelector(".title");
+            const authorElement = bookElement.querySelector(".subtitle");
+            const linkElement = bookElement.querySelector("a");
+
+            if (titleElement && linkElement) {
+              const title = titleElement.textContent.trim();
+              const author = authorElement
+                ? authorElement.textContent.trim()
+                : "Unknown";
+              const href = linkElement.getAttribute("href");
+              const bookUrl = href ? new URL(href, baseURL).href : null;
+              const bookIdMatch = bookUrl
+                ? bookUrl.match(/\/ebooks\/(\d+)/)
+                : null;
+
+              similarBooks.push({
+                title: title,
+                author: author,
+                url: bookUrl,
+                id: bookIdMatch ? bookIdMatch[1] : "unknown",
+              });
+            }
+          });
+        } else {
+          // Alternative selector if .booklink isn't found
+          const bookRows = similarBooksDoc.querySelectorAll(
+            "li.booklink, li.u-booklink"
+          );
+
+          bookRows.forEach((row) => {
+            const titleElement = row.querySelector("a");
+            const authorElement = row.querySelector("span.subtitle, .author");
+
+            if (titleElement) {
+              const title = titleElement.textContent.trim();
+              const author = authorElement
+                ? authorElement.textContent.trim()
+                : "Unknown";
+              const href = titleElement.getAttribute("href");
+              const bookUrl = href ? new URL(href, baseURL).href : null;
+              const bookIdMatch = bookUrl
+                ? bookUrl.match(/\/ebooks\/(\d+)/)
+                : null;
+
+              similarBooks.push({
+                title: title,
+                author: author,
+                url: bookUrl,
+                id: bookIdMatch ? bookIdMatch[1] : "unknown",
+              });
+            }
+          });
+        }
+
+        // If we still can't find books with the structured approach,
+        // try getting all links that look like book links
+        if (similarBooks.length === 0) {
+          const possibleBookLinks = Array.from(
+            similarBooksDoc.querySelectorAll('a[href*="/ebooks/"]')
+          );
+
+          possibleBookLinks.forEach((link) => {
+            const href = link.getAttribute("href");
+            const bookIdMatch = href.match(/\/ebooks\/(\d+)/);
+
+            if (bookIdMatch) {
+              const bookUrl = new URL(href, baseURL).href;
+
+              similarBooks.push({
+                title: link.textContent.trim(),
+                author: "Unknown",
+                url: bookUrl,
+                id: bookIdMatch[1],
+              });
+            }
+          });
+        }
+
+        console.log(`Found ${similarBooks.length} similar books`);
+      } catch (error) {
+        console.error("Error fetching similar books:", error);
+      }
+    }
+
     // Create the result object
     const result = {
       book: {
@@ -187,11 +319,14 @@ async function imdbMapper(key, value, callback) {
           period: downloadPeriod,
           sourceURL: url,
         },
+        similarBooks: similarBooks,
       },
     };
 
     console.log(`Book ID: ${bookId}, Title: ${bookTitle}`);
     console.log(`Downloads: ${downloadCount} in ${downloadPeriod}`);
+    console.log(`Similar books count: ${similarBooks.length}`);
+    console.log(`Similar books are: ${JSON.stringify(similarBooks)}`);
 
     callback(null, [result]);
   } catch (error) {
