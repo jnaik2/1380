@@ -1,7 +1,7 @@
 // Function to query Gutendex API using a search string and return the id of the first result.
 // It also logs the title of the book and the name of the first author.
 function getID(userEntry) {
-  const url = `https://gutendex.com/books?search=${encodeURIComponent(userEntry)}`;
+  const url = `https://gutendex.com/books?search=${encodeURIComponent(userEntry)}&sort=popular`;
 
   return fetch(url)
       .then((response) => {
