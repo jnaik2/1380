@@ -6,6 +6,7 @@ const id = distribution.util.id;
 // Helper function to fetch HTML content (Refactored to return a Promise)
 
 async function imdbMapper(key, value, callback) {
+  const fs = require("fs");
   const url = value;
 
   function delay(ms) {
@@ -91,55 +92,108 @@ async function imdbMapper(key, value, callback) {
     const document = dom.window.document;
     const baseURL = getBaseURL(url);
     fs.writeFileSync("textContent.txt", document.body.innerHTML);
+    const bookTitle = document
+      .querySelector('td[itemprop="headline"]')
+      ?.textContent.trim();
+    const bookId = url.match(/\/ebooks\/(\d+)/)?.[1] || "Unknown";
+    const downloadsRow = Array.from(document.querySelectorAll("tr")).find(
+      (row) => row.querySelector("th")?.textContent === "Downloads"
+    );
 
-    let ratingElement = document.querySelector("div.allmovie-rating");
+    let downloadCount = "0";
+    let downloadPeriod = "unknown time period";
 
-    if (!ratingElement) {
-      console.error("Rating element not found on the page.", url);
-      callback(new Error("Rating element not found"), null);
-      return;
+    if (downloadsRow) {
+      const downloadText = downloadsRow.querySelector(
+        'td[itemprop="interactionCount"]'
+      )?.textContent;
+      if (downloadText) {
+        // Extract the download count using regex
+        const match = downloadText.match(
+          /(\d+)\s+downloads in the last (\d+\s+\w+)/i
+        );
+        if (match) {
+          downloadCount = match[1];
+          downloadPeriod = match[2];
+        } else {
+          // If regex fails, just use the raw text
+          downloadCount = downloadText.trim();
+        }
+      }
     }
 
-    const rating = Number(ratingElement.textContent.split(" ")[0]);
+    // let ratingElement = document.querySelector("div.allmovie-rating");
 
-    const moreLikeThis = document.querySelectorAll("a.poster-link");
+    // if (!ratingElement) {
+    //   console.error("Rating element not found on the page.", url);
+    //   callback(new Error("Rating element not found"), null);
+    //   return;
+    // }
 
-    if (moreLikeThis.length === 0) {
-      console.error("No related books found on the page.");
-      callback(new Error("No related books found"), null);
-      return;
-    }
+    // const rating = Number(ratingElement.textContent.split(" ")[0]);
 
-    const similar = [];
+    // const moreLikeThis = document.querySelectorAll("a.poster-link");
 
-    moreLikeThis.forEach((link) => {
-      if (!link) {
-        console.error("Link is null or undefined");
-        callback(new Error("Link is null or undefined"), null);
-        return;
-      }
+    // if (moreLikeThis.length === 0) {
+    //   console.error("No related books found on the page.");
+    //   callback(new Error("No related books found"), null);
+    //   return;
+    // }
 
-      if (link.hasAttribute("href")) {
-        const href = link.getAttribute("href");
-        const url_slice = new URL(href, baseURL).href;
-        const title = link.getAttribute("title");
+    // const similar = [];
 
-        similar.push({
-          [title]: {
-            keyUrl: url_slice,
-            sourceURL: url,
-            sourceRating: rating,
-            sourceName: key,
-          },
-        });
-      } else {
-        console.error("Link without href attribute found:", link);
-        callback(new Error("Link without href attribute found"), null);
-        return;
-      }
-    });
+    // moreLikeThis.forEach((link) => {
+    //   if (!link) {
+    //     console.error("Link is null or undefined");
+    //     callback(new Error("Link is null or undefined"), null);
+    //     return;
+    //   }
 
-    callback(null, [similar]);
+    //   if (link.hasAttribute("href")) {
+    //     const href = link.getAttribute("href");
+    //     const url_slice = new URL(href, baseURL).href;
+    //     const title = link.getAttribute("title");
+
+    //     similar.push({
+    //       [title]: {
+    //         keyUrl: url_slice,
+    //         sourceURL: url,
+    //         sourceRating: rating,
+    //         sourceName: key,
+    //       },
+    //     });
+    //   } else {
+    //     console.error("Link without href attribute found:", link);
+    //     callback(new Error("Link without href attribute found"), null);
+    //     return;
+    //   }
+    // });
+
+    // callback(null, [similar]);
+    // Also extract author for additional context
+    const authorElement = document.querySelector('a[rel="marcrel:aut"]');
+    const author = authorElement
+      ? authorElement.textContent.trim()
+      : "Unknown author";
+
+    // Create the result object
+    const result = {
+      book: {
+        id: bookId,
+        title: bookTitle,
+        author: author,
+        downloads: {
+          count: parseInt(downloadCount.replace(/,/g, ""), 10) || 0,
+          period: downloadPeriod,
+          sourceURL: url,
+        },
+      },
+    };
+
+    console.log(`Book ID: ${bookId}, Title: ${bookTitle}`);
+    console.log(`Downloads: ${downloadCount} in ${downloadPeriod}`);
+
+    callback(null, [result]);
   } catch (error) {
     console.error("Error fetching or processing HTML:", error);
     callback(null, [
