@@ -6,6 +6,7 @@ const id = distribution.util.id;
 // Helper function to fetch HTML content (Refactored to return a Promise)
 
 async function imdbMapper(key, value, callback) {
+  const fs = require("fs");
   const url = value;
 
   function delay(ms) {
@@ -91,55 +92,243 @@ async function imdbMapper(key, value, callback) {
     const document = dom.window.document;
     const baseURL = getBaseURL(url);
     fs.writeFileSync("textContent.txt", document.body.innerHTML);
+    const bookTitle = document
+      .querySelector('td[itemprop="headline"]')
+      ?.textContent.trim();
+    const bookId = url.match(/\/ebooks\/(\d+)/)?.[1] || "Unknown";
+    const downloadsRow = Array.from(document.querySelectorAll("tr")).find(
+      (row) => row.querySelector("th")?.textContent === "Downloads"
+    );
 
-    let ratingElement = document.querySelector("div.allmovie-rating");
+    let downloadCount = "0";
+    let downloadPeriod = "unknown time period";
 
-    if (!ratingElement) {
-      console.error("Rating element not found on the page.", url);
-      callback(new Error("Rating element not found"), null);
-      return;
+    if (downloadsRow) {
+      const downloadText = downloadsRow.querySelector(
+        'td[itemprop="interactionCount"]'
+      )?.textContent;
+      if (downloadText) {
+        // Extract the download count using regex
+        const match = downloadText.match(
+          /(\d+)\s+downloads in the last (\d+\s+\w+)/i
+        );
+        if (match) {
+          downloadCount = match[1];
+          downloadPeriod = match[2];
+        } else {
+          // If regex fails, just use the raw text
+          downloadCount = downloadText.trim();
+        }
+      }
     }
 
-    const rating = Number(ratingElement.textContent.split(" ")[0]);
+    // let ratingElement = document.querySelector("div.allmovie-rating");
 
-    const moreLikeThis = document.querySelectorAll("a.poster-link");
+    // if (!ratingElement) {
+    //   console.error("Rating element not found on the page.", url);
+    //   callback(new Error("Rating element not found"), null);
+    //   return;
+    // }
 
-    if (moreLikeThis.length === 0) {
-      console.error("No related books found on the page.");
-      callback(new Error("No related books found"), null);
-      return;
+    // const rating = Number(ratingElement.textContent.split(" ")[0]);
+
+    // const moreLikeThis = document.querySelectorAll("a.poster-link");
+
+    // if (moreLikeThis.length === 0) {
+    //   console.error("No related books found on the page.");
+    //   callback(new Error("No related books found"), null);
+    //   return;
+    // }
+
+    // const similar = [];
+
+    // moreLikeThis.forEach((link) => {
+    //   if (!link) {
+    //     console.error("Link is null or undefined");
+    //     callback(new Error("Link is null or undefined"), null);
+    //     return;
+    //   }
+
+    //   if (link.hasAttribute("href")) {
+    //     const href = link.getAttribute("href");
+    //     const url_slice = new URL(href, baseURL).href;
+    //     const title = link.getAttribute("title");
+
+    //     similar.push({
+    //       [title]: {
+    //         keyUrl: url_slice,
+    //         sourceURL: url,
+    //         sourceRating: rating,
+    //         sourceName: key,
+    //       },
+    //     });
+    //   } else {
+    //     console.error("Link without href attribute found:", link);
+    //     callback(new Error("Link without href attribute found"), null);
+    //     return;
+    //   }
+    // });
+
+    // callback(null, [similar]);
+    // Also extract author for additional context
+    const authorElement = document.querySelector('a[rel="marcrel:aut"]');
+    const author = authorElement
+      ? authorElement.textContent.trim()
+      : "Unknown author";
+
+    const similarBooksHeader = document.querySelector("h2.header");
+    let similarBooksUrl = null;
+
+    if (
+      similarBooksHeader &&
+      similarBooksHeader.textContent.trim() === "Similar Books"
+    ) {
+      // Look for a link in a div that follows the header
+      const navlinkDiv = similarBooksHeader.nextElementSibling;
+      if (navlinkDiv && navlinkDiv.classList.contains("navlink")) {
+        const link = navlinkDiv.querySelector("a");
+        if (link && link.hasAttribute("href")) {
+          const hrefPath = link.getAttribute("href");
+          similarBooksUrl = new URL(hrefPath, baseURL).href;
+        }
+      }
     }
 
-    const similar = [];
+    // If we couldn't find the link, construct it based on the book ID
+    if (!similarBooksUrl && bookId !== "Unknown") {
+      similarBooksUrl = `${baseURL}/ebooks/${bookId}/also/`;
+    }
 
-    moreLikeThis.forEach((link) => {
-      if (!link) {
-        console.error("Link is null or undefined");
-        callback(new Error("Link is null or undefined"), null);
-        return;
+    let similarBooks = [];
+
+    // If we have a URL to fetch similar books, do so
+    if (similarBooksUrl) {
+      console.log(`Fetching similar books from: ${similarBooksUrl}`);
+
+      // Add a delay before making the second request
+      await delay(2000 + Math.random() * 3000);
+
+      try {
+        // Fetch the similar books page
+        const similarBooksHtml = await fetchHTMLWithRetry(similarBooksUrl);
+
+        // Optional: Save the HTML content to a file for debugging if needed
+        // fs.writeFileSync("similar-books-debug.txt", similarBooksHtml);
+
+        // Parse the similar books page
+        const similarBooksDom = new JSDOM(similarBooksHtml);
+        const similarBooksDoc = similarBooksDom.window.document;
+
+        // Extract the list of similar books
+        const bookElements = similarBooksDoc.querySelectorAll(".booklink");
+
+        if (bookElements.length > 0) {
+          bookElements.forEach((bookElement) => {
+            const titleElement = bookElement.querySelector(".title");
+            const authorElement = bookElement.querySelector(".subtitle");
+            const linkElement = bookElement.querySelector("a");
+
+            if (titleElement && linkElement) {
+              const title = titleElement.textContent.trim();
+              const author = authorElement
+                ? authorElement.textContent.trim()
+                : "Unknown";
+              const href = linkElement.getAttribute("href");
+              const bookUrl = href ? new URL(href, baseURL).href : null;
+              const bookIdMatch = bookUrl
+                ? bookUrl.match(/\/ebooks\/(\d+)/)
+                : null;
+
+              similarBooks.push({
+                title: title,
+                author: author,
+                url: bookUrl,
+                id: bookIdMatch ? bookIdMatch[1] : "unknown",
+              });
+            }
+          });
+        } else {
+          // Alternative selector if .booklink isn't found
+          const bookRows = similarBooksDoc.querySelectorAll(
+            "li.booklink, li.u-booklink"
+          );
+
+          bookRows.forEach((row) => {
+            const titleElement = row.querySelector("a");
+            const authorElement = row.querySelector("span.subtitle, .author");
+
+            if (titleElement) {
+              const title = titleElement.textContent.trim();
+              const author = authorElement
+                ? authorElement.textContent.trim()
+                : "Unknown";
+              const href = titleElement.getAttribute("href");
+              const bookUrl = href ? new URL(href, baseURL).href : null;
+              const bookIdMatch = bookUrl
+                ? bookUrl.match(/\/ebooks\/(\d+)/)
+                : null;
+
+              similarBooks.push({
+                title: title,
+                author: author,
+                url: bookUrl,
+                id: bookIdMatch ? bookIdMatch[1] : "unknown",
+              });
+            }
+          });
+        }
+
+        // If we still can't find books with the structured approach,
+        // try getting all links that look like book links
+        if (similarBooks.length === 0) {
+          const possibleBookLinks = Array.from(
+            similarBooksDoc.querySelectorAll('a[href*="/ebooks/"]')
+          );
+
+          possibleBookLinks.forEach((link) => {
+            const href = link.getAttribute("href");
+            const bookIdMatch = href.match(/\/ebooks\/(\d+)/);
+
+            if (bookIdMatch) {
+              const bookUrl = new URL(href, baseURL).href;
+
+              similarBooks.push({
+                title: link.textContent.trim(),
+                author: "Unknown",
+                url: bookUrl,
+                id: bookIdMatch[1],
+              });
+            }
+          });
+        }
+
+        console.log(`Found ${similarBooks.length} similar books`);
+      } catch (error) {
+        console.error("Error fetching similar books:", error);
       }
+    }
 
-      if (link.hasAttribute("href")) {
-        const href = link.getAttribute("href");
-        const url_slice = new URL(href, baseURL).href;
-        const title = link.getAttribute("title");
+    // Create the result object
+    const result = {
+      book: {
+        id: bookId,
+        title: bookTitle,
+        author: author,
+        downloads: {
+          count: parseInt(downloadCount.replace(/,/g, ""), 10) || 0,
+          period: downloadPeriod,
+          sourceURL: url,
+        },
+        similarBooks: similarBooks,
+      },
+    };
 
-        similar.push({
-          [title]: {
-            keyUrl: url_slice,
-            sourceURL: url,
-            sourceRating: rating,
-            sourceName: key,
-          },
-        });
-      } else {
-        console.error("Link without href attribute found:", link);
-        callback(new Error("Link without href attribute found"), null);
-        return;
-      }
-    });
+    console.log(`Book ID: ${bookId}, Title: ${bookTitle}`);
+    console.log(`Downloads: ${downloadCount} in ${downloadPeriod}`);
+    console.log(`Similar books count: ${similarBooks.length}`);
+    console.log(`Similar books are: ${JSON.stringify(similarBooks)}`);
 
-    callback(null, [similar]);
+    callback(null, [result]);
   } catch (error) {
     console.error("Error fetching or processing HTML:", error);
     callback(null, [
