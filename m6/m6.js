@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const { log } = require("console");
 const distribution = require("../config.js");
 const id = distribution.util.id;
 
@@ -6,6 +7,7 @@ const id = distribution.util.id;
 // Helper function to fetch HTML content (Refactored to return a Promise)
 
 async function imdbMapper(key, value, callback) {
+  const randomDelay = Math.random() * 5000;
   const url = value;
 
   function delay(ms) {
@@ -48,25 +50,25 @@ async function imdbMapper(key, value, callback) {
         reject(err);
       });
 
-      request.setTimeout(111000, () => {
+      request.setTimeout(500000, () => {
         request.abort();
         reject(new Error("Request timed out"));
       });
     });
   }
 
-  async function fetchHTMLWithRetry(url, attempts = 10) {
+  async function fetchHTMLWithRetry(url, attempts = 6) {
+    const numTry = 6 - attempts + 1;
     try {
       return await fetchHTML(url);
     } catch (err) {
-      if ((err.retryable && err.statusCode === 503) || attempts > 1) {
+      if ((err.retryable && err.statusCode === 503) || attempts > 0) {
         console.warn(
-          `Fetch failed, retrying (try #${
-            10 - attempts + 1
-          } after long delay... (${url})`
+          `Fetch failed, retrying (try #${numTry} after long delay... (${url})`
         );
-        // Delay more significantly before retrying
-        await delay(10000);
+        // Try exponential backoff delay
+        const delayTime = Math.random() * Math.pow(5, 6 - attempts) * 1000;
+        await delay(delayTime + randomDelay);
         return fetchHTMLWithRetry(url, attempts - 1);
       } else {
         throw err;
@@ -81,7 +83,7 @@ async function imdbMapper(key, value, callback) {
 
   try {
     // Initial random polite delay
-    await delay(1000);
+    await delay(randomDelay);
     const html = await fetchHTMLWithRetry(url);
     const { JSDOM } = require("jsdom");
     const { URL } = require("url");
@@ -143,9 +145,9 @@ const reducer = (key, values) => {
   return { [key]: values };
 };
 
-const nodes = Array.from({ length: 100 }, (_, i) => ({
+const nodes = Array.from({ length: 60 }, (_, i) => ({
   ip: "127.0.0.1",
-  port: 7110 + i,
+  port: 7310 + i,
 }));
 
 const imdbGroup = {};
@@ -161,6 +163,16 @@ let dataset = [
       "https://www.allmovie.com/movie/a-minecraft-movie-am125648",
   },
   { "Om Shanti Om": "https://www.allmovie.com/movie/om-shanti-om-am9195" },
+  { Parasite: "https://www.allmovie.com/movie/parasite-am209097" },
+  { Amélie: "https://www.allmovie.com/movie/am%C3%A9lie-am1047" },
+  { "Spirited Away": "https://www.allmovie.com/movie/spirited-away-am4470" },
+  { "Pan's Labyrinth": "https://www.allmovie.com/movie/pans-labyrinth-am4" },
+  {
+    "The Lives of Others":
+      "https://www.allmovie.com/movie/the-lives-of-others-am6572",
+  },
+  { "Star Trek": "https://www.allmovie.com/movie/star-trek-am19526" },
+  { Incendies: "https://www.allmovie.com/movie/incendies-am23857" },
 ];
 let keys = dataset.map((o) => Object.keys(o)[0]);
 
@@ -180,7 +192,6 @@ async function runIterations(localServer, maxIters = 10) {
       logStream.write(`Iteration ${i}:\n`);
       logStream.write("Dataset Size: " + dataset.length + "\n");
       logStream.write("Visited URL Size: " + visitedUrls.size + "\n");
-      logStream.end();
       dataset.forEach((entry) => {
         const key = Object.keys(entry)[0];
 
@@ -202,7 +213,6 @@ async function runIterations(localServer, maxIters = 10) {
                   for (const value of result) {
                     const key = Object.keys(value)[0];
                     const keyUrl = value[key][0].keyUrl;
-                    const name = value[key][0].name;
 
                     if (!visitedUrls.has(keyUrl)) {
                       dataset.push({ [key]: keyUrl });
