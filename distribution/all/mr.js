@@ -51,72 +51,73 @@ function mr(config) {
     // Map
     mrServiceObject.map = (keys, mapFunc, gid, jobID, callback) => {
       const results = [];
-      const count = 0;
+
       if (keys.length === 0) {
         callback(null, []);
         return;
       }
 
-      // Keep track of pending operations
+      // Track pending operations
       let pendingOperations = keys.length;
-      // console.log("IN MAP, pendingOperations is: ", pendingOperations);
+      console.log(
+        `[MAP] Starting map phase for job ${jobID} with ${pendingOperations} keys`
+      );
 
-      for (const key of keys) {
-        // console.log("Current key is: ", key);
+      // Process all keys with our improved concurrency control
+      keys.forEach((key) => {
         global.distribution.local.store.get(
           { key: key, gid: gid },
-          async (e, value) => {
+          (err, value) => {
+            if (err) {
+              console.error(
+                `[MAP] Error retrieving value for key ${key}:`,
+                err
+              );
+              pendingOperations--;
+              checkCompletion();
+              return;
+            }
+
             try {
-              // Check if mapFunc returns a Promise
-              const result = mapFunc(key, value, (err, mapResult) => {
-                // if (key == "Snow White") {
-                //   console.log("Here");
-                // }
-                if (err) {
-                  console.error("Mapper error:", err);
-                } else if (Array.isArray(mapResult)) {
-                  results.push(...mapResult);
+              // Execute the mapper function
+              mapFunc(key, value, (mapErr, mapResult) => {
+                if (mapErr) {
+                  console.error(`[MAP] Mapper error for key ${key}:`, mapErr);
                 } else {
-                  results.push(mapResult);
+                  if (Array.isArray(mapResult)) {
+                    results.push(...mapResult);
+                  } else if (mapResult) {
+                    results.push(mapResult);
+                  }
                 }
 
-                // console.log("I am in the mapFunc part");
-                // console.log(key);
-                // console.log(mapResult);
-
                 pendingOperations--;
-                // console.log("New pending operations is: ", pendingOperations);
+                console.log(
+                  `[MAP] Completed mapping for key: ${key}, ${pendingOperations} operations remaining`
+                );
                 checkCompletion();
               });
-
-              // If mapFunc didn't use the callback (returned a value or Promise)
-              // if (result !== undefined) {
-              //   const resolvedResult = await Promise.resolve(result);
-              //   if (Array.isArray(resolvedResult)) {
-              //     results.push(...resolvedResult);
-              //   } else {
-              //     results.push(resolvedResult);
-              //   }
-
-              //   pendingOperations--;
-              //   checkCompletion();
-              // }
             } catch (error) {
-              console.error("Error in mapper:", error);
+              console.error(`[MAP] Exception in mapper for key ${key}:`, error);
               pendingOperations--;
               checkCompletion();
             }
           }
         );
-      }
+      });
 
       function checkCompletion() {
         if (pendingOperations === 0) {
-          // console.log("Results in checking completion map: ", results);
+          console.log(
+            `[MAP] Map phase complete for job ${jobID}, collected ${results.length} results`
+          );
           global.distribution.local.store.put(
             results,
             { key: `mr-map-${jobID}`, gid: gid },
             (e, v) => {
+              if (e) {
+                console.error(`[MAP] Error storing map results:`, e);
+              }
               callback(null, results);
             }
           );
@@ -151,23 +152,37 @@ function mr(config) {
           //   console.log("\n");
           // }
           if (values.length !== 0) {
-            values.forEach((innerValue) => {
-              // console.log(innerValue);
-
-              innerValue.forEach((value) => {
-                // console.log("Value in values loop: ", values);
-                const key = Object.keys(value)[0];
-                // console.log("key", key);
-                if (!collection[key]) {
-                  collection[key] = [];
+            try {
+              // console.log("Actual value");
+              // console.log(values);
+              values.forEach((innerValue) => {
+                // console.log("Inner value");
+                // console.log(innerValue);
+                if (innerValue.length !== 0) {
+                  innerValue.forEach((value) => {
+                    // console.log("Value in values loop: ", values);
+                    const key = Object.keys(value)[0];
+                    // console.log("key", key);
+                    if (!collection[key]) {
+                      collection[key] = [];
+                    }
+                    collection[key].push(value[key]);
+                    // console.log(
+                    //   "After adding key, we get: ",
+                    //   JSON.stringify(collection)
+                    // );
+                  });
                 }
-                collection[key].push(value[key]);
-                // console.log(
-                //   "After adding key, we get: ",
-                //   JSON.stringify(collection)
-                // );
               });
-            });
+            } catch (error) {
+              // console.log("Actual value");
+              // console.log(values);
+              console.error(
+                `Error in looping through values ${JSON.stringify(
+                  values
+                )} with error ${error}`
+              );
+            }
           }
 
           // console.log("IN SHUFFLE COLLECTION");

@@ -5,94 +5,652 @@ const id = distribution.util.id;
 // Define the mapper function
 // Helper function to fetch HTML content (Refactored to return a Promise)
 
+// 1. Request Queue with Rate Limiting Implementation
+// class RequestQueue {
+//   constructor(options = {}) {
+//     this.queue = [];
+//     this.running = 0;
+//     this.concurrency = options.concurrency || 3;
+//     this.interval = options.interval || 1000;
+//     this.lastRequestTime = 0;
+//     this.domainTimers = {}; // Track time of last request per domain
+//     this.perDomainInterval = options.perDomainInterval || 2000; // Min ms between requests to same domain
+//   }
+
+//   add(url, taskFn) {
+//     return new Promise((resolve, reject) => {
+//       const hostname = new URL(url).hostname;
+//       this.queue.push({ url, hostname, taskFn, resolve, reject });
+//       this.process();
+//     });
+//   }
+
+//   async process() {
+//     if (this.running >= this.concurrency || this.queue.length === 0) {
+//       return;
+//     }
+
+//     // Find the next task we can run based on domain timers
+//     const now = Date.now();
+//     let taskIndex = -1;
+
+//     for (let i = 0; i < this.queue.length; i++) {
+//       const { hostname } = this.queue[i];
+//       const lastRequestToThisDomain = this.domainTimers[hostname] || 0;
+//       if (now - lastRequestToThisDomain >= this.perDomainInterval) {
+//         taskIndex = i;
+//         break;
+//       }
+//     }
+
+//     // If no suitable task was found, wait and try again
+//     if (taskIndex === -1) {
+//       const minWaitTime = Math.min(
+//         ...Object.entries(this.domainTimers)
+//           .map(([domain, time]) => this.perDomainInterval - (now - time))
+//           .filter((t) => t > 0)
+//       );
+
+//       setTimeout(() => this.process(), minWaitTime || 100);
+//       return;
+//     }
+
+//     // Get the next task and run it
+//     const { url, hostname, taskFn, resolve, reject } = this.queue.splice(
+//       taskIndex,
+//       1
+//     )[0];
+//     this.running++;
+
+//     // Ensure minimum time between overall requests
+//     const timeSinceLastRequest = now - this.lastRequestTime;
+//     if (timeSinceLastRequest < this.interval) {
+//       await new Promise((r) =>
+//         setTimeout(r, this.interval - timeSinceLastRequest)
+//       );
+//     }
+
+//     // Update timers and run the task
+//     this.lastRequestTime = Date.now();
+//     this.domainTimers[hostname] = Date.now();
+
+//     try {
+//       const result = await taskFn();
+//       resolve(result);
+//     } catch (error) {
+//       reject(error);
+//     } finally {
+//       this.running--;
+//       setTimeout(() => this.process(), 0); // Process next item
+//     }
+//   }
+// }
+
+// 2. Improved HTTP Request Function
+// function fetchHTML(url, options = {}) {
+//   const https = require("https");
+//   const http = require("http");
+//   const zlib = require("zlib");
+
+//   // Rotate user agents for each request
+//   const userAgents = [
+//     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
+//     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15",
+//     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+//     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0",
+//     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0",
+//   ];
+
+//   // Prepare the headers with better request management
+//   const headers = {
+//     "User-Agent": userAgents[Math.floor(Math.random() * userAgents.length)],
+//     Accept:
+//       "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+//     "Accept-Language": "en-US,en;q=0.5",
+//     "Accept-Encoding": "gzip, deflate, br",
+//     DNT: "1",
+//     Connection: "keep-alive",
+//     "Upgrade-Insecure-Requests": "1",
+//     "Sec-Fetch-Dest": "document",
+//     "Sec-Fetch-Mode": "navigate",
+//     "Sec-Fetch-Site": "none",
+//     "Sec-Fetch-User": "?1",
+//     "Cache-Control": "max-age=0",
+//     ...options.headers,
+//   };
+
+//   // Parse the URL to determine if it's HTTP or HTTPS
+//   const isHttps = url.startsWith("https:");
+//   const client = isHttps ? https : http;
+//   const urlObj = new URL(url);
+
+//   // Prepare the request options
+//   const requestOptions = {
+//     hostname: urlObj.hostname,
+//     path: urlObj.pathname + urlObj.search,
+//     method: "GET",
+//     headers,
+//     timeout: options.timeout || 15000,
+//     // Create a new agent for each request with keep-alive settings
+//     agent: new client.Agent({
+//       keepAlive: true,
+//       keepAliveMsecs: 1000,
+//       maxSockets: 10,
+//       maxFreeSockets: 5,
+//       timeout: 60000,
+//     }),
+//   };
+
+//   return new Promise((resolve, reject) => {
+//     const req = client.request(requestOptions, (res) => {
+//       // Handle redirects
+//       if (
+//         res.statusCode === 301 ||
+//         res.statusCode === 302 ||
+//         res.statusCode === 307 ||
+//         res.statusCode === 308
+//       ) {
+//         const redirectUrl = res.headers.location;
+//         if (!redirectUrl) {
+//           reject(
+//             new Error(
+//               `Redirect with no location header. Status: ${res.statusCode}`
+//             )
+//           );
+//           return;
+//         }
+
+//         // Handle relative redirects
+//         const absoluteUrl = redirectUrl.startsWith("http")
+//           ? redirectUrl
+//           : new URL(redirectUrl, url).href;
+
+//         // Check for redirect loops
+//         if (options.redirectCount && options.redirectCount > 5) {
+//           reject(new Error(`Too many redirects for ${url}`));
+//           return;
+//         }
+
+//         // Follow the redirect with a slight delay
+//         setTimeout(() => {
+//           fetchHTML(absoluteUrl, {
+//             ...options,
+//             redirectCount: (options.redirectCount || 0) + 1,
+//           })
+//             .then(resolve)
+//             .catch(reject);
+//         }, 500);
+//         return;
+//       }
+
+//       // Handle rate limiting (429 Too Many Requests)
+//       if (res.statusCode === 429) {
+//         const retryAfter = parseInt(res.headers["retry-after"], 10) || 60;
+//         const retryTime = retryAfter * 1000;
+
+//         console.warn(
+//           `Rate limited on ${url}. Retrying after ${retryAfter} seconds.`
+//         );
+
+//         setTimeout(() => {
+//           fetchHTML(url, options).then(resolve).catch(reject);
+//         }, retryTime);
+//         return;
+//       }
+
+//       // Check for other error status codes
+//       if (res.statusCode !== 200) {
+//         reject(
+//           new Error(
+//             `Failed to load page, status code: ${res.statusCode}. Url: ${url}`
+//           )
+//         );
+//         return;
+//       }
+
+//       // Check if the response is compressed
+//       const encoding = res.headers["content-encoding"];
+//       let responseStream = res;
+
+//       if (encoding === "gzip") {
+//         responseStream = res.pipe(zlib.createGunzip());
+//       } else if (encoding === "deflate") {
+//         responseStream = res.pipe(zlib.createInflate());
+//       } else if (encoding === "br") {
+//         responseStream = res.pipe(zlib.createBrotliDecompress());
+//       }
+
+//       // Collect the response data
+//       const chunks = [];
+//       responseStream.on("data", (chunk) => chunks.push(chunk));
+
+//       responseStream.on("end", () => {
+//         const buffer = Buffer.concat(chunks);
+//         const html = buffer.toString("utf8");
+
+//         // Check for anti-scraping techniques
+//         if (
+//           html.includes("captcha") ||
+//           html.includes("CAPTCHA") ||
+//           html.includes("Access Denied") ||
+//           html.includes("DDoS protection")
+//         ) {
+//           reject(
+//             new Error(`Possible anti-scraping protection detected for ${url}`)
+//           );
+//           return;
+//         }
+
+//         resolve(html);
+//       });
+//     });
+
+//     // Handle network errors
+//     req.on("error", (err) => {
+//       reject(err);
+//     });
+
+//     // Handle timeouts
+//     req.on("timeout", () => {
+//       req.destroy();
+//       reject(new Error(`Request timed out after ${requestOptions.timeout}ms`));
+//     });
+
+//     // Send the request
+//     req.end();
+//   });
+// }
+
+// 3. Enhanced retry functionality with exponential backoff
+// async function fetchHTMLWithRetry(url, options = {}) {
+//   const maxAttempts = options.maxAttempts || 3;
+//   const initialDelay = options.initialDelay || 2000;
+//   const backoffFactor = options.backoffFactor || 2;
+//   const jitter = options.jitter || 0.2; // 20% randomness
+
+//   let attempt = 1;
+//   let lastError;
+
+//   while (attempt <= maxAttempts) {
+//     try {
+//       return await fetchHTML(url, options);
+//     } catch (err) {
+//       lastError = err;
+
+//       // Don't retry on certain error types
+//       if (
+//         err.message &&
+//         (err.message.includes("403") ||
+//           err.message.includes("Forbidden") ||
+//           err.message.includes("anti-scraping") ||
+//           err.message.includes("captcha") ||
+//           err.message.includes("CAPTCHA"))
+//       ) {
+//         console.error(`Scraping blocked for ${url}: ${err.message}`);
+//         throw err;
+//       }
+
+//       // Last attempt - give up
+//       if (attempt >= maxAttempts) {
+//         console.error(`Failed after ${maxAttempts} attempts for ${url}`);
+//         throw err;
+//       }
+
+//       // Calculate delay with exponential backoff and jitter
+//       const delay = initialDelay * Math.pow(backoffFactor, attempt - 1);
+//       const randomFactor = 1 - jitter + Math.random() * jitter * 2;
+//       const actualDelay = Math.floor(delay * randomFactor);
+
+//       console.warn(
+//         `Attempt ${attempt}/${maxAttempts} failed for ${url}. Retrying in ${actualDelay}ms. Error: ${err.message}`
+//       );
+
+//       // Wait before retrying
+//       await new Promise((resolve) => setTimeout(resolve, actualDelay));
+//       attempt++;
+//     }
+//   }
+
+//   throw lastError;
+// }
+
+// 4. Modify the mapper function to use the queue
 async function imdbMapper(key, value, callback) {
-  const fs = require("fs");
-  const url = value;
-
-  function delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  function fetchHTML(url) {
+  function fetchHTML(url, options = {}) {
     const https = require("https");
+    const http = require("http");
+    const zlib = require("zlib");
 
+    // Rotate user agents for each request
     const userAgents = [
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/112.0.0.0 Safari/537.36",
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Version/14.1.2 Safari/605.1.15",
-      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/113.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15",
+      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0",
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0",
     ];
 
+    // Prepare the headers with better request management
     const headers = {
       "User-Agent": userAgents[Math.floor(Math.random() * userAgents.length)],
-      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      Accept:
+        "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
       "Accept-Language": "en-US,en;q=0.5",
+      "Accept-Encoding": "gzip, deflate, br",
+      DNT: "1",
       Connection: "keep-alive",
+      "Upgrade-Insecure-Requests": "1",
+      "Sec-Fetch-Dest": "document",
+      "Sec-Fetch-Mode": "navigate",
+      "Sec-Fetch-Site": "none",
+      "Sec-Fetch-User": "?1",
+      "Cache-Control": "max-age=0",
+      ...options.headers,
+    };
+
+    // Parse the URL to determine if it's HTTP or HTTPS
+    const isHttps = url.startsWith("https:");
+    const client = isHttps ? https : http;
+    const urlObj = new URL(url);
+
+    // Prepare the request options
+    const requestOptions = {
+      hostname: urlObj.hostname,
+      path: urlObj.pathname + urlObj.search,
+      method: "GET",
+      headers,
+      timeout: options.timeout || 15000,
+      // Create a new agent for each request with keep-alive settings
+      agent: new client.Agent({
+        keepAlive: true,
+        keepAliveMsecs: 1000,
+        maxSockets: 10,
+        maxFreeSockets: 5,
+        timeout: 60000,
+      }),
     };
 
     return new Promise((resolve, reject) => {
-      const request = https.get(url, { headers }, (response) => {
-        if (response.statusCode !== 200) {
+      const req = client.request(requestOptions, (res) => {
+        // Handle redirects
+        if (
+          res.statusCode === 301 ||
+          res.statusCode === 302 ||
+          res.statusCode === 307 ||
+          res.statusCode === 308
+        ) {
+          const redirectUrl = res.headers.location;
+          if (!redirectUrl) {
+            reject(
+              new Error(
+                `Redirect with no location header. Status: ${res.statusCode}`
+              )
+            );
+            return;
+          }
+
+          // Handle relative redirects
+          const absoluteUrl = redirectUrl.startsWith("http")
+            ? redirectUrl
+            : new URL(redirectUrl, url).href;
+
+          // Check for redirect loops
+          if (options.redirectCount && options.redirectCount > 5) {
+            reject(new Error(`Too many redirects for ${url}`));
+            return;
+          }
+
+          // Follow the redirect with a slight delay
+          setTimeout(() => {
+            fetchHTML(absoluteUrl, {
+              ...options,
+              redirectCount: (options.redirectCount || 0) + 1,
+            })
+              .then(resolve)
+              .catch(reject);
+          }, 500);
+          return;
+        }
+
+        // Handle rate limiting (429 Too Many Requests)
+        if (res.statusCode === 429) {
+          const retryAfter = parseInt(res.headers["retry-after"], 10) || 60;
+          const retryTime = retryAfter * 1000;
+
+          console.warn(
+            `Rate limited on ${url}. Retrying after ${retryAfter} seconds.`
+          );
+
+          setTimeout(() => {
+            fetchHTML(url, options).then(resolve).catch(reject);
+          }, retryTime);
+          return;
+        }
+
+        // Check for other error status codes
+        if (res.statusCode !== 200) {
           reject(
             new Error(
-              `Failed to load page, status code: ${response.statusCode}. Url: ${url}`
+              `Failed to load page, status code: ${res.statusCode}. Url: ${url}`
             )
           );
           return;
         }
 
-        let data = "";
-        response.on("data", (chunk) => {
-          data += chunk;
-        });
-        response.on("end", () => {
-          resolve(data);
+        // Check if the response is compressed
+        const encoding = res.headers["content-encoding"];
+        let responseStream = res;
+
+        if (encoding === "gzip") {
+          responseStream = res.pipe(zlib.createGunzip());
+        } else if (encoding === "deflate") {
+          responseStream = res.pipe(zlib.createInflate());
+        } else if (encoding === "br") {
+          responseStream = res.pipe(zlib.createBrotliDecompress());
+        }
+
+        // Collect the response data
+        const chunks = [];
+        responseStream.on("data", (chunk) => chunks.push(chunk));
+
+        responseStream.on("end", () => {
+          const buffer = Buffer.concat(chunks);
+          const html = buffer.toString("utf8");
+
+          // Check for anti-scraping techniques
+          if (
+            html.includes("captcha") ||
+            html.includes("CAPTCHA") ||
+            html.includes("Access Denied") ||
+            html.includes("DDoS protection")
+          ) {
+            reject(
+              new Error(`Possible anti-scraping protection detected for ${url}`)
+            );
+            return;
+          }
+
+          resolve(html);
         });
       });
 
-      request.on("error", (err) => {
+      // Handle network errors
+      req.on("error", (err) => {
         reject(err);
       });
 
-      request.setTimeout(10000, () => {
-        request.abort();
-        reject(new Error("Request timed out"));
+      // Handle timeouts
+      req.on("timeout", () => {
+        req.destroy();
+        reject(
+          new Error(`Request timed out after ${requestOptions.timeout}ms`)
+        );
       });
+
+      // Send the request
+      req.end();
     });
   }
 
-  async function fetchHTMLWithRetry(url, attempts = 2) {
-    try {
-      return await fetchHTML(url);
-    } catch (err) {
-      if (attempts > 1) {
-        console.warn(`Fetch failed, retrying after long delay... (${url})`);
-        // Delay more significantly before retrying
-        await delay(20000 + Math.pow(Math.random(), 2) * 100000);
-        return fetchHTMLWithRetry(url, attempts - 1);
-      } else {
-        throw err;
+  async function fetchHTMLWithRetry(url, options = {}) {
+    const maxAttempts = options.maxAttempts || 3;
+    const initialDelay = options.initialDelay || 2000;
+    const backoffFactor = options.backoffFactor || 2;
+    const jitter = options.jitter || 0.2; // 20% randomness
+
+    let attempt = 1;
+    let lastError;
+
+    while (attempt <= maxAttempts) {
+      try {
+        return await fetchHTML(url, options);
+      } catch (err) {
+        lastError = err;
+
+        // Don't retry on certain error types
+        if (
+          err.message &&
+          (err.message.includes("403") ||
+            err.message.includes("Forbidden") ||
+            err.message.includes("anti-scraping") ||
+            err.message.includes("captcha") ||
+            err.message.includes("CAPTCHA"))
+        ) {
+          console.error(`Scraping blocked for ${url}: ${err.message}`);
+          throw err;
+        }
+
+        // Last attempt - give up
+        if (attempt >= maxAttempts) {
+          console.error(`Failed after ${maxAttempts} attempts for ${url}`);
+          throw err;
+        }
+
+        // Calculate delay with exponential backoff and jitter
+        const delay = initialDelay * Math.pow(backoffFactor, attempt - 1);
+        const randomFactor = 1 - jitter + Math.random() * jitter * 2;
+        const actualDelay = Math.floor(delay * randomFactor);
+
+        console.warn(
+          `Attempt ${attempt}/${maxAttempts} failed for ${url}. Retrying in ${actualDelay}ms. Error: ${err.message}`
+        );
+
+        // Wait before retrying
+        await new Promise((resolve) => setTimeout(resolve, actualDelay));
+        attempt++;
+      }
+    }
+
+    throw lastError;
+  }
+
+  const fs = require("fs");
+  const url = value;
+
+  class RequestQueue {
+    constructor(options = {}) {
+      this.queue = [];
+      this.running = 0;
+      this.concurrency = options.concurrency || 3;
+      this.interval = options.interval || 1000;
+      this.lastRequestTime = 0;
+      this.domainTimers = {}; // Track time of last request per domain
+      this.perDomainInterval = options.perDomainInterval || 2000; // Min ms between requests to same domain
+    }
+
+    add(url, taskFn) {
+      return new Promise((resolve, reject) => {
+        const hostname = new URL(url).hostname;
+        this.queue.push({ url, hostname, taskFn, resolve, reject });
+        this.process();
+      });
+    }
+
+    async process() {
+      if (this.running >= this.concurrency || this.queue.length === 0) {
+        return;
+      }
+
+      // Find the next task we can run based on domain timers
+      const now = Date.now();
+      let taskIndex = -1;
+
+      for (let i = 0; i < this.queue.length; i++) {
+        const { hostname } = this.queue[i];
+        const lastRequestToThisDomain = this.domainTimers[hostname] || 0;
+        if (now - lastRequestToThisDomain >= this.perDomainInterval) {
+          taskIndex = i;
+          break;
+        }
+      }
+
+      // If no suitable task was found, wait and try again
+      if (taskIndex === -1) {
+        const minWaitTime = Math.min(
+          ...Object.entries(this.domainTimers)
+            .map(([domain, time]) => this.perDomainInterval - (now - time))
+            .filter((t) => t > 0)
+        );
+
+        setTimeout(() => this.process(), minWaitTime || 100);
+        return;
+      }
+
+      // Get the next task and run it
+      const { url, hostname, taskFn, resolve, reject } = this.queue.splice(
+        taskIndex,
+        1
+      )[0];
+      this.running++;
+
+      // Ensure minimum time between overall requests
+      const timeSinceLastRequest = now - this.lastRequestTime;
+      if (timeSinceLastRequest < this.interval) {
+        await new Promise((r) =>
+          setTimeout(r, this.interval - timeSinceLastRequest)
+        );
+      }
+
+      // Update timers and run the task
+      this.lastRequestTime = Date.now();
+      this.domainTimers[hostname] = Date.now();
+
+      try {
+        const result = await taskFn();
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      } finally {
+        this.running--;
+        setTimeout(() => this.process(), 0); // Process next item
       }
     }
   }
 
-  function getBaseURL(url) {
-    const parsedURL = new URL(url);
-    return `${parsedURL.protocol}//${parsedURL.host}`;
-  }
+  // Create a domain-aware request queue
+  const requestQueue = new RequestQueue({
+    concurrency: 3,
+    interval: 1000,
+    perDomainInterval: 3000, // 3 seconds between requests to the same domain
+  });
 
   try {
-    // Initial random polite delay
-    await delay(500 + Math.random() * 2000);
+    // Initial request through the queue
+    const html = await requestQueue.add(url, () =>
+      fetchHTMLWithRetry(url, {
+        maxAttempts: 3,
+        initialDelay: 2000,
+      })
+    );
 
-    // console.log(`URL being passed into fetchHTML is ${url}`);
-    const html = await fetchHTMLWithRetry(url);
-
+    // Process HTML (your existing code)
     const { JSDOM } = require("jsdom");
     const { URL } = require("url");
     const dom = new JSDOM(html);
     const document = dom.window.document;
-    const baseURL = getBaseURL(url);
-    // fs.writeFileSync("textContent.txt", document.body.innerHTML);
+    const baseURL = new URL(url).origin;
+
+    // Extract book information (your existing code)
     const bookTitle = document
       .querySelector('td[itemprop="headline"]')
       ?.textContent.trim();
@@ -136,7 +694,7 @@ async function imdbMapper(key, value, callback) {
       ? authorElement.textContent.trim()
       : "Unknown author";
 
-    // Look for the "Similar Books" header and associated link
+    // Look for similar books URL
     const similarBooksHeader = document.querySelector("h2.header");
     let similarBooksUrl = null;
 
@@ -144,7 +702,6 @@ async function imdbMapper(key, value, callback) {
       similarBooksHeader &&
       similarBooksHeader.textContent.trim() === "Similar Books"
     ) {
-      // Look for a link in a div that follows the header
       const navlinkDiv = similarBooksHeader.nextElementSibling;
       if (navlinkDiv && navlinkDiv.classList.contains("navlink")) {
         const link = navlinkDiv.querySelector("a");
@@ -162,16 +719,16 @@ async function imdbMapper(key, value, callback) {
 
     let similarBooksOutput = [];
 
-    // If we have a URL to fetch similar books, do so
+    // If we have a URL to fetch similar books, do so using the queue
     if (similarBooksUrl) {
-      // console.log(`Fetching similar books from: ${similarBooksUrl}`);
-
-      // Add a delay before making the second request
-      await delay(2000 + Math.random() * 3000);
-
       try {
-        // Fetch the similar books page
-        const similarBooksHtml = await fetchHTMLWithRetry(similarBooksUrl);
+        // Fetch the similar books page through the queue
+        const similarBooksHtml = await requestQueue.add(similarBooksUrl, () =>
+          fetchHTMLWithRetry(similarBooksUrl, {
+            maxAttempts: 2,
+            initialDelay: 2000,
+          })
+        );
 
         // Parse the similar books page
         const similarBooksDom = new JSDOM(similarBooksHtml);
@@ -191,16 +748,14 @@ async function imdbMapper(key, value, callback) {
               const similarBookUrl = href ? new URL(href, baseURL).href : null;
 
               if (similarBookUrl) {
-                const outputObject = {
+                similarBooksOutput.push({
                   [similarBookTitle]: {
                     similarBookUrl: similarBookUrl,
                     originalBookUrl: url,
                     originalBookTitle: bookTitle,
                     originalBookRating: downloadRating,
                   },
-                };
-
-                similarBooksOutput.push(outputObject);
+                });
               }
             }
           });
@@ -219,16 +774,14 @@ async function imdbMapper(key, value, callback) {
               const similarBookUrl = href ? new URL(href, baseURL).href : null;
 
               if (similarBookUrl) {
-                const outputObject = {
+                similarBooksOutput.push({
                   [similarBookTitle]: {
                     similarBookUrl: similarBookUrl,
                     originalBookUrl: url,
                     originalBookTitle: bookTitle,
                     originalBookRating: downloadRating,
                   },
-                };
-
-                similarBooksOutput.push(outputObject);
+                });
               }
             }
           });
@@ -249,36 +802,33 @@ async function imdbMapper(key, value, callback) {
               const similarBookTitle = link.textContent.trim();
               const similarBookUrl = new URL(href, baseURL).href;
 
-              const outputObject = {
+              similarBooksOutput.push({
                 [similarBookTitle]: {
                   similarBookUrl: similarBookUrl,
                   originalBookUrl: url,
                   originalBookTitle: bookTitle,
                   originalBookRating: downloadRating,
                 },
-              };
-
-              similarBooksOutput.push(outputObject);
+              });
             }
           });
         }
 
-        console.log(`Found ${similarBooksOutput.length} similar books`);
+        console.log(
+          `Found ${similarBooksOutput.length} similar books for "${bookTitle}"`
+        );
       } catch (error) {
-        console.error("Error fetching similar books:", error);
+        console.error(
+          `Error fetching similar books for ${url}:`,
+          error.message
+        );
       }
     }
-
-    // console.log(`Book ID: ${bookId}, Title: ${bookTitle}`);
-    // console.log(`Downloads: ${downloadCount} in ${downloadPeriod}`);
-    // console.log(`Rating (downloads per day): ${downloadRating}`);
-    // console.log(`Similar books count: ${similarBooksOutput.length}`);
-    // console.log(`similarBooksOutput is: `, JSON.stringify(similarBooksOutput));
 
     // Return the array of similar books in the requested format
     callback(null, [similarBooksOutput]);
   } catch (error) {
-    console.error("Error fetching or processing HTML:", error);
+    console.error(`Error processing ${url}:`, error.message);
     callback(null, [
       {
         [JSON.stringify({ url: url, rating: "N/A" })]: [],
