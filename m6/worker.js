@@ -1,7 +1,7 @@
-const { parentPort, workerData } = require("worker_threads");
+const {parentPort, workerData} = require('worker_threads');
 
 // Receive data from the main thread
-const { resultBatch, visitedUrlsArray } = workerData;
+const {resultBatch, visitedUrlsArray} = workerData;
 
 // Convert the array back to a Set for efficient lookups
 const localVisitedUrls = new Set(visitedUrlsArray);
@@ -18,7 +18,7 @@ for (const value of resultBatch) {
 
   // Only add URLs we haven't seen before
   if (!localVisitedUrls.has(keyUrl)) {
-    newDataset.push({ [key]: keyUrl });
+    newDataset.push({[key]: keyUrl});
   }
 }
 
