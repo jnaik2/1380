@@ -2,7 +2,6 @@
 # This is the main entry point of the search engine.
 cat /dev/null > d/visited.txt
 cat /dev/null > d/global-index.txt
-cat ./t/d/perf.txt > d/urls.txt
 
 cd "$(dirname "$0")" || exit 1
 
