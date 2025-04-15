@@ -261,16 +261,18 @@ function mr(config) {
                 console.error(e);
               }
               mapResponses++;
+
               if (mapResponses == workerCount) {
+                // console.log("Latencies is: ", JSON.stringify(latencies));
                 let t2 = performance.now();
                 console.log("Calculating performance");
                 console.log("keys length: ", configuration.keys.length);
                 let latency = (t2 - t1) / configuration.keys.length;
                 let throughput = (configuration.keys.length * 1000) / (t2 - t1);
                 let results = {
-                  throughput: throughput,
-                  latency: latency,
-                  time: (t2 - t1) / 1000,
+                  "throughput (urls/s)": throughput,
+                  "average latency (ms)": latency,
+                  "time (s)": (t2 - t1) / 1000,
                 };
                 global.distribution.local.store.put(
                   [results],
@@ -293,6 +295,7 @@ function mr(config) {
                       shuffleArgs,
                       shuffleRemote,
                       (e, v) => {
+                        console.log("Shuffle Values is: ", v);
                         const keyLength = Object.values(v).reduce(
                           (sum, value) => sum + value,
                           0

@@ -85,7 +85,7 @@ async function imdbMapper(key, value, callback) {
   try {
     // Initial random polite delay
     await delay(randomDelay);
-    const html = await fetchHTMLWithRetry(url);
+    const html = await fetchHTMLWithRetry(url + "/related");
     const { JSDOM } = require("jsdom");
     const { URL } = require("url");
     const dom = new JSDOM(html);
@@ -146,10 +146,20 @@ const reducer = (key, values) => {
   return { [key]: values };
 };
 
-const nodes = Array.from({ length: 50 }, (_, i) => ({
-  ip: "127.0.0.1",
-  port: 7310 + i,
-}));
+// const nodes = Array.from({ length: 50 }, (_, i) => ({
+//   ip: "127.0.0.1",
+//   port: 7310 + i,
+// }));
+
+const nodes = [];
+const n1 = { ip: "3.145.76.237", port: 1234 };
+nodes.push(n1);
+const n2 = { ip: "3.149.213.219", port: 1234 };
+nodes.push(n2);
+const n3 = { ip: "3.144.19.33", port: 1234 };
+nodes.push(n3);
+const n4 = { ip: "18.227.0.115", port: 1234 };
+nodes.push(n4);
 
 const imdbGroup = {};
 nodes.forEach((node) => {
@@ -190,6 +200,36 @@ let dataset = [
     "Battleship Potemkin":
       "https://www.allmovie.com/movie/battleship-potemkin-am4535",
   },
+  {
+    "Kuch Kuch Hota Hai":
+      "https://www.allmovie.com/movie/kuch-kuch-hota-hai-am35037",
+  },
+  {
+    "Scent of a Woman":
+      "https://www.allmovie.com/movie/scent-of-a-woman-am20186",
+  },
+  {
+    "12 Years a Slave":
+      "https://www.allmovie.com/movie/12-years-a-slave-am31959",
+  },
+  { Intolerance: "https://www.allmovie.com/movie/intolerance-am16365" },
+  { "The Red Turtle": "https://www.allmovie.com/movie/the-red-turtle-am7919" },
+  { "Atomic Blonde": "https://www.allmovie.com/movie/atomic-blonde-am130715" },
+  { "The Omen": "https://www.allmovie.com/movie/the-omen-am6720" },
+  {
+    "Singin' in the Rain":
+      "https://www.allmovie.com/movie/singin-in-the-rain-am6785",
+  },
+  {
+    "West Side Story":
+      "https://www.allmovie.com/movie/west-side-story-am200156",
+  },
+  {
+    "Silver Linings Playbook":
+      "https://www.allmovie.com/movie/silver-linings-playbook-am15308",
+  },
+  { Avatar: "https://www.allmovie.com/movie/avatar-am3369" },
+  { Akira: "https://www.allmovie.com/movie/akira-am729" },
 ];
 let keys = dataset.map((o) => Object.keys(o)[0]);
 
@@ -217,7 +257,7 @@ async function processResultsParallel(result, visitedUrlsArray) {
 
     // Create a worker for each batch
     batches.forEach((batch) => {
-      const worker = new Worker("./m6/worker.js", {
+      const worker = new Worker("./worker.js", {
         workerData: {
           resultBatch: batch,
           visitedUrlsArray: visitedUrlsArray,

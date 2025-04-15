@@ -4,6 +4,9 @@ const config = {
 };
 const distribution = require("../distribution.js")(config);
 const id = distribution.util.id;
+const Typo = require("typo-js");
+const lang_code = "en_US";
+const dictionary = new Typo(lang_code);
 
 function doActualQuery() {
   const movieName = process.argv[2];
@@ -39,7 +42,9 @@ function doActualQuery() {
   console.log(`Remote is ${remote} and args is ${args}`);
   global.distribution.local.comm.send([args], remote, (e, v) => {
     if (!v) {
+      const array_of_suggestions = dictionary.suggest(movieName);
       console.log(`Nothing was found for ${movieName}`);
+      console.log(`Did you mean: `, array_of_suggestions);
       shutdown();
       return;
     }

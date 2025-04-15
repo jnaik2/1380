@@ -10,7 +10,7 @@ QUERY="$1"
 
 # Run the m6 file in the background
 rm -rf store/*  
-./m6/m6.js &
+./m6.js &
 
 # Get the start time
 start_time=$(date +%s)
@@ -22,7 +22,7 @@ interval=300  # 5 minutes
 # Loop until 2 hours have passed
 while [ $(($(date +%s) - start_time)) -lt $duration ]; do
     timestamp=$(date "+%Y-%m-%d %H:%M:%S")
-    node ./m6/m6Query.js "$QUERY" >> queryPerformance.txt 2>&1
+    node ./m6Query.js "$QUERY" >> queryPerformance.txt 2>&1
     echo "[$timestamp] Received query for \"$QUERY\"" >> queryPerformance.txt
     echo "--------------------------------------------------" >> queryPerformance.txt
     sleep $interval
