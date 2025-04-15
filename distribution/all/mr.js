@@ -59,6 +59,7 @@ function mr(config) {
 
       // Keep track of pending operations
       let pendingOperations = keys.length;
+
       for (const key of keys) {
         global.distribution.local.store.get(
           { key: key, gid: gid },
@@ -107,18 +108,10 @@ function mr(config) {
             callback(e, null);
             return;
           }
-
-          // console.log(
-          //   "IN SHUFFLE with this many values",
-          //   values ? values.length : 0
-          // );
-
           const collection = {};
           values.forEach((innerValue) => {
             innerValue.forEach((value) => {
-              // console.log("Value in values loop: ", values);
               const key = Object.keys(value)[0];
-              // console.log("key", key);
               if (!collection[key]) {
                 collection[key] = [];
               }
@@ -137,7 +130,7 @@ function mr(config) {
                   global.distribution.local.store.del(
                     { key: `mr-map-${jobID}`, gid: gid },
                     (e, v) => {
-                      callback(null, collection);
+                      callback(null, Object.keys(collection).length);
                     }
                   );
                 }
@@ -150,7 +143,6 @@ function mr(config) {
 
     // Reduce
     mrServiceObject.reduce = (gid, reduceFunc, callback) => {
-      // console.log("IN REDUCE");
       global.distribution.local.status.get("sid", (e, v) => {
         const localSid = v;
         global.distribution.local.store.get(
@@ -169,38 +161,55 @@ function mr(config) {
               return;
             }
             for (const key of reduceKeys) {
-              global.distribution.local.store.get(
-                { key: key, gid: gid },
-                (e, value) => {
-                  count++;
-                  const result = reduceFunc(key.slice(11), value);
-                  if (Array.isArray(result)) {
-                    results.push(...result);
-                  } else {
-                    results.push(result);
-                  }
+              // call local.mem.get for key (need to check whehter value is null or not)
+              global.distribution.local.mem.get(key, (e, v) => {
+                let seen;
+                if (v !== null) {
+                  seen = new Set(v);
+                } else {
+                  seen = new Set();
+                }
+                global.distribution.local.store.get(
+                  { key: key, gid: gid },
+                  (e, value) => {
+                    const result = reduceFunc(key.slice(11), value);
+                    if (!seen.has(JSON.stringify(result))) {
+                      results.push(result);
+                      seen.add(JSON.stringify(result));
+                    }
 
-                  global.distribution.local.store.del(
-                    { key: key, gid: gid },
-                    (e, v) => {
-                      global.distribution.local.store.put(
-                        results,
-                        {
-                          key: `local-index-${localSid}`,
-                          gid: "local",
-                          append: "true",
-                        },
+                    // call local.mem.put again
+                    global.distribution.local.mem.put(seen, key, (e, v) => {
+                      if (e) {
+                        console.error(
+                          `Error in mem putting with object: ${seen} and key: ${key}`
+                        );
+                      }
+                      global.distribution.local.store.del(
+                        { key: key, gid: gid },
                         (e, v) => {
+                          count++;
+                          // this is step 4
                           if (count === reduceKeys.length) {
-                            callback(null, results);
-                            return;
+                            global.distribution.local.store.put(
+                              results,
+                              {
+                                key: `local-index-${localSid}`,
+                                gid: "local",
+                                append: "true",
+                              },
+                              (e, v) => {
+                                callback(null, results);
+                                return;
+                              }
+                            );
                           }
                         }
                       );
-                    }
-                  );
-                }
-              );
+                    });
+                  }
+                );
+              });
             }
           }
         );
@@ -246,44 +255,108 @@ function mr(config) {
               method: "map",
               node: groups[sid],
             };
+            let t1 = performance.now();
             global.distribution.local.comm.send(mapArgs, mapRemote, (e, v) => {
               if (e) {
                 console.error(e);
               }
               mapResponses++;
               if (mapResponses == workerCount) {
-                // Start shuffle phase
-                const shuffleArgs = [context.gid, jobID];
-                const shuffleRemote = {
-                  service: mrServiceName,
-                  method: "shuffle",
-                };
-                global.distribution[context.gid].comm.send(
-                  shuffleArgs,
-                  shuffleRemote,
+                let t2 = performance.now();
+                console.log("Calculating performance");
+                console.log("T1: ", t1);
+                console.log("T2: ", t2);
+                console.log("keys length: ", configuration.keys.length);
+                let latency = (t2 - t1) / configuration.keys.length;
+                let throughput = (configuration.keys.length * 1000) / (t2 - t1);
+                let results = { throughput: throughput, latency: latency };
+                global.distribution.local.store.put(
+                  [results],
+                  {
+                    key: `performance-mapper-results`,
+                    gid: "local",
+                    append: "true",
+                  },
                   (e, v) => {
-                    // Start reduce phase
-                    const reduceArgs = [context.gid, configuration.reduce];
-                    const reduceRemote = {
+                    // Start shuffle phase
+                    console.log("Stored performance results error: ", e);
+                    console.log("Stored performance results: ", v);
+                    const shuffleArgs = [context.gid, jobID];
+                    const shuffleRemote = {
                       service: mrServiceName,
-                      method: "reduce",
+                      method: "shuffle",
                     };
+
+                    t1 = performance.now();
                     global.distribution[context.gid].comm.send(
-                      reduceArgs,
-                      reduceRemote,
+                      shuffleArgs,
+                      shuffleRemote,
                       (e, v) => {
-                        // Collect results from all nodes
-                        let reduceResults = [];
-                        for (const value of Object.values(v)) {
-                          if (value !== null) {
-                            reduceResults = reduceResults.concat(value);
-                          }
-                        }
-                        // Remove endpoint
-                        global.distribution[context.gid].routes.rem(
-                          mrServiceName,
-                          (e, _) => {
-                            cb(null, reduceResults);
+                        const keyLength = Object.values(v).reduce(
+                          (sum, value) => sum + value,
+                          0
+                        );
+                        // Start reduce phase
+                        const reduceArgs = [context.gid, configuration.reduce];
+                        const reduceRemote = {
+                          service: mrServiceName,
+                          method: "reduce",
+                        };
+                        global.distribution[context.gid].comm.send(
+                          reduceArgs,
+                          reduceRemote,
+                          (e, v) => {
+                            // t2 = performance.now();
+                            // latency = (t2 - t1) / keyLength;
+                            // throughput = (1000 * keyLength) / (t2 - t1);
+                            // results = {
+                            //   throughput: throughput,
+                            //   latency: latency,
+                            // };
+                            // console.log("Calculating indexer performance");
+                            // console.log("T1: ", t1);
+                            // console.log("T2: ", t2);
+                            // console.log("keys length: " + keyLength);
+
+                            console.log("Stored performance results: ", v2);
+                            let reduceResults = [];
+                            for (const value of Object.values(v)) {
+                              if (value !== null) {
+                                reduceResults = reduceResults.concat(value);
+                              }
+                            }
+
+                            t2 = performance.now();
+                            latency = (t2 - t1) / keyLength;
+                            throughput = (1000 * keyLength) / (t2 - t1);
+                            results = {
+                              throughput: throughput,
+                              latency: latency,
+                            };
+                            console.log("Calculating indexer performance");
+                            console.log("T1: ", t1);
+                            console.log("T2: ", t2);
+                            console.log("keys length: " + keyLength);
+
+                            global.distribution.local.store.put(
+                              [results],
+                              {
+                                key: `performance-indexer-results`,
+                                gid: "local",
+                                append: "true",
+                              },
+                              (e, v2) => {
+                                console.log("Stored performance results: ", v2);
+                                global.distribution[context.gid].routes.rem(
+                                  mrServiceName,
+                                  (e, _) => {
+                                    cb(null, reduceResults);
+                                  }
+                                );
+                              }
+                            );
+                            // Remove endpoint
+                            // Collect results from all nodes
                           }
                         );
                       }

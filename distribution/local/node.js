@@ -11,10 +11,10 @@ const { routes } = require("./local");
 */
 
 const start = function (callback) {
-  console.log("IM STARTING NODE ");
+  // console.log("IM STARTING NODE ");
   const server = http.createServer((req, res) => {
     /* Your server will be listening for PUT requests. */
-    console.log("CREATED SERVER");
+    // console.log("CREATED SERVER");
 
     global.moreStatus["counts"]++;
     if (req.method !== "PUT") {
@@ -28,8 +28,8 @@ const start = function (callback) {
       The url will have the form: http://node_ip:node_port/service/method
     */
 
-    console.log("Paring stuff in node.js");
-    console.log(`Req is ${req}`);
+    // console.log("Paring stuff in node.js");
+    // console.log(`Req is ${req}`);
 
     const urlArr = url.parse(req.url).pathname.split("/");
     const gid = urlArr[urlArr.length - 3];
@@ -65,10 +65,10 @@ const start = function (callback) {
       */
       try {
         // Use a try catch in case the body is not in JSON format
-        console.log("IN NODE");
-        console.log(`Body is ${body}`);
+        // console.log("IN NODE");
+        // console.log(`Body is ${body}`);
         const args = deserialize(body.join(""));
-        console.log(`Args is ${args}`);
+        // console.log(`Args is ${args}`);
         routes.get({ service: service, gid: gid }, (e1, s) => {
           if (e1) {
             res.statusCode = 404;

@@ -99,8 +99,8 @@ function deserialize(string) {
 }
 
 function deserializeRecursive(json, referenceMap) {
-  console.log("IN RECURSIVE");
-  console.log(json);
+  // console.log("IN RECURSIVE");
+  // console.log(json);
   const value = json["value"];
   const id = json["id"];
   const type = json["type"];

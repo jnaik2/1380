@@ -18,9 +18,9 @@ const { serialize, deserialize } = require("../util/util");
  * @return {void}
  */
 function send(message, remote, callback) {
-  console.log("IM COMMING IT 2");
+  // console.log("IM COMMING IT 2");
   const callBack = callback || console.log;
-  console.log(`Remote is ${JSON.stringify(remote)}`);
+  // console.log(`Remote is ${JSON.stringify(remote)}`);
   if (!remote) {
     callBack(new Error("Remote not specified"), null);
     return;
@@ -48,7 +48,7 @@ function send(message, remote, callback) {
   }
 
   const postData = serialize(message);
-  console.log(`Serialized message is ${postData}`);
+  // console.log(`Serialized message is ${postData}`);
   const options = {
     hostname: remote.node.ip,
     port: remote.node.port,

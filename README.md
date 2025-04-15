@@ -140,12 +140,9 @@ My implementation consists of 5 main components: local store, local mem, distrib
 
 > Describe how you characterized the correctness and performance of your implementation
 
+_Correctness_ -- I implemented 5 tests and they test distributed & local store & mem with consistent hashing. They covered the core functionality of put, get, and del calls, especially the edge case where even the same key in different groups should not be retrieved.
 
-*Correctness* -- I implemented 5 tests and they test distributed & local store & mem with consistent hashing. They covered the core functionality of put, get, and del calls, especially the edge case where even the same key in different groups should not be retrieved.
-
-
-*Performance* -- The average latency for inserting was 11 ms and the throughput is 100 req/s. The average latency for querying is 5 ms and the throughput is 200 req/s
-
+_Performance_ -- The average latency for inserting was 11 ms and the throughput is 100 req/s. The average latency for querying is 5 ms and the throughput is 200 req/s
 
 ## Key Feature
 
@@ -153,3 +150,22 @@ My implementation consists of 5 main components: local store, local mem, distrib
 
 This avoids unnecessary work. Suppose not all objects need to be relocated, then the overhead of retrieving the objects from all the nodes is unnecessary, whereas if the keys need to be relocated we can first determine that locally and then relocate only the objects that need to be moved instead of all of them.
 
+# M6: Cloud Deployment
+
+## Summarize the process of writing the paper and preparing the poster, including any surprises you encountered.
+
+## Roughly, how many hours did M6 take you to complete?
+
+Hours: 80
+
+## How many LoC did the distributed version of the project end up taking?
+
+DLoC: 725
+
+## How does this number compare with your non-distributed version?
+
+LoC: 1050 predicted
+
+## How different are these numbers for different members in the team and why?
+
+ion wanna tell yo bich ass
