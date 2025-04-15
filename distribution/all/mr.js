@@ -127,12 +127,10 @@ function mr(config) {
           });
           let count = 0;
           for (const key in collection) {
-            const lastIndex = key.lastIndexOf("/");
-            const tConst = key.substring(lastIndex + 1);
-            // console.log(tConst);
+            // console.log(key);
             global.distribution[gid].store.put(
               collection[key],
-              { key: `mr-shuffle-${tConst}`, append: "true" },
+              { key: `mr-shuffle-${key}`, append: "true" },
               (e, v) => {
                 count++;
                 if (count === Object.keys(collection).length) {

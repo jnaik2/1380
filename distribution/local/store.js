@@ -61,7 +61,7 @@ function put(state, configuration, callback) {
 }
 
 function get(configuration, callback) {
-  // console.log("IM GETTING IT");
+  console.log("IM GETTING IT");
   const nid = global.moreStatus["nid"];
   let key = null;
   let gid = "local";
@@ -72,6 +72,7 @@ function get(configuration, callback) {
     gid = configuration.gid;
   }
 
+  console.log(`Key is ${key} and gid is ${gid} in store.get`);
   if (!key) {
     // return all possible keys
     const dirPath = path.join(process.cwd(), `/store/${nid}/${gid}`);
@@ -94,6 +95,7 @@ function get(configuration, callback) {
 
   const filepath = path.join(process.cwd(), `/store/${nid}/${gid}/${key}`);
   // console.log('GET filepath', filepath);
+  console.log(`Filepath is ${filepath}`);
   fs.readFile(filepath, (err, data) => {
     if (err) {
       // console.log('Error reading file:', err, configuration);

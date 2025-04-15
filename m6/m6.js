@@ -145,7 +145,7 @@ const reducer = (key, values) => {
   return { [key]: values };
 };
 
-const nodes = Array.from({ length: 60 }, (_, i) => ({
+const nodes = Array.from({ length: 100 }, (_, i) => ({
   ip: "127.0.0.1",
   port: 7310 + i,
 }));
