@@ -2,12 +2,13 @@
 const { log } = require("console");
 const distribution = require("../config.js");
 const id = distribution.util.id;
+const { Worker } = require("worker_threads");
 
 // Define the mapper function
 // Helper function to fetch HTML content (Refactored to return a Promise)
 
 async function imdbMapper(key, value, callback) {
-  const randomDelay = Math.random() * 5000;
+  const randomDelay = Math.random() * 1000;
   const url = value;
 
   function delay(ms) {
@@ -63,11 +64,11 @@ async function imdbMapper(key, value, callback) {
       return await fetchHTML(url);
     } catch (err) {
       if ((err.retryable && err.statusCode === 503) || attempts > 0) {
-        console.warn(
-          `Fetch failed, retrying (try #${numTry} after long delay... (${url})`
-        );
+        // console.warn(
+        //   `Fetch failed, retrying (try #${numTry} after long delay... (${url})`
+        // );
         // Try exponential backoff delay
-        const delayTime = Math.random() * Math.pow(5, 6 - attempts) * 1000;
+        const delayTime = Math.random() * (6 - attempts + 2) * 15000;
         await delay(delayTime + randomDelay);
         return fetchHTMLWithRetry(url, attempts - 1);
       } else {
@@ -145,7 +146,7 @@ const reducer = (key, values) => {
   return { [key]: values };
 };
 
-const nodes = Array.from({ length: 100 }, (_, i) => ({
+const nodes = Array.from({ length: 50 }, (_, i) => ({
   ip: "127.0.0.1",
   port: 7310 + i,
 }));
@@ -173,28 +174,91 @@ let dataset = [
   },
   { "Star Trek": "https://www.allmovie.com/movie/star-trek-am19526" },
   { Incendies: "https://www.allmovie.com/movie/incendies-am23857" },
+  {
+    "Slumdog Millionaire":
+      "https://www.allmovie.com/movie/slumdog-millionaire-am15508",
+  },
+  { Tsotsi: "https://www.allmovie.com/movie/tsotsi-am6781" },
+  {
+    "In the Mood for Love":
+      "https://www.allmovie.com/movie/in-the-mood-for-love-am6759",
+  },
+  {
+    "Wings of Desire": "https://www.allmovie.com/movie/wings-of-desire-am6275",
+  },
+  {
+    "Battleship Potemkin":
+      "https://www.allmovie.com/movie/battleship-potemkin-am4535",
+  },
 ];
 let keys = dataset.map((o) => Object.keys(o)[0]);
 
 const visitedUrls = new Set();
 const visitedTitles = new Set();
+const os = require("os");
 
-async function runIterations(localServer, maxIters = 10) {
-  for (let i = 0; i < 10; i++) {
-    console.log("Iteration:", i);
-    // Change this to log to a file instead of the console
+// Determine number of CPU cores for optimal threading
+const NUM_CPUS = os.cpus().length;
+const BATCH_SIZE = 1000; // Adjust based on your dataset size
 
+// Main thread function to split processing across workers
+async function processResultsParallel(result, visitedUrlsArray) {
+  return new Promise((resolve) => {
+    const batches = [];
+    const batchSize = Math.ceil(result.length / NUM_CPUS);
+
+    // Split results into batches
+    for (let i = 0; i < result.length; i += batchSize) {
+      batches.push(result.slice(i, i + batchSize));
+    }
+
+    let completedWorkers = 0;
+    let combinedResults = [];
+
+    // Create a worker for each batch
+    batches.forEach((batch) => {
+      const worker = new Worker("./m6/worker.js", {
+        workerData: {
+          resultBatch: batch,
+          visitedUrlsArray: visitedUrlsArray,
+        },
+      });
+
+      worker.on("message", (newDataset) => {
+        combinedResults = combinedResults.concat(newDataset);
+        completedWorkers++;
+
+        if (completedWorkers === batches.length) {
+          resolve(combinedResults);
+        }
+      });
+
+      worker.on("error", (err) => {
+        console.error("Worker error:", err);
+        completedWorkers++;
+
+        if (completedWorkers === batches.length) {
+          resolve(combinedResults);
+        }
+      });
+    });
+  });
+}
+
+async function runIterations(localServer, maxIters = 100) {
+  for (let i = 0; i < maxIters; i++) {
+    console.log("Starting iteration " + i);
     await new Promise((resolve) => {
       let counter = 0;
-      keys = dataset.map((o) => Object.keys(o)[0]);
+      const keys = dataset.map((o) => Object.keys(o)[0]);
       const fs = require("fs");
       const logStream = fs.createWriteStream("log.txt", { flags: "a" });
       logStream.write(`Iteration ${i}:\n`);
       logStream.write("Dataset Size: " + dataset.length + "\n");
       logStream.write("Visited URL Size: " + visitedUrls.size + "\n");
+
       dataset.forEach((entry) => {
         const key = Object.keys(entry)[0];
-
         const value = entry[key];
         visitedUrls.add(value);
         visitedTitles.add(key);
@@ -204,23 +268,27 @@ async function runIterations(localServer, maxIters = 10) {
           if (counter === dataset.length) {
             distribution.imdbGroup.mr.exec(
               { keys: keys, map: imdbMapper, reduce: reducer },
-              (err, result) => {
+              async (err, result) => {
                 if (err) {
                   console.error("MapReduce failed:", err);
+                  resolve();
                 } else {
-                  dataset = [];
+                  console.log("Processing result in parallel...");
 
-                  for (const value of result) {
-                    const key = Object.keys(value)[0];
-                    const keyUrl = value[key][0].keyUrl;
+                  // Convert Set to Array for passing to workers
+                  const visitedUrlsArray = Array.from(visitedUrls);
 
-                    if (!visitedUrls.has(keyUrl)) {
-                      dataset.push({ [key]: keyUrl });
-                    }
-                  }
+                  // Process results in parallel
+                  dataset = await processResultsParallel(
+                    result,
+                    visitedUrlsArray
+                  );
+
+                  console.log(
+                    `Processed ${result.length} URLs, found ${dataset.length} new URLs`
+                  );
+                  resolve();
                 }
-
-                resolve();
               }
             );
           }
@@ -228,7 +296,6 @@ async function runIterations(localServer, maxIters = 10) {
       });
     });
   }
-
   shutdownAll(localServer);
 }
 

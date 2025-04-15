@@ -50,7 +50,6 @@ function mr(config) {
 
     // Map
     mrServiceObject.map = (keys, mapFunc, gid, jobID, callback) => {
-      // console.log("IN MAP with this many keys", keys.length);
       const results = [];
       if (keys.length === 0) {
         callback(null, []);
@@ -67,7 +66,7 @@ function mr(config) {
             try {
               const result = mapFunc(key, value, (err, mapResult) => {
                 if (err) {
-                  console.error("Mapper error:", err);
+                  // console.error("Mapper error:", err);
                 } else if (Array.isArray(mapResult)) {
                   results.push(...mapResult);
                 } else {
@@ -234,6 +233,7 @@ function mr(config) {
 
     // Invocation
     const mrServiceName = `mr-${jobID}`;
+    console.log("Creating service: ");
     global.distribution[context.gid].routes.put(
       mrServiceObject,
       mrServiceName,
@@ -264,12 +264,14 @@ function mr(config) {
               if (mapResponses == workerCount) {
                 let t2 = performance.now();
                 console.log("Calculating performance");
-                console.log("T1: ", t1);
-                console.log("T2: ", t2);
                 console.log("keys length: ", configuration.keys.length);
                 let latency = (t2 - t1) / configuration.keys.length;
                 let throughput = (configuration.keys.length * 1000) / (t2 - t1);
-                let results = { throughput: throughput, latency: latency };
+                let results = {
+                  throughput: throughput,
+                  latency: latency,
+                  time: (t2 - t1) / 1000,
+                };
                 global.distribution.local.store.put(
                   [results],
                   {
@@ -279,7 +281,6 @@ function mr(config) {
                   },
                   (e, v) => {
                     // Start shuffle phase
-                    console.log("Stored performance results error: ", e);
                     console.log("Stored performance results: ", v);
                     const shuffleArgs = [context.gid, jobID];
                     const shuffleRemote = {
@@ -306,19 +307,6 @@ function mr(config) {
                           reduceArgs,
                           reduceRemote,
                           (e, v) => {
-                            // t2 = performance.now();
-                            // latency = (t2 - t1) / keyLength;
-                            // throughput = (1000 * keyLength) / (t2 - t1);
-                            // results = {
-                            //   throughput: throughput,
-                            //   latency: latency,
-                            // };
-                            // console.log("Calculating indexer performance");
-                            // console.log("T1: ", t1);
-                            // console.log("T2: ", t2);
-                            // console.log("keys length: " + keyLength);
-
-                            console.log("Stored performance results: ", v2);
                             let reduceResults = [];
                             for (const value of Object.values(v)) {
                               if (value !== null) {
@@ -327,15 +315,14 @@ function mr(config) {
                             }
 
                             t2 = performance.now();
-                            latency = (t2 - t1) / keyLength;
-                            throughput = (1000 * keyLength) / (t2 - t1);
+                            let latency = (t2 - t1) / keyLength;
+                            let throughput = (keyLength * 1000) / (t2 - t1);
                             results = {
                               throughput: throughput,
                               latency: latency,
+                              time: (t2 - t1) / 1000,
                             };
                             console.log("Calculating indexer performance");
-                            console.log("T1: ", t1);
-                            console.log("T2: ", t2);
                             console.log("keys length: " + keyLength);
 
                             global.distribution.local.store.put(
@@ -350,13 +337,12 @@ function mr(config) {
                                 global.distribution[context.gid].routes.rem(
                                   mrServiceName,
                                   (e, _) => {
+                                    console.log("Removed service");
                                     cb(null, reduceResults);
                                   }
                                 );
                               }
                             );
-                            // Remove endpoint
-                            // Collect results from all nodes
                           }
                         );
                       }
