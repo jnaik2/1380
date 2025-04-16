@@ -146,10 +146,10 @@ const reducer = (key, values) => {
   return { [key]: values };
 };
 
-// const nodes = Array.from({ length: 10 }, (_, i) => ({
-//   ip: "127.0.0.1",
-//   port: 7310 + i,
-// }));
+const nodes = Array.from({ length: 3 }, (_, i) => ({
+  ip: "127.0.0.1",
+  port: 7310 + i,
+}));
 
 // const nodes = [];
 // const n1 = { ip: "3.145.76.237", port: 1234 };
@@ -183,7 +183,7 @@ const reducer = (key, values) => {
 // const n15 = { ip: "3.128.95.181", port: 1234 };
 // nodes.push(n15);
 
-const nodes = [];
+// const nodes = [];
 // const n1 = { ip: "3.145.76.237", port: 1234 };
 // nodes.push(n1);
 // const n2 = { ip: "3.149.213.219", port: 1234 };
@@ -192,12 +192,12 @@ const nodes = [];
 // nodes.push(n3);
 // const n4 = { ip: "18.227.0.115", port: 1234 };
 // nodes.push(n4);
-const n5 = { ip: "3.144.42.193", port: 1234 };
-nodes.push(n5);
-const n6 = { ip: "3.128.87.180", port: 1234 };
-nodes.push(n6);
-const n7 = { ip: "13.58.20.60", port: 1234 };
-nodes.push(n7);
+// const n5 = { ip: "3.144.42.193", port: 1234 };
+// nodes.push(n5);
+// const n6 = { ip: "3.128.87.180", port: 1234 };
+// nodes.push(n6);
+// const n7 = { ip: "13.58.20.60", port: 1234 };
+// nodes.push(n7);
 // const n8 = { ip: "3.135.186.61", port: 1234 };
 // nodes.push(n8);
 // const n9 = { ip: "3.140.196.218", port: 1234 };
@@ -397,24 +397,24 @@ async function runIterations(localServer, maxIters = 100) {
   shutdownAll(localServer);
 }
 
-// function startNodes(cb) {
-//   const startNext = (index) => {
-//     if (index >= nodes.length) return cb();
-//     distribution.local.status.spawn(nodes[index], () => startNext(index + 1));
-//   };
-//   startNext(0);
-// }
+function startNodes(cb) {
+  const startNext = (index) => {
+    if (index >= nodes.length) return cb();
+    distribution.local.status.spawn(nodes[index], () => startNext(index + 1));
+  };
+  startNext(0);
+}
 
 distribution.node.start((localServer) => {
   console.log("Local node (orchestrator) started");
 
-  // startNodes(() => {
-  distribution.local.groups.put(groupConfig, imdbGroup, () => {
-    distribution.imdbGroup.groups.put(groupConfig, imdbGroup, () => {
-      runIterations(localServer);
+  startNodes(() => {
+    distribution.local.groups.put(groupConfig, imdbGroup, () => {
+      distribution.imdbGroup.groups.put(groupConfig, imdbGroup, () => {
+        runIterations(localServer);
+      });
     });
   });
-  // });
 });
 
 // distribution.local.groups.put(groupConfig, imdbGroup, () => {
