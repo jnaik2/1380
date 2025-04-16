@@ -61,7 +61,7 @@ function put(state, configuration, callback) {
 }
 
 function get(configuration, callback) {
-  // console.log("IM GETTING IT");
+  console.error("IM GETTING IT");
   const nid = global.moreStatus["nid"];
   let key = null;
   let gid = "local";
@@ -72,10 +72,16 @@ function get(configuration, callback) {
     gid = configuration.gid;
   }
 
-  // console.log(`Key is ${key} and gid is ${gid} in store.get`);
+  let dir;
+  if ("aws" in configuration && configuration.aws === "true") {
+    dir = "/home/ubuntu/1380";
+  } else {
+    dir = process.cwd();
+  }
   if (!key) {
+    // console.log(`Key is ${key} and gid is ${gid} in store.get`);
     // return all possible keys
-    const dirPath = path.join(process.cwd(), `/store/${nid}/${gid}`);
+    const dirPath = path.join(dir, `/store/${nid}/${gid}`);
     if (!fs.existsSync(dirPath)) {
       callback(new Error("No value found for key: " + configuration), null);
       return;
@@ -93,12 +99,12 @@ function get(configuration, callback) {
     return;
   }
 
-  const filepath = path.join(process.cwd(), `/store/${nid}/${gid}/${key}`);
-  // console.log('GET filepath', filepath);
+  const filepath = path.join(dir, `/store/${nid}/${gid}/${key}`);
+  console.log("GET filepath", filepath);
   // console.log(`Filepath is ${filepath}`);
   fs.readFile(filepath, (err, data) => {
     if (err) {
-      // console.log('Error reading file:', err, configuration);
+      console.error("Error reading file:", err, configuration);
       callback(new Error(err), null);
     } else {
       const obj = deserialize(data.toString());
