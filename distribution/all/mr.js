@@ -58,6 +58,7 @@ function mr(config) {
 
       // Keep track of pending operations
       let pendingOperations = keys.length;
+      console.log(`Number of pending operations is: ${pendingOperations}}`);
 
       for (const key of keys) {
         global.distribution.local.store.get(
@@ -73,6 +74,9 @@ function mr(config) {
                   results.push(mapResult);
                 }
                 pendingOperations--;
+                console.log(
+                  `Number of pending operations is: ${pendingOperations}}`
+                );
                 checkCompletion();
               });
             } catch (error) {
@@ -100,6 +104,7 @@ function mr(config) {
     // Shuffle
     mrServiceObject.shuffle = (gid, jobID, callback) => {
       // Retrieve map results
+      console.log("Started shuffle method");
       global.distribution.local.store.get(
         { key: `mr-map-${jobID}`, gid: gid },
         (e, values) => {
@@ -118,6 +123,12 @@ function mr(config) {
             });
           });
           let count = 0;
+          console.log("Done collection method");
+          console.log(`Collection is ${JSON.stringify(collection)}`);
+          if (Object.keys(collection).length == 0) {
+            console.log("reached 0 case for collection");
+            callback(null, 0);
+          }
           for (const key in collection) {
             // console.log(key);
             global.distribution[gid].store.put(
@@ -125,10 +136,17 @@ function mr(config) {
               { key: `mr-shuffle-${key}`, append: "true" },
               (e, v) => {
                 count++;
+                console.log(
+                  `Count is ${count} and we need ${
+                    Object.keys(collection).length
+                  }`
+                );
                 if (count === Object.keys(collection).length) {
+                  console.log(`Reached to go into reducer`);
                   global.distribution.local.store.del(
                     { key: `mr-map-${jobID}`, gid: gid },
                     (e, v) => {
+                      console.log(`deleted in shuffle`);
                       callback(null, Object.keys(collection).length);
                     }
                   );
@@ -142,6 +160,7 @@ function mr(config) {
 
     // Reduce
     mrServiceObject.reduce = (gid, reduceFunc, callback) => {
+      console.log(`Reached reducer`);
       global.distribution.local.status.get("sid", (e, v) => {
         const localSid = v;
         global.distribution.local.store.get(
@@ -295,7 +314,8 @@ function mr(config) {
                       shuffleArgs,
                       shuffleRemote,
                       (e, v) => {
-                        console.log("Shuffle Values is: ", v);
+                        console.log("Started shuffle");
+                        // console.log("Shuffle Values is: ", v);
                         const keyLength = Object.values(v).reduce(
                           (sum, value) => sum + value,
                           0
@@ -310,6 +330,7 @@ function mr(config) {
                           reduceArgs,
                           reduceRemote,
                           (e, v) => {
+                            console.log("Started reducing");
                             let reduceResults = [];
                             for (const value of Object.values(v)) {
                               if (value !== null) {
