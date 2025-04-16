@@ -42,6 +42,7 @@ function doActualQuery() {
   };
   console.log(`Remote is ${remote} and args is ${args}`);
   global.distribution.local.comm.send([args], remote, (e, v) => {
+    console.log(e);
     if (!v) {
       // const arrayOfSuggestions = dictionary.suggest(movieName);
       console.log(`Nothing was found for ${movieName}`);
@@ -49,20 +50,43 @@ function doActualQuery() {
       shutdown();
       return;
     }
-    let res;
-    for (let i = 0; i < v.length; i++) {
-      if (v[i][movieName]) {
-        res = v[i][movieName];
-        break;
+    // let res = [];
+    // for (let i = 0; i < v.length; i++) {
+    //   if (v[i][movieName]) {
+    //     res = res.concat(v[i][movieName]);
+    //   }
+    // }
+    let res = [];
+    const seen = new Set();
+
+    v.forEach((entry) => {
+      const results = entry[movieName];
+      if (results) {
+        results.forEach((item) => {
+          if (!seen.has(item.sourceURL)) {
+            seen.add(item.sourceURL);
+            res.push(item);
+          }
+        });
       }
-    }
-    const sorted = res.sort((a, b) => {
-      if (b.sourceRating !== a.sourceRating) {
-        return b.sourceRating - a.sourceRating;
-      }
-      return a.sourceName.localeCompare(b.sourceName);
     });
-    console.log(sorted);
+    console.log(res);
+    console.log("----------------------------------");
+    if (res.length === 1) {
+      console.log("Reached here");
+      console.log(res);
+      console.log(res.length);
+    } else {
+      const sorted = res.sort((a, b) => {
+        if (b.sourceRating !== a.sourceRating) {
+          return b.sourceRating - a.sourceRating;
+        }
+        return a.sourceName.localeCompare(b.sourceName);
+      });
+      console.log(sorted);
+      console.log(sorted.length);
+    }
+
     shutdown();
   });
 }

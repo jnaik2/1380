@@ -17,7 +17,7 @@ start_time=$(date +%s)
 
 # Run for 8 hours (28800 seconds)
 duration=28800
-interval=300  # 5 minutes
+interval=30  # 5 minutes
 
 # Loop until 2 hours have passed
 while [ $(($(date +%s) - start_time)) -lt $duration ]; do
