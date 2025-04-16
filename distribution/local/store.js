@@ -107,6 +107,54 @@ function get(configuration, callback) {
   });
 }
 
+function awsGet(configuration, callback) {
+  console.log("IM GETTING IT");
+  const nid = global.moreStatus["nid"];
+  let key = null;
+  let gid = "local";
+  if (typeof configuration === "string") {
+    key = configuration;
+  } else if (configuration != null) {
+    key = configuration.key;
+    gid = configuration.gid;
+  }
+
+  // console.log(`Key is ${key} and gid is ${gid} in store.get`);
+  const dir = "/home/ubuntu/1380";
+  if (!key) {
+    // return all possible keys
+    const dirPath = path.join(dir, `/store/${nid}/${gid}`);
+    if (!fs.existsSync(dirPath)) {
+      callback(new Error("No value found for key: " + configuration), null);
+      return;
+    }
+    const files = fs.readdirSync(dirPath);
+    const data = [];
+
+    files.forEach((file) => {
+      const filepath = path.join(dirPath, file);
+      // get the last part of the path
+      data.push(path.basename(filepath));
+      // console.log('fileData', fileData.toString());
+    });
+    callback(null, data);
+    return;
+  }
+
+  const filepath = path.join(dir, `/store/${nid}/${gid}/${key}`);
+  console.log("GET filepath", filepath);
+  // console.log(`Filepath is ${filepath}`);
+  fs.readFile(filepath, (err, data) => {
+    if (err) {
+      // console.log('Error reading file:', err, configuration);
+      callback(new Error(err), null);
+    } else {
+      const obj = deserialize(data.toString());
+      callback(null, obj);
+    }
+  });
+}
+
 function del(configuration, callback) {
   const nid = global.moreStatus["nid"];
   let key;
@@ -143,4 +191,4 @@ function del(configuration, callback) {
   }
 }
 
-module.exports = { put, get, del };
+module.exports = { put, get, del, awsGet };

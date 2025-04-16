@@ -1,8 +1,9 @@
-const {id} = require('../util/util');
+const { awsGet } = require("../local/store");
+const { id } = require("../util/util");
 
 function store(config) {
   const context = {};
-  context.gid = config.gid || 'all';
+  context.gid = config.gid || "all";
   context.hash = config.hash || id.consistentHash;
 
   /* For the distributed store service, the configuration will
@@ -24,9 +25,41 @@ function store(config) {
         const nid = context.hash(kid, nids);
         for (const node of Object.values(group)) {
           if (id.getNID(node) === nid) {
-            global.distribution.local.comm.send([{key: configuration, gid: context.gid}], {node: node, service: 'store', method: 'get'}, (err, res) => {
-              callback(err, res);
-            });
+            global.distribution.local.comm.send(
+              [{ key: configuration, gid: context.gid }],
+              { node: node, service: "store", method: "get" },
+              (err, res) => {
+                callback(err, res);
+              }
+            );
+          }
+        }
+      });
+    },
+
+    awsGet: (configuration, callback) => {
+      const kid = id.getID(configuration);
+      global.distribution.local.groups.get(context.gid, (err, group) => {
+        if (err) {
+          callback(err, null);
+          return;
+        }
+
+        const nids = [];
+        Object.values(group).forEach((node) => {
+          nids.push(id.getNID(node));
+        });
+
+        const nid = context.hash(kid, nids);
+        for (const node of Object.values(group)) {
+          if (id.getNID(node) === nid) {
+            global.distribution.local.comm.send(
+              [{ key: configuration, gid: context.gid }],
+              { node: node, service: "store", method: "awsGet" },
+              (err, res) => {
+                callback(err, res);
+              }
+            );
           }
         }
       });
@@ -35,11 +68,11 @@ function store(config) {
     put: (state, configuration, callback) => {
       let kid;
       let key;
-      let append = 'false';
+      let append = "false";
       if (!configuration) {
-        kid = id.getID((id.getID(state)));
+        kid = id.getID(id.getID(state));
         key = id.getID(state);
-      } else if (typeof configuration === 'string') {
+      } else if (typeof configuration === "string") {
         kid = id.getID(configuration);
         key = configuration;
       } else {
@@ -61,13 +94,16 @@ function store(config) {
           nids.push(id.getNID(node));
         });
 
-
         const nid = context.hash(kid, nids);
         for (const node of Object.values(group)) {
           if (id.getNID(node) === nid) {
-            global.distribution.local.comm.send([state, {'key': key, 'gid': context.gid, 'append': append}], {node: node, service: 'store', method: 'put'}, (err, res) => {
-              callback(err, res);
-            });
+            global.distribution.local.comm.send(
+              [state, { key: key, gid: context.gid, append: append }],
+              { node: node, service: "store", method: "put" },
+              (err, res) => {
+                callback(err, res);
+              }
+            );
           }
         }
       });
@@ -89,17 +125,20 @@ function store(config) {
         const nid = context.hash(kid, nids);
         for (const node of Object.values(group)) {
           if (id.getNID(node) === nid) {
-            global.distribution.local.comm.send([{key: configuration, gid: context.gid}], {node: node, service: 'store', method: 'del'}, (err, res) => {
-              callback(err, res);
-            });
+            global.distribution.local.comm.send(
+              [{ key: configuration, gid: context.gid }],
+              { node: node, service: "store", method: "del" },
+              (err, res) => {
+                callback(err, res);
+              }
+            );
           }
         }
       });
     },
 
-    reconf: (configuration, callback) => {
-    },
+    reconf: (configuration, callback) => {},
   };
-};
+}
 
 module.exports = store;

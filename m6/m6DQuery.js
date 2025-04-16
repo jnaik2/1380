@@ -56,7 +56,7 @@ function doActualQuery() {
   // we have the node we want to get to
   // send local comm send and then access local-index through sid, then JSON parse, then return the key value pair.
   remote = {
-    method: "get",
+    method: "awsGet",
     service: "store",
     node: nidToNode[nidToGoTo],
   };
