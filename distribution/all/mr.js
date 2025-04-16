@@ -159,6 +159,8 @@ function mr(config) {
                 callback(null, null);
                 return;
               }
+
+              // we are just storing 1 keys results instead of all of them
               for (const key of reduceKeys) {
               // call local.mem.get for key (need to check whehter value is null or not)
                 global.distribution.local.mem.get(key, (e, v) => {
@@ -189,17 +191,17 @@ function mr(config) {
                               (e, v) => {
                                 count++;
                                 // this is step 4
-                                const seenResults = [...seen];
+                                // const seenResults = [...seen];
                                 if (count === reduceKeys.length) {
                                   global.distribution.local.store.put(
-                                      seenResults,
+                                      results,
                                       {
                                         key: `local-index-${localSid}`,
                                         gid: 'local',
                                         append: 'true',
                                       },
                                       (e, v) => {
-                                        callback(null, seenResults);
+                                        callback(null, results);
                                         return;
                                       },
                                   );

@@ -1,19 +1,11 @@
-Iteration 0:
+Iteration 0: (0 Results)
 
-NidtoGoTo is 6bc6c1f826393d6d93ef4f614c0b667cf618f534d75f0253e5bca12a08a5b21b
 Remote is [object Object] and args is [object Object]
-No Results
+Nothing was found for Pulp Fiction
 
 
+Iteration 1: (6 Results)
 
-
-
-
-
-Iteration 1:
-
-NidtoGoTo is 6bc6c1f826393d6d93ef4f614c0b667cf618f534d75f0253e5bca12a08a5b21b
-Remote is [object Object] and args is [object Object]
 [
   {
     keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
@@ -54,10 +46,1981 @@ Remote is [object Object] and args is [object Object]
 ]
 
 
+Iteration 2: (89 Results)
+
+Remote is [object Object] and args is [object Object]
+[
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/apocalypse-now-am2812',
+    sourceRating: 9,
+    sourceName: 'Apocalypse Now'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/fargo-am6379',
+    sourceRating: 9,
+    sourceName: 'Fargo'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/inception-am23858',
+    sourceRating: 9,
+    sourceName: 'Inception'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/one-flew-over-the-cuckoos-nest-am6518',
+    sourceRating: 9,
+    sourceName: "One Flew Over the Cuckoo's Nest"
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-godfather-am6349',
+    sourceRating: 9,
+    sourceName: 'The Godfather'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-godfather-part-ii-am6351',
+    sourceRating: 9,
+    sourceName: 'The Godfather Part II'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-lord-of-the-rings-the-return-of-the-king-am2541',
+    sourceRating: 9,
+    sourceName: 'The Lord of the Rings: The Return of the King'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/a-hard-days-night-am6671',
+    sourceRating: 8,
+    sourceName: "A Hard Day's Night"
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/being-john-malkovich-am4708',
+    sourceRating: 8,
+    sourceName: 'Being John Malkovich'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/boogie-nights-am7496',
+    sourceRating: 8,
+    sourceName: 'Boogie Nights'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/donnie-darko-am6273',
+    sourceRating: 8,
+    sourceName: 'Donnie Darko'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/easy-rider-am6602',
+    sourceRating: 8,
+    sourceName: 'Easy Rider'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/goodfellas-am6700',
+    sourceRating: 8,
+    sourceName: 'Goodfellas'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/life-of-pi-am33178',
+    sourceRating: 8,
+    sourceName: 'Life of Pi'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/magnolia-am3723',
+    sourceRating: 8,
+    sourceName: 'Magnolia'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/marathon-man-am21935',
+    sourceRating: 8,
+    sourceName: 'Marathon Man'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/memento-am4324',
+    sourceRating: 8,
+    sourceName: 'Memento'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/mulholland-drive-am5628',
+    sourceRating: 8,
+    sourceName: 'Mulholland Drive'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/requiem-for-a-dream-am6618',
+    sourceRating: 8,
+    sourceName: 'Requiem for a Dream'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/tenet-am209067',
+    sourceRating: 8,
+    sourceName: 'Tenet'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-green-mile-am6508',
+    sourceRating: 8,
+    sourceName: 'The Green Mile'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-lord-of-the-rings-the-two-towers-am2542',
+    sourceRating: 8,
+    sourceName: 'The Lord of the Rings: The Two Towers'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/top-gun-maverick-am147804',
+    sourceRating: 8,
+    sourceName: 'Top Gun: Maverick'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/2001-a-space-odyssey-am230',
+    sourceRating: 7,
+    sourceName: '2001: A Space Odyssey'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/alice-in-wonderland-am788',
+    sourceRating: 7,
+    sourceName: 'Alice in Wonderland'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/birdman-or-the-unexpected-virtue-of-ignorance-am5109',
+    sourceRating: 7,
+    sourceName: 'Birdman or (The Unexpected Virtue of Ignorance)'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/eraserhead-am6863',
+    sourceRating: 7,
+    sourceName: 'Eraserhead'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/fantasia-am6690',
+    sourceRating: 7,
+    sourceName: 'Fantasia'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/fight-club-am6546',
+    sourceRating: 7,
+    sourceName: 'Fight Club'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/good-will-hunting-am6502',
+    sourceRating: 7,
+    sourceName: 'Good Will Hunting'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/halloween-am6843',
+    sourceRating: 7,
+    sourceName: 'Halloween'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/lenny-am2005',
+    sourceRating: 7,
+    sourceName: 'Lenny'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-blues-brothers-am6196',
+    sourceRating: 7,
+    sourceName: 'The Blues Brothers'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-discreet-charm-of-the-bourgeoisie-am13056',
+    sourceRating: 7,
+    sourceName: 'The Discreet Charm of the Bourgeoisie'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-shape-of-water-am143543',
+    sourceRating: 7,
+    sourceName: 'The Shape of Water'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-thing-am6886',
+    sourceRating: 7,
+    sourceName: 'The Thing'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/tommy-am23156',
+    sourceRating: 7,
+    sourceName: 'Tommy'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/willy-wonka-the-chocolate-factory-am32729',
+    sourceRating: 7,
+    sourceName: 'Willy Wonka &amp; the Chocolate Factory'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/in-the-line-of-fire-am20074',
+    sourceRating: 6,
+    sourceName: 'In the Line of Fire'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/inland-empire-am7162',
+    sourceRating: 6,
+    sourceName: 'Inland Empire'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/killer-joe-am25220',
+    sourceRating: 6,
+    sourceName: 'Killer Joe'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/natural-born-killers-am6352',
+    sourceRating: 6,
+    sourceName: 'Natural Born Killers'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/seven-psychopaths-am14973',
+    sourceRating: 6,
+    sourceName: 'Seven Psychopaths'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/seven-samurai-am6431',
+    sourceRating: 6,
+    sourceName: 'Seven Samurai'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/sorry-to-bother-you-am153970',
+    sourceRating: 6,
+    sourceName: 'Sorry to Bother You'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/ted-am21415',
+    sourceRating: 6,
+    sourceName: 'Ted'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-big-lebowski-am4441',
+    sourceRating: 6,
+    sourceName: 'The Big Lebowski'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-blair-witch-project-am5963',
+    sourceRating: 6,
+    sourceName: 'The Blair Witch Project'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-fly-am17558',
+    sourceRating: 6,
+    sourceName: 'The Fly'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-master-am29158',
+    sourceRating: 6,
+    sourceName: 'The Master'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/total-recall-am6774',
+    sourceRating: 6,
+    sourceName: 'Total Recall'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/true-lies-am23411',
+    sourceRating: 6,
+    sourceName: 'True Lies'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/videodrome-am6755',
+    sourceRating: 6,
+    sourceName: 'Videodrome'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/a-nightmare-on-elm-street-am6437',
+    sourceRating: 5,
+    sourceName: 'A Nightmare on Elm Street'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/dancer-in-the-dark-am2754',
+    sourceRating: 5,
+    sourceName: 'Dancer in the Dark'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/frank-am17823',
+    sourceRating: 5,
+    sourceName: 'Frank'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/ghost-in-the-shell-am18451',
+    sourceRating: 5,
+    sourceName: 'Ghost in the Shell'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/groundhog-day-am4496',
+    sourceRating: 5,
+    sourceName: 'Groundhog Day'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/johnny-mnemonic-am20866',
+    sourceRating: 5,
+    sourceName: 'Johnny Mnemonic'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/legend-am26767',
+    sourceRating: 5,
+    sourceName: 'Legend'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/little-children-am6993',
+    sourceRating: 5,
+    sourceName: 'Little Children'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/persona-am6723',
+    sourceRating: 5,
+    sourceName: 'Persona'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/red-dawn-am7249',
+    sourceRating: 5,
+    sourceName: 'Red Dawn'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/stargate-am7461',
+    sourceRating: 5,
+    sourceName: 'Stargate'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-cabinet-of-dr-caligari-am6345',
+    sourceRating: 5,
+    sourceName: 'The Cabinet of Dr. Caligari'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-devils-backbone-am6987',
+    sourceRating: 5,
+    sourceName: "The Devil's Backbone"
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-life-aquatic-with-steve-zissou-am6463',
+    sourceRating: 5,
+    sourceName: 'The Life Aquatic with Steve Zissou'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-man-who-wasnt-there-am3883',
+    sourceRating: 5,
+    sourceName: "The Man Who Wasn't There"
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-warriors-am23388',
+    sourceRating: 5,
+    sourceName: 'The Warriors'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/unbreakable-am20646',
+    sourceRating: 5,
+    sourceName: 'Unbreakable'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/xanadu-am28827',
+    sourceRating: 5,
+    sourceName: 'Xanadu'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/yellow-submarine-am26056',
+    sourceRating: 5,
+    sourceName: 'Yellow Submarine'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/a-trip-to-the-moon-am6705',
+    sourceRating: 4,
+    sourceName: 'A Trip to the Moon'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/damien-omen-ii-am11427',
+    sourceRating: 4,
+    sourceName: 'Damien: Omen II'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/mirror-am6962',
+    sourceRating: 4,
+    sourceName: 'Mirror'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/planet-terror-am7332',
+    sourceRating: 4,
+    sourceName: 'Planet Terror'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/princess-mononoke-am4466',
+    sourceRating: 4,
+    sourceName: 'Princess Mononoke'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/slc-punk%21-am15462',
+    sourceRating: 4,
+    sourceName: 'SLC Punk!'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/stalker-am6964',
+    sourceRating: 4,
+    sourceName: 'Stalker'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-lodger-a-story-of-the-london-fog-am2438',
+    sourceRating: 4,
+    sourceName: 'The Lodger: A Story of the London Fog'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-perfect-host-am9833',
+    sourceRating: 4,
+    sourceName: 'The Perfect Host'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/un-chien-andalou-am6604',
+    sourceRating: 4,
+    sourceName: 'Un Chien Andalou'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/el-topo-am13683',
+    sourceRating: 3,
+    sourceName: 'El Topo'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/phantasm-am9936',
+    sourceRating: 3,
+    sourceName: 'Phantasm'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/sherlock-jr-am6870',
+    sourceRating: 3,
+    sourceName: 'Sherlock Jr.'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-final-conflict-am22342',
+    sourceRating: 3,
+    sourceName: 'The Final Conflict'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/black-cat-white-cat-am5152',
+    sourceRating: 2,
+    sourceName: 'Black Cat, White Cat'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/im-a-cyborg-but-thats-ok-am17204',
+    sourceRating: 2,
+    sourceName: "I'm a Cyborg, But That's OK"
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/prelude-dog-star-man-am56876',
+    sourceRating: 1,
+    sourceName: 'Prelude: Dog Star Man'
+  }
+]
 
 
+Iteration 3: (76 Results)
+
+Remote is [object Object] and args is [object Object]
+[
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/all-about-eve-am841',
+    sourceRating: 9,
+    sourceName: 'All About Eve'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/django-unchained-am30517',
+    sourceRating: 9,
+    sourceName: 'Django Unchained'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/no-country-for-old-men-am8223',
+    sourceRating: 9,
+    sourceName: 'No Country for Old Men'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/days-of-heaven-am26878',
+    sourceRating: 8,
+    sourceName: 'Days of Heaven'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-crying-game-am23250',
+    sourceRating: 8,
+    sourceName: 'The Crying Game'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-lord-of-the-rings-the-fellowship-of-the-ring-am2540',
+    sourceRating: 8,
+    sourceName: 'The Lord of the Rings: The Fellowship of the Ring'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/das-boot-am6443',
+    sourceRating: 7,
+    sourceName: 'Das Boot'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-bad-seed-am3547',
+    sourceRating: 7,
+    sourceName: 'The Bad Seed'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-day-the-earth-stood-still-am6747',
+    sourceRating: 7,
+    sourceName: 'The Day the Earth Stood Still'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/fanny-and-alexander-am17453',
+    sourceRating: 6,
+    sourceName: 'Fanny and Alexander'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/hanna-am20313',
+    sourceRating: 6,
+    sourceName: 'Hanna'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/little-shop-of-horrors-am2373',
+    sourceRating: 6,
+    sourceName: 'Little Shop of Horrors'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/meet-joe-black-am4196',
+    sourceRating: 6,
+    sourceName: 'Meet Joe Black'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/nightcrawler-am8165',
+    sourceRating: 6,
+    sourceName: 'Nightcrawler'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/seven-pounds-am14972',
+    sourceRating: 6,
+    sourceName: 'Seven Pounds'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/smokin-aces-am15543',
+    sourceRating: 6,
+    sourceName: "Smokin' Aces"
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-imaginarium-of-doctor-parnassus-am18768',
+    sourceRating: 6,
+    sourceName: 'The Imaginarium of Doctor Parnassus'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/top-gun-am6683',
+    sourceRating: 6,
+    sourceName: 'Top Gun'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/a-scanner-darkly-am16518',
+    sourceRating: 5,
+    sourceName: 'A Scanner Darkly'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/childs-play-am9088',
+    sourceRating: 5,
+    sourceName: "Child's Play"
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/clerks-ii-am94',
+    sourceRating: 5,
+    sourceName: 'Clerks II'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/darkman-am11578',
+    sourceRating: 5,
+    sourceName: 'Darkman'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/dead-man-am6825',
+    sourceRating: 5,
+    sourceName: 'Dead Man'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/excalibur-am23479',
+    sourceRating: 5,
+    sourceName: 'Excalibur'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/halloween-the-curse-of-michael-myers-am22668',
+    sourceRating: 5,
+    sourceName: 'Halloween: The Curse of Michael Myers'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/high-life-am144694',
+    sourceRating: 5,
+    sourceName: 'High Life'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/highlander-am18728',
+    sourceRating: 5,
+    sourceName: 'Highlander'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/i-heart-huckabees-am7071',
+    sourceRating: 5,
+    sourceName: 'I Heart Huckabees'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/kill-your-friends-am27120',
+    sourceRating: 5,
+    sourceName: 'Kill Your Friends'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/orphan-am9386',
+    sourceRating: 5,
+    sourceName: 'Orphan'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/play-misty-for-me-am32028',
+    sourceRating: 5,
+    sourceName: 'Play Misty for Me'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/raising-cain-am12258',
+    sourceRating: 5,
+    sourceName: 'Raising Cain'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/saw-am6302',
+    sourceRating: 5,
+    sourceName: 'Saw'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/sin-city-a-dame-to-kill-for-am6311',
+    sourceRating: 5,
+    sourceName: 'Sin City: A Dame to Kill For'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/sleepwalkers-am15483',
+    sourceRating: 5,
+    sourceName: 'Sleepwalkers'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/so-i-married-an-axe-murderer-am15597',
+    sourceRating: 5,
+    sourceName: 'So I Married an Axe Murderer'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/surveillance-am21039',
+    sourceRating: 5,
+    sourceName: 'Surveillance'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-double-am13292',
+    sourceRating: 5,
+    sourceName: 'The Double'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-goonies-am18915',
+    sourceRating: 5,
+    sourceName: 'The Goonies'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-hudsucker-proxy-am32276',
+    sourceRating: 5,
+    sourceName: 'The Hudsucker Proxy'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-lake-house-am1627',
+    sourceRating: 5,
+    sourceName: 'The Lake House'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-spiderwick-chronicles-am18849',
+    sourceRating: 5,
+    sourceName: 'The Spiderwick Chronicles'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/time-bandits-am22857',
+    sourceRating: 5,
+    sourceName: 'Time Bandits'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/to-live-and-die-in-la-am20826',
+    sourceRating: 5,
+    sourceName: 'To Live and Die in L.A.'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/6-souls-am357',
+    sourceRating: 4,
+    sourceName: '6 Souls'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/bronson-am7785',
+    sourceRating: 4,
+    sourceName: 'Bronson'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/cach%C3%A9-am6481',
+    sourceRating: 4,
+    sourceName: 'Caché'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/candyman-day-of-the-dead-am8659',
+    sourceRating: 4,
+    sourceName: 'Candyman: Day of the Dead'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/dead-snow-am11747',
+    sourceRating: 4,
+    sourceName: 'Dead Snow'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/death-race-2000-am11862',
+    sourceRating: 4,
+    sourceName: 'Death Race 2000'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/dog-soldiers-am29788',
+    sourceRating: 4,
+    sourceName: 'Dog Soldiers'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/flesh-for-frankenstein-am15984',
+    sourceRating: 4,
+    sourceName: 'Flesh for Frankenstein'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/head-am34664',
+    sourceRating: 4,
+    sourceName: 'Head'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/hellraiser-am19634',
+    sourceRating: 4,
+    sourceName: 'Hellraiser'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/irreversible-am6858',
+    sourceRating: 4,
+    sourceName: 'Irreversible'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/pi-am6495',
+    sourceRating: 4,
+    sourceName: 'Pi'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/problem-child-am22792',
+    sourceRating: 4,
+    sourceName: 'Problem Child'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/sfw-am15017',
+    sourceRating: 4,
+    sourceName: 'S.F.W.'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-beguiled-am4681',
+    sourceRating: 4,
+    sourceName: 'The Beguiled'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-house-of-the-devil-am33598',
+    sourceRating: 4,
+    sourceName: 'The House of the Devil'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-house-of-yes-am22263',
+    sourceRating: 4,
+    sourceName: 'The House of Yes'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-ruling-class-am41534',
+    sourceRating: 4,
+    sourceName: 'The Ruling Class'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/weekend-at-bernies-am19163',
+    sourceRating: 4,
+    sourceName: "Weekend at Bernie's"
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/wild-tales-am12477',
+    sourceRating: 4,
+    sourceName: 'Wild Tales'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/wizards-am25865',
+    sourceRating: 4,
+    sourceName: 'Wizards'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/200-motels-am226',
+    sourceRating: 3,
+    sourceName: '200 Motels'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/control-am17145',
+    sourceRating: 3,
+    sourceName: 'Control'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/dead-of-night-am35484',
+    sourceRating: 3,
+    sourceName: 'Dead of Night'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/halloween-5-the-revenge-of-michael-myers-am23212',
+    sourceRating: 3,
+    sourceName: 'Halloween 5: The Revenge of Michael Myers'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/harlequin-am202264',
+    sourceRating: 3,
+    sourceName: 'Harlequin'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/man-bites-dog-am21240',
+    sourceRating: 3,
+    sourceName: 'Man Bites Dog'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-last-house-on-the-left-am1725',
+    sourceRating: 3,
+    sourceName: 'The Last House on the Left'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/a-tale-of-two-sisters-am16866',
+    sourceRating: 2,
+    sourceName: 'A Tale of Two Sisters'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/idiots-and-angels-am46637',
+    sourceRating: 2,
+    sourceName: 'Idiots and Angels'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/space-is-the-place-am33972',
+    sourceRating: 2,
+    sourceName: 'Space Is the Place'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-adventures-of-prince-achmed-am37199',
+    sourceRating: 1,
+    sourceName: 'The Adventures of Prince Achmed'
+  }
+]
 
 
+Iteration 4: (79 results)
 
-Iteration 2:
+Remote is [object Object] and args is [object Object]
+[
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/barry-lyndon-am3689',
+    sourceRating: 8,
+    sourceName: 'Barry Lyndon'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/inglourious-basterds-am23899',
+    sourceRating: 7,
+    sourceName: 'Inglourious Basterds'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/bad-santa-am21340',
+    sourceRating: 6,
+    sourceName: 'Bad Santa'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/bringing-up-baby-am6807',
+    sourceRating: 6,
+    sourceName: 'Bringing Up Baby'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/cape-fear-am23188',
+    sourceRating: 6,
+    sourceName: 'Cape Fear'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/despicable-me-4-am278136',
+    sourceRating: 6,
+    sourceName: 'Despicable Me 4'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/john-wick-chapter-2-am24902',
+    sourceRating: 6,
+    sourceName: 'John Wick: Chapter 2'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/machete-kills-am2863',
+    sourceRating: 6,
+    sourceName: 'Machete Kills'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/mimic-am4454',
+    sourceRating: 6,
+    sourceName: 'Mimic'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/murder-by-death-am5656',
+    sourceRating: 6,
+    sourceName: 'Murder by Death'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/righteous-kill-am12703',
+    sourceRating: 6,
+    sourceName: 'Righteous Kill'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/unbroken-am24296',
+    sourceRating: 6,
+    sourceName: 'Unbroken'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/big-trouble-in-little-china-am5024',
+    sourceRating: 5,
+    sourceName: 'Big Trouble in Little China'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/brewster-mccloud-am7707',
+    sourceRating: 5,
+    sourceName: 'Brewster McCloud'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/bulletproof-am7869',
+    sourceRating: 5,
+    sourceName: 'Bulletproof'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/childs-play-3-am9090',
+    sourceRating: 5,
+    sourceName: "Child's Play 3"
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/commando-am22690',
+    sourceRating: 5,
+    sourceName: 'Commando'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/dead-ringers-am11740',
+    sourceRating: 5,
+    sourceName: 'Dead Ringers'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/dirty-work-am29937',
+    sourceRating: 5,
+    sourceName: 'Dirty Work'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/dreamscape-am32299',
+    sourceRating: 5,
+    sourceName: 'Dreamscape'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/duel-am6756',
+    sourceRating: 5,
+    sourceName: 'Duel'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/enemy-am13825',
+    sourceRating: 5,
+    sourceName: 'Enemy'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/hard-target-am7353',
+    sourceRating: 5,
+    sourceName: 'Hard Target'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/hero-am4326',
+    sourceRating: 5,
+    sourceName: 'Hero'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/hide-and-seek-am20848',
+    sourceRating: 5,
+    sourceName: 'Hide and Seek'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/hostel-am7136',
+    sourceRating: 5,
+    sourceName: 'Hostel'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/in-the-shadow-of-the-moon-am213366',
+    sourceRating: 5,
+    sourceName: 'In the Shadow of the Moon'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/jigsaw-am125799',
+    sourceRating: 5,
+    sourceName: 'Jigsaw'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/leatherface-texas-chainsaw-massacre-iii-am30081',
+    sourceRating: 5,
+    sourceName: 'Leatherface: Texas Chainsaw Massacre III'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/quick-change-am22280',
+    sourceRating: 5,
+    sourceName: 'Quick Change'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/right-at-your-door-am12698',
+    sourceRating: 5,
+    sourceName: 'Right at Your Door'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/saw-v-am14679',
+    sourceRating: 5,
+    sourceName: 'Saw V'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/sea-of-love-am14797',
+    sourceRating: 5,
+    sourceName: 'Sea of Love'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-blackcoats-daughter-am153303',
+    sourceRating: 5,
+    sourceName: "The Blackcoat's Daughter"
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-final-countdown-am15799',
+    sourceRating: 5,
+    sourceName: 'The Final Countdown'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-fourth-kind-am17796',
+    sourceRating: 5,
+    sourceName: 'The Fourth Kind'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-iceman-am23682',
+    sourceRating: 5,
+    sourceName: 'The Iceman'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/unknown-am24398',
+    sourceRating: 5,
+    sourceName: 'Unknown'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/unthinkable-am26980',
+    sourceRating: 5,
+    sourceName: 'Unthinkable'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/betty-blue-am4850',
+    sourceRating: 4,
+    sourceName: 'Betty Blue'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/black-christmas-am5153',
+    sourceRating: 4,
+    sourceName: 'Black Christmas'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/bloody-birthday-am6130',
+    sourceRating: 4,
+    sourceName: 'Bloody Birthday'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/carandiru-am8727',
+    sourceRating: 4,
+    sourceName: 'Carandiru'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/dot-the-i-am13262',
+    sourceRating: 4,
+    sourceName: 'Dot the I'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/joy-ride-2-dead-ahead-am24965',
+    sourceRating: 4,
+    sourceName: 'Joy Ride 2: Dead Ahead'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/kaboom-am25071',
+    sourceRating: 4,
+    sourceName: 'Kaboom'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/leprechaun-2-am2016',
+    sourceRating: 4,
+    sourceName: 'Leprechaun 2'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/shanghai-knights-am17492',
+    sourceRating: 4,
+    sourceName: 'Shanghai Knights'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/sharknado-2-the-second-one-am15083',
+    sourceRating: 4,
+    sourceName: 'Sharknado 2: The Second One'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/something-wicked-this-way-comes-am38813',
+    sourceRating: 4,
+    sourceName: 'Something Wicked This Way Comes'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-brother-from-another-planet-am7792',
+    sourceRating: 4,
+    sourceName: 'The Brother from Another Planet'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-company-of-wolves-am10499',
+    sourceRating: 4,
+    sourceName: 'The Company of Wolves'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-crimson-rivers-am11075',
+    sourceRating: 4,
+    sourceName: 'The Crimson Rivers'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-forbidden-room-am17689',
+    sourceRating: 4,
+    sourceName: 'The Forbidden Room'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/victor-crowley-am165310',
+    sourceRating: 4,
+    sourceName: 'Victor Crowley'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/whisper-of-the-heart-am44227',
+    sourceRating: 4,
+    sourceName: 'Whisper of the Heart'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/zombie-am18377',
+    sourceRating: 4,
+    sourceName: 'Zombie'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/3-iron-am286',
+    sourceRating: 3,
+    sourceName: '3-Iron'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/bhool-bhulaiyaa-am4919',
+    sourceRating: 3,
+    sourceName: 'Bhool Bhulaiyaa'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/bornless-ones-am144599',
+    sourceRating: 3,
+    sourceName: 'Bornless Ones'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/clownhouse-am10260',
+    sourceRating: 3,
+    sourceName: 'Clownhouse'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/coffy-am26828',
+    sourceRating: 3,
+    sourceName: 'Coffy'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/deep-red-am11941',
+    sourceRating: 3,
+    sourceName: 'Deep Red'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/friday-the-13th-a-new-beginning-am17973',
+    sourceRating: 3,
+    sourceName: 'Friday the 13th: A New Beginning'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/ghoulies-am18492',
+    sourceRating: 3,
+    sourceName: 'Ghoulies'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/ju-on-the-grudge-am35029',
+    sourceRating: 3,
+    sourceName: 'Ju-on: The Grudge'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/madman-am29291',
+    sourceRating: 3,
+    sourceName: 'Madman'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/maniac-cop-am34467',
+    sourceRating: 3,
+    sourceName: 'Maniac Cop'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-1000-eyes-of-dr-mabuse-am37134',
+    sourceRating: 3,
+    sourceName: 'The 1,000 Eyes of Dr. Mabuse'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-exterminator-am44243',
+    sourceRating: 3,
+    sourceName: 'The Exterminator'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-theatre-bizarre-am30646',
+    sourceRating: 3,
+    sourceName: 'The Theatre Bizarre'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/a-day-of-judgment-am138372',
+    sourceRating: 2,
+    sourceName: 'A Day of Judgment'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/khakee-am37933',
+    sourceRating: 2,
+    sourceName: 'Khakee'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/killjoy-am25268',
+    sourceRating: 2,
+    sourceName: 'Killjoy'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/meatcleaver-massacre-am129205',
+    sourceRating: 2,
+    sourceName: 'Meatcleaver Massacre'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/sweet-movie-am7036',
+    sourceRating: 2,
+    sourceName: 'Sweet Movie'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/at-land-am47639',
+    sourceRating: 1,
+    sourceName: 'At Land'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/charleston-am46267',
+    sourceRating: 1,
+    sourceName: 'Charleston'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/la-cravate-am42332',
+    sourceRating: 1,
+    sourceName: 'La cravate'
+  }
+]
+
+Iteration 5: (41 Results)
+
+Remote is [object Object] and args is [object Object]
+[
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-hurt-locker-am22463',
+    sourceRating: 9,
+    sourceName: 'The Hurt Locker'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/mildred-pierce-am16459',
+    sourceRating: 7,
+    sourceName: 'Mildred Pierce'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/bad-boys-ii-am3520',
+    sourceRating: 6,
+    sourceName: 'Bad Boys II'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/m-am2840',
+    sourceRating: 6,
+    sourceName: 'M'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/ma-am203322',
+    sourceRating: 6,
+    sourceName: 'Ma'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/coneheads-am20393',
+    sourceRating: 5,
+    sourceName: 'Coneheads'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/deuce-bigalow-male-gigolo-am21779',
+    sourceRating: 5,
+    sourceName: 'Deuce Bigalow: Male Gigolo'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/fail-safe-am6512',
+    sourceRating: 5,
+    sourceName: 'Fail Safe'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/in-dreams-am23785',
+    sourceRating: 5,
+    sourceName: 'In Dreams'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/jason-goes-to-hell-am21590',
+    sourceRating: 5,
+    sourceName: 'Jason Goes to Hell'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/john-wick-chapter-4-am227231',
+    sourceRating: 5,
+    sourceName: 'John Wick: Chapter 4'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/renegade-am12500',
+    sourceRating: 5,
+    sourceName: 'Renegade'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/space-jam-am16061',
+    sourceRating: 5,
+    sourceName: 'Space Jam'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/splice-am19362',
+    sourceRating: 5,
+    sourceName: 'Splice'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-island-am18715',
+    sourceRating: 5,
+    sourceName: 'The Island'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/dementia-13-am11994',
+    sourceRating: 4,
+    sourceName: 'Dementia 13'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/eden-lake-am13609',
+    sourceRating: 4,
+    sourceName: 'Eden Lake'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/from-beyond-am31905',
+    sourceRating: 4,
+    sourceName: 'From Beyond'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/house-of-the-dead-2-am22257',
+    sourceRating: 4,
+    sourceName: 'House of the Dead 2'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/i-am-the-pretty-thing-that-lives-in-the-house-am143731',
+    sourceRating: 4,
+    sourceName: 'I Am the Pretty Thing That Lives in the House'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/into-the-sun-am23984',
+    sourceRating: 4,
+    sourceName: 'Into the Sun'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/man-with-a-movie-camera-am34562',
+    sourceRating: 4,
+    sourceName: 'Man with a Movie Camera'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/mirage-am201939',
+    sourceRating: 4,
+    sourceName: 'Mirage'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/night-of-the-demons-am30214',
+    sourceRating: 4,
+    sourceName: 'Night of the Demons'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/secretary-am14862',
+    sourceRating: 4,
+    sourceName: 'Secretary'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-glimmer-man-am18635',
+    sourceRating: 4,
+    sourceName: 'The Glimmer Man'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-killer-am22440',
+    sourceRating: 4,
+    sourceName: 'The Killer'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-raid-redemption-am12237',
+    sourceRating: 4,
+    sourceName: 'The Raid: Redemption'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/guyver-am35900',
+    sourceRating: 3,
+    sourceName: 'Guyver'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/ichi-the-killer-am20560',
+    sourceRating: 3,
+    sourceName: 'Ichi the Killer'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/morvern-callar-am5497',
+    sourceRating: 3,
+    sourceName: 'Morvern Callar'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/species-the-awakening-am35947',
+    sourceRating: 3,
+    sourceName: 'Species: The Awakening'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-house-by-the-cemetery-am22207',
+    sourceRating: 3,
+    sourceName: 'The House by the Cemetery'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/touchez-pas-au-grisbi-am33452',
+    sourceRating: 3,
+    sourceName: 'Touchez Pas au Grisbi'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/killjoy-2-deliverance-from-evil-am40001',
+    sourceRating: 2,
+    sourceName: 'Killjoy 2: Deliverance from Evil'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/mad-mission-am16186',
+    sourceRating: 2,
+    sourceName: 'Mad Mission'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/master-of-the-flying-guillotine-am4075',
+    sourceRating: 2,
+    sourceName: 'Master of the Flying Guillotine'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/raw-force-am41416',
+    sourceRating: 2,
+    sourceName: 'Raw Force'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/beneath-the-valley-of-the-ultra-vixens-am17133',
+    sourceRating: 1,
+    sourceName: 'Beneath the Valley of the Ultra-Vixens'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/cat-women-of-the-moon-am47040',
+    sourceRating: 1,
+    sourceName: 'Cat-Women of the Moon'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/i-am-curious-yellow-am46730',
+    sourceRating: 1,
+    sourceName: 'I Am Curious (Yellow)'
+  }
+]
+
+
+Iteration 6: (31 Results)
+
+Remote is [object Object] and args is [object Object]
+[
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/mccabe-mrs-miller-am4144',
+    sourceRating: 7,
+    sourceName: 'McCabe &amp; Mrs. Miller'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-hunt-am209131',
+    sourceRating: 6,
+    sourceName: 'The Hunt'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/house-at-the-end-of-the-street-am29902',
+    sourceRating: 5,
+    sourceName: 'House at the End of the Street'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/nymphomaniac-vol-i-am8418',
+    sourceRating: 5,
+    sourceName: 'Nymphomaniac: Vol. I'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/over-the-top-am7207',
+    sourceRating: 5,
+    sourceName: 'Over the Top'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/dogtown-and-z-boys-am6929',
+    sourceRating: 4,
+    sourceName: 'Dogtown and Z-Boys'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/excess-baggage-am14009',
+    sourceRating: 4,
+    sourceName: 'Excess Baggage'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/night-in-paradise-am241383',
+    sourceRating: 4,
+    sourceName: 'Night in Paradise'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-loneliness-of-the-long-distance-runner-am26645',
+    sourceRating: 4,
+    sourceName: 'The Loneliness of the Long Distance Runner'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-transfiguration-am146582',
+    sourceRating: 4,
+    sourceName: 'The Transfiguration'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-valley-of-gwangi-am29325',
+    sourceRating: 4,
+    sourceName: 'The Valley of Gwangi'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-virgin-spring-am23572',
+    sourceRating: 4,
+    sourceName: 'The Virgin Spring'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/almost-human-am939',
+    sourceRating: 3,
+    sourceName: 'Almost Human'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/drive-in-massacre-am13424',
+    sourceRating: 3,
+    sourceName: 'Drive in Massacre'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/isolation-am28324',
+    sourceRating: 3,
+    sourceName: 'Isolation'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/most-likely-to-die-am12954',
+    sourceRating: 3,
+    sourceName: 'Most Likely to Die'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/reefer-madness-am44242',
+    sourceRating: 3,
+    sourceName: 'Reefer Madness'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/silent-night-deadly-night-am15282',
+    sourceRating: 3,
+    sourceName: 'Silent Night, Deadly Night'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/silent-night-deadly-night-4-initiation-am15284',
+    sourceRating: 3,
+    sourceName: 'Silent Night, Deadly Night 4: Initiation'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/switchblade-sisters-am21171',
+    sourceRating: 3,
+    sourceName: 'Switchblade Sisters'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-endless-summer-am2769',
+    sourceRating: 3,
+    sourceName: 'The Endless Summer'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-lickerish-quartet-am133428',
+    sourceRating: 3,
+    sourceName: 'The Lickerish Quartet'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-outing-am9472',
+    sourceRating: 3,
+    sourceName: 'The Outing'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/too-scared-to-scream-am152565',
+    sourceRating: 3,
+    sourceName: 'Too Scared to Scream'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/drawing-restraint-9-am13380',
+    sourceRating: 2,
+    sourceName: 'Drawing Restraint 9'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/scare-campaign-am166236',
+    sourceRating: 2,
+    sourceName: 'Scare Campaign'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/werckmeister-harmonies-am38351',
+    sourceRating: 2,
+    sourceName: 'Werckmeister Harmonies'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/anemic-cinema-am54714',
+    sourceRating: 1,
+    sourceName: 'Anemic Cinema'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/masterblaster-am136043',
+    sourceRating: 1,
+    sourceName: 'Masterblaster'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/mothlight-am153581',
+    sourceRating: 1,
+    sourceName: 'Mothlight'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-secret-formula-am65322',
+    sourceRating: 1,
+    sourceName: 'The Secret Formula'
+  }
+]
+
+
+Iteration 7: (7 Results)
+
+Remote is [object Object] and args is [object Object]
+[
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/a-shot-in-the-dark-am7067',
+    sourceRating: 5,
+    sourceName: 'A Shot in the Dark'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/slap-shot-am15439',
+    sourceRating: 5,
+    sourceName: 'Slap Shot'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/the-last-house-on-the-left-am1724',
+    sourceRating: 5,
+    sourceName: 'The Last House on the Left'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/demonlover-am12006',
+    sourceRating: 3,
+    sourceName: 'Demonlover'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/milo-am4451',
+    sourceRating: 2,
+    sourceName: 'Milo'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/dial-help-am41525',
+    sourceRating: 1,
+    sourceName: 'Dial: Help'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/night-of-the-skull-am40361',
+    sourceRating: 1,
+    sourceName: 'Night of the Skull'
+  }
+]
 

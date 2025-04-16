@@ -1,8 +1,8 @@
 const config = {
-  ip: "127.0.0.1",
+  ip: '127.0.0.1',
   port: 8080,
 };
-const distribution = require("../distribution.js")(config);
+const distribution = require('../distribution.js')(config);
 const id = distribution.util.id;
 // const Typo = require('typo-js');
 // const langCode = 'en_US';
@@ -12,8 +12,8 @@ function doActualQuery() {
   const movieName = process.argv[2];
 
   // Define 10 nodes
-  const nodes = Array.from({ length: 100 }, (_, i) => ({
-    ip: "127.0.0.1",
+  const nodes = Array.from({length: 100}, (_, i) => ({
+    ip: '127.0.0.1',
     port: 7310 + i,
   }));
 
@@ -25,22 +25,22 @@ function doActualQuery() {
     nidToNode[nid] = node;
   });
 
-  const kid = id.getID("mr-shuffle-" + movieName);
+  const kid = id.getID('mr-shuffle-' + movieName);
   const nidToGoTo = id.consistentHash(kid, nodeIds);
-  console.log(`NidtoGoTo is ${nidToGoTo}`);
+  // console.log(`NidtoGoTo is ${nidToGoTo}`);
 
   // we have the node we want to get to
   // send local comm send and then access local-index through sid, then JSON parse, then return the key value pair.
   const remote = {
-    method: "get",
-    service: "store",
+    method: 'get',
+    service: 'store',
     node: nidToNode[nidToGoTo],
   };
   const args = {
     key: `local-index-${id.getSID(nidToNode[nidToGoTo])}`,
-    gid: "local",
+    gid: 'local',
   };
-  console.log(`Remote is ${remote} and args is ${args}`);
+  // console.log(`Remote is ${remote} and args is ${args}`);
   global.distribution.local.comm.send([args], remote, (e, v) => {
     if (!v) {
       // const arrayOfSuggestions = dictionary.suggest(movieName);
@@ -62,7 +62,15 @@ function doActualQuery() {
       }
       return a.sourceName.localeCompare(b.sourceName);
     });
-    console.log(sorted);
+
+    console.log('----------------------------------------------------------------');
+    console.log(`RECOMMENDATIONS FOR ${movieName}\nURL: ${sorted[0].keyUrl}`);
+    for (let i = 0; i < sorted.length; i++) {
+      console.log(`\nRecommendation ${i + 1}: ${sorted[i].sourceName}`);
+      console.log(`Rating: ${sorted[i].sourceRating}\nURL: ${sorted[i].sourceURL}`);
+    }
+    console.log('-----------------------------------------------------------------');
+
     shutdown();
   });
 }
