@@ -1,0 +1,63 @@
+Iteration 0:
+
+NidtoGoTo is 6bc6c1f826393d6d93ef4f614c0b667cf618f534d75f0253e5bca12a08a5b21b
+Remote is [object Object] and args is [object Object]
+No Results
+
+
+
+
+
+
+
+Iteration 1:
+
+NidtoGoTo is 6bc6c1f826393d6d93ef4f614c0b667cf618f534d75f0253e5bca12a08a5b21b
+Remote is [object Object] and args is [object Object]
+[
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/pans-labyrinth-am4',
+    sourceRating: 8,
+    sourceName: "Pan's Labyrinth"
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/parasite-am209097',
+    sourceRating: 8,
+    sourceName: 'Parasite'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/spirited-away-am4470',
+    sourceRating: 8,
+    sourceName: 'Spirited Away'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/in-the-mood-for-love-am6759',
+    sourceRating: 6,
+    sourceName: 'In the Mood for Love'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/wings-of-desire-am6275',
+    sourceRating: 6,
+    sourceName: 'Wings of Desire'
+  },
+  {
+    keyUrl: 'https://www.allmovie.com/movie/pulp-fiction-am6652',
+    sourceURL: 'https://www.allmovie.com/movie/battleship-potemkin-am4535',
+    sourceRating: 5,
+    sourceName: 'Battleship Potemkin'
+  }
+]
+
+
+
+
+
+
+
+Iteration 2:
+
