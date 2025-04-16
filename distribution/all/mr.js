@@ -184,11 +184,11 @@ function mr(config) {
                     }
 
                     // call local.mem.put again
-                    if (currName === "Pulp Fiction") {
-                      console.log("new seen");
-                      console.log(JSON.stringify(seen));
-                      console.log(JSON.stringify(results));
-                    }
+                    // if (currName === "Pulp Fiction") {
+                    //   console.log("new seen");
+                    //   console.log(JSON.stringify(seen));
+                    //   console.log(JSON.stringify(results));
+                    // }
                     global.distribution.local.mem.put(seen, key, (e, v) => {
                       if (e) {
                         console.error(

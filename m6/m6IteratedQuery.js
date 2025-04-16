@@ -8,8 +8,36 @@ const Typo = require("typo-js");
 const langCode = "en_US";
 const dictionary = new Typo(langCode);
 
-function doActualQuery(movieName) {
-  // Define 10 nodes
+const t1 = performance.now();
+const movieName = process.argv[2];
+tryAllSuggestions(movieName);
+
+function tryAllSuggestions(originalMovieName) {
+  const t1 = performance.now();
+  const suggestions = [
+    originalMovieName,
+    ...dictionary.suggest(originalMovieName),
+  ];
+  console.log(`Trying all suggestions: ${suggestions.join(", ")}`);
+
+  let index = 0;
+
+  function tryNext() {
+    if (index >= suggestions.length) {
+      console.log("No results found for any suggestion.");
+      shutdown();
+      return;
+    }
+
+    const suggestion = suggestions[index++];
+    console.log(`Trying "${suggestion}"...`);
+    doActualQuery(suggestion, tryNext);
+  }
+
+  tryNext();
+}
+
+function doActualQuery(movieName, onFailure) {
   const nodes = Array.from({ length: 50 }, (_, i) => ({
     ip: "127.0.0.1",
     port: 7310 + i,
@@ -25,35 +53,24 @@ function doActualQuery(movieName) {
 
   const kid = id.getID("mr-shuffle-" + movieName);
   const nidToGoTo = id.consistentHash(kid, nodeIds);
-  console.log(`NidtoGoTo is ${nidToGoTo}`);
-
-  // we have the node we want to get to
-  // send local comm send and then access local-index through sid, then JSON parse, then return the key value pair.
   const remote = {
     method: "get",
     service: "store",
     node: nidToNode[nidToGoTo],
   };
+
   const args = {
     key: `local-index-${id.getSID(nidToNode[nidToGoTo])}`,
     gid: "local",
   };
-  console.log(`Remote is ${remote} and args is ${args}`);
+
   global.distribution.local.comm.send([args], remote, (e, v) => {
     console.log(e);
     if (!v) {
-      const arrayOfSuggestions = dictionary.suggest(movieName);
-      console.log(`Nothing was found for ${movieName}`);
-      console.log(`Did you mean: `, arrayOfSuggestions);
-      shutdown();
-      return;
+      console.log(`No result for "${movieName}"`);
+      return onFailure();
     }
-    // let res = [];
-    // for (let i = 0; i < v.length; i++) {
-    //   if (v[i][movieName]) {
-    //     res = res.concat(v[i][movieName]);
-    //   }
-    // }
+
     let res = [];
     const seen = new Set();
 
@@ -68,12 +85,16 @@ function doActualQuery(movieName) {
         });
       }
     });
-    // console.log(res);
-    // console.log("----------------------------------");
+
+    if (res.length === 0) {
+      console.log(`No data for "${movieName}"`);
+      return onFailure();
+    }
+
+    console.log("----------------------------------");
     if (res.length === 1) {
-      // console.log("Reached here");
+      console.log("Single result:");
       console.log(res);
-      console.log(res.length);
     } else {
       const sorted = res.sort((a, b) => {
         if (b.sourceRating !== a.sourceRating) {
@@ -81,21 +102,18 @@ function doActualQuery(movieName) {
         }
         return a.sourceName.localeCompare(b.sourceName);
       });
+      console.log("Multiple results (sorted):");
       console.log(sorted);
-      console.log(sorted.length);
     }
+
     shutdown();
   });
 }
 
-const t1 = performance.now();
-const movieName = process.argv[2];
-doActualQuery(movieName);
-
 function shutdown() {
   const t2 = performance.now();
   const latency = t2 - t1;
-  console.log("Time taken to normal query: ", latency);
+  console.log("Time taken to iterate query: ", latency);
   global.distribution.local.status.stop((e, v) => {
     process.exit(0);
   });
