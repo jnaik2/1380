@@ -1,30 +1,30 @@
 const config = {
-  ip: "127.0.0.1",
+  ip: '127.0.0.1',
   port: 8080,
 };
-const distribution = require("../distribution.js")(config);
+const distribution = require('../distribution.js')(config);
 const id = distribution.util.id;
-const Typo = require("typo-js");
-const langCode = "en_US";
+const Typo = require('typo-js');
+const langCode = 'en_US';
 const dictionary = new Typo(langCode);
 
-const t1 = performance.now();
+let t1 = performance.now();
 const movieName = process.argv[2];
 tryAllSuggestions(movieName);
 
 function tryAllSuggestions(originalMovieName) {
-  const t1 = performance.now();
+  t1 = performance.now();
   const suggestions = [
     originalMovieName,
     ...dictionary.suggest(originalMovieName),
   ];
-  console.log(`Trying all suggestions: ${suggestions.join(", ")}`);
+  console.log(`Trying all suggestions: ${suggestions.join(', ')}`);
 
   let index = 0;
 
   function tryNext() {
     if (index >= suggestions.length) {
-      console.log("No results found for any suggestion.");
+      console.log('No results found for any suggestion.');
       shutdown();
       return;
     }
@@ -38,8 +38,8 @@ function tryAllSuggestions(originalMovieName) {
 }
 
 function doActualQuery(movieName, onFailure) {
-  const nodes = Array.from({ length: 50 }, (_, i) => ({
-    ip: "127.0.0.1",
+  const nodes = Array.from({length: 50}, (_, i) => ({
+    ip: '127.0.0.1',
     port: 7310 + i,
   }));
 
@@ -51,17 +51,17 @@ function doActualQuery(movieName, onFailure) {
     nidToNode[nid] = node;
   });
 
-  const kid = id.getID("mr-shuffle-" + movieName);
+  const kid = id.getID('mr-shuffle-' + movieName);
   const nidToGoTo = id.consistentHash(kid, nodeIds);
   const remote = {
-    method: "get",
-    service: "store",
+    method: 'get',
+    service: 'store',
     node: nidToNode[nidToGoTo],
   };
 
   const args = {
     key: `local-index-${id.getSID(nidToNode[nidToGoTo])}`,
-    gid: "local",
+    gid: 'local',
   };
 
   global.distribution.local.comm.send([args], remote, (e, v) => {
@@ -71,7 +71,7 @@ function doActualQuery(movieName, onFailure) {
       return onFailure();
     }
 
-    let res = [];
+    const res = [];
     const seen = new Set();
 
     v.forEach((entry) => {
@@ -91,10 +91,21 @@ function doActualQuery(movieName, onFailure) {
       return onFailure();
     }
 
-    console.log("----------------------------------");
     if (res.length === 1) {
-      console.log("Single result:");
-      console.log(res);
+      console.log(
+          '----------------------------------------------------------------',
+      );
+      console.log(
+          `RECOMMENDATION FOR: ${movieName}\nURL: ${res[0].keyUrl}`,
+      );
+      console.log(`\nRecommendation: ${res[0].sourceName}`);
+      console.log(
+          `Rating: ${res[0].sourceRating}\nURL: ${res[0].sourceURL}`,
+      );
+      console.log(`1 RECOMMENDATION FOUND`);
+      console.log(
+          '-----------------------------------------------------------------',
+      );
     } else {
       const sorted = res.sort((a, b) => {
         if (b.sourceRating !== a.sourceRating) {
@@ -102,8 +113,22 @@ function doActualQuery(movieName, onFailure) {
         }
         return a.sourceName.localeCompare(b.sourceName);
       });
-      console.log("Multiple results (sorted):");
-      console.log(sorted);
+      console.log(
+          '----------------------------------------------------------------',
+      );
+      console.log(
+          `RECOMMENDATIONS FOR ${movieName}\nURL: ${sorted[0].keyUrl}`,
+      );
+      for (let i = 0; i < sorted.length; i++) {
+        console.log(`\nRecommendation ${i + 1}: ${sorted[i].sourceName}`);
+        console.log(
+            `Rating: ${sorted[i].sourceRating}\nURL: ${sorted[i].sourceURL}`,
+        );
+      }
+      console.log(`${sorted.length} RECOMMENDATIONS FOUND`);
+      console.log(
+          '-----------------------------------------------------------------',
+      );
     }
 
     shutdown();
@@ -113,7 +138,7 @@ function doActualQuery(movieName, onFailure) {
 function shutdown() {
   const t2 = performance.now();
   const latency = t2 - t1;
-  console.log("Time taken to iterate query: ", latency);
+  console.log('Time taken to iterate query: ', latency);
   global.distribution.local.status.stop((e, v) => {
     process.exit(0);
   });

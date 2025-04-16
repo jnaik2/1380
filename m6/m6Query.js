@@ -1,17 +1,17 @@
 const config = {
-  ip: "127.0.0.1",
+  ip: '127.0.0.1',
   port: 8080,
 };
-const distribution = require("../distribution.js")(config);
+const distribution = require('../distribution.js')(config);
 const id = distribution.util.id;
-const Typo = require("typo-js");
-const langCode = "en_US";
+const Typo = require('typo-js');
+const langCode = 'en_US';
 const dictionary = new Typo(langCode);
 
 function doActualQuery(movieName) {
   // Define 10 nodes
-  const nodes = Array.from({ length: 50 }, (_, i) => ({
-    ip: "127.0.0.1",
+  const nodes = Array.from({length: 50}, (_, i) => ({
+    ip: '127.0.0.1',
     port: 7310 + i,
   }));
 
@@ -23,20 +23,20 @@ function doActualQuery(movieName) {
     nidToNode[nid] = node;
   });
 
-  const kid = id.getID("mr-shuffle-" + movieName);
+  const kid = id.getID('mr-shuffle-' + movieName);
   const nidToGoTo = id.consistentHash(kid, nodeIds);
   console.log(`NidtoGoTo is ${nidToGoTo}`);
 
   // we have the node we want to get to
   // send local comm send and then access local-index through sid, then JSON parse, then return the key value pair.
   const remote = {
-    method: "get",
-    service: "store",
+    method: 'get',
+    service: 'store',
     node: nidToNode[nidToGoTo],
   };
   const args = {
     key: `local-index-${id.getSID(nidToNode[nidToGoTo])}`,
-    gid: "local",
+    gid: 'local',
   };
   console.log(`Remote is ${remote} and args is ${args}`);
   global.distribution.local.comm.send([args], remote, (e, v) => {
@@ -54,7 +54,7 @@ function doActualQuery(movieName) {
     //     res = res.concat(v[i][movieName]);
     //   }
     // }
-    let res = [];
+    const res = [];
     const seen = new Set();
 
     v.forEach((entry) => {
@@ -71,9 +71,20 @@ function doActualQuery(movieName) {
     // console.log(res);
     // console.log("----------------------------------");
     if (res.length === 1) {
-      // console.log("Reached here");
-      console.log(res);
-      console.log(res.length);
+      console.log(
+          '----------------------------------------------------------------',
+      );
+      console.log(
+          `RECOMMENDATION FOR: ${movieName}\nURL: ${res[0].keyUrl}`,
+      );
+      console.log(`\nRecommendation: ${res[0].sourceName}`);
+      console.log(
+          `Rating: ${res[0].sourceRating}\nURL: ${res[0].sourceURL}`,
+      );
+      console.log(`1 RECOMMENDATION FOUND`);
+      console.log(
+          '-----------------------------------------------------------------',
+      );
     } else {
       const sorted = res.sort((a, b) => {
         if (b.sourceRating !== a.sourceRating) {
@@ -81,8 +92,22 @@ function doActualQuery(movieName) {
         }
         return a.sourceName.localeCompare(b.sourceName);
       });
-      console.log(sorted);
-      console.log(sorted.length);
+      console.log(
+          '----------------------------------------------------------------',
+      );
+      console.log(
+          `RECOMMENDATIONS FOR ${movieName}\nURL: ${sorted[0].keyUrl}`,
+      );
+      for (let i = 0; i < sorted.length; i++) {
+        console.log(`\nRecommendation ${i + 1}: ${sorted[i].sourceName}`);
+        console.log(
+            `Rating: ${sorted[i].sourceRating}\nURL: ${sorted[i].sourceURL}`,
+        );
+      }
+      console.log(`${sorted.length} RECOMMENDATIONS FOUND`);
+      console.log(
+          '-----------------------------------------------------------------',
+      );
     }
     shutdown();
   });
@@ -95,7 +120,7 @@ doActualQuery(movieName);
 function shutdown() {
   const t2 = performance.now();
   const latency = t2 - t1;
-  console.log("Time taken to normal query: ", latency);
+  console.log('Time taken to normal query: ', latency);
   global.distribution.local.status.stop((e, v) => {
     process.exit(0);
   });
