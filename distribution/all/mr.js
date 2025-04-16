@@ -160,7 +160,7 @@ function mr(config) {
 
     // Reduce
     mrServiceObject.reduce = (gid, reduceFunc, callback) => {
-      console.log(`Reached reducer`);
+      // console.log(`Reached reducer`);
       global.distribution.local.status.get("sid", (e, v) => {
         const localSid = v;
         global.distribution.local.store.get(

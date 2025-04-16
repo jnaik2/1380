@@ -100,7 +100,7 @@ function get(configuration, callback) {
   }
 
   const filepath = path.join(dir, `/store/${nid}/${gid}/${key}`);
-  console.log("GET filepath", filepath);
+  // console.log("GET filepath", filepath);
   // console.log(`Filepath is ${filepath}`);
   fs.readFile(filepath, (err, data) => {
     if (err) {
@@ -114,7 +114,7 @@ function get(configuration, callback) {
 }
 
 function awsGet(configuration, callback) {
-  console.log("IM GETTING IT");
+  // console.log("IM GETTING IT");
   const nid = global.moreStatus["nid"];
   let key = null;
   let gid = "local";
@@ -148,7 +148,7 @@ function awsGet(configuration, callback) {
   }
 
   const filepath = path.join(dir, `/store/${nid}/${gid}/${key}`);
-  console.log("GET filepath", filepath);
+  // console.log("GET filepath", filepath);
   // console.log(`Filepath is ${filepath}`);
   fs.readFile(filepath, (err, data) => {
     if (err) {
