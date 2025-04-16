@@ -168,4 +168,8 @@ LoC: 1050 predicted
 
 ## How different are these numbers for different members in the team and why?
 
-ion wanna tell yo bich ass
+Our numbers were very different, and ranged from 600 lines to 3000 lines in terms of predictions. Some members noted that there were 6 milestones and simply mutiplied the number of lines of code in m0 by 6. Other predictions varied and were rough estimates based on the LoC of prior large-scale systems projects.
+
+# Instructions to Run m6 Code (CineScraper)
+
+From root, simply run 'node m6/m6.js' in a terminal shell, and run 'node m6/m6Query.js <QUERY>' in a separate shell. Replace <QUERY> with a query of a movie name. Typos are okay! Our spell check algorithm will output a list of suggestions and query the CineScraper system for each suggestion, upon detecting a typo.
