@@ -4,132 +4,141 @@
 // const {JSDOM} = require('jsdom');
 // const {URL} = require('url');
 
-function fetchHTML(url, callback) {
-  const https = require('https');
-  console.log('Getting content from url: ', url);
-  https.get(url, (response) => { // use https to get html
-    if (response.statusCode !== 200) {
-      callback(new Error(`Failed to load page, status code: ${response.statusCode}`));
-      return;
-    }
+async function imdbMapper(key, value, callback) {
+  const randomDelay = Math.random() * 5000;
+  const url = value;
 
+  function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
-    // similar to our original comm
+  function fetchHTML(url) {
+    const https = require("https");
 
-    let data = '';
-    response.on('data', (chunk) => {
-      data += chunk;
+    return new Promise((resolve, reject) => {
+      const request = https.get(url, (response) => {
+        if (response.statusCode === 503) {
+          reject({
+            retryable: true,
+            statusCode: 503,
+            message: `503 Service Unavailable: ${url}`,
+          });
+          return;
+        }
+
+        if (response.statusCode !== 200) {
+          reject(
+            new Error(
+              `Failed to load page, status code: ${response.statusCode}. Url: ${url}`
+            )
+          );
+          return;
+        }
+
+        let data = "";
+        response.on("data", (chunk) => {
+          data += chunk;
+        });
+        response.on("end", () => {
+          resolve(data);
+        });
+      });
+
+      request.on("error", (err) => {
+        reject(err);
+      });
+
+      request.setTimeout(500000, () => {
+        request.abort();
+        reject(new Error("Request timed out"));
+      });
     });
-    response.on('end', () => callback(null, data));
-  }).on('error', (err) => {
-    callback(err);
-  });
-}
+  }
 
-function getBaseURL(url) {
-  const parsedURL = new URL(url);
-  return `${parsedURL.protocol}//${parsedURL.host}`;
-}
-
-function extractIMDbInfo(url, callback) {
-  const {JSDOM} = require('jsdom');
-  const {URL} = require('url');
-  callback = callback || function() {};
-  fetchHTML(url, (err, html) => {
-    if (err) {
-      return callback(err);
+  async function fetchHTMLWithRetry(url, attempts = 6) {
+    const numTry = 6 - attempts + 1;
+    try {
+      return await fetchHTML(url);
+    } catch (err) {
+      if ((err.retryable && err.statusCode === 503) || attempts > 0) {
+        console.warn(
+          `Fetch failed, retrying (try #${numTry} after long delay... (${url})`
+        );
+        // Try exponential backoff delay
+        const delayTime = Math.random() * Math.pow(5, 6 - attempts) * 1000;
+        await delay(delayTime + randomDelay);
+        return fetchHTMLWithRetry(url, attempts - 1);
+      } else {
+        throw err;
+      }
     }
+  }
 
-    // similar to our original getURLS.js
+  function getBaseURL(url) {
+    const parsedURL = new URL(url);
+    return `${parsedURL.protocol}//${parsedURL.host}`;
+  }
+
+  try {
+    // Initial random polite delay
+    await delay(randomDelay);
+    const html = await fetchHTMLWithRetry(url);
+    const { JSDOM } = require("jsdom");
+    const { URL } = require("url");
     const dom = new JSDOM(html);
     const document = dom.window.document;
     const baseURL = getBaseURL(url);
-    const seenMovies = new Set();
 
-    // get rating of current url
-    // try all possible class names I saw on various IMDB sites
-    let ratingElement = document.querySelector('span.sc-d541859f-1.imUuxf') ||
-                        document.querySelector('[data-testid="hero-rating-bar__aggregate-rating__score"] span') ||
-                        document.querySelector('.ratings_wrapper .rating span');
+    let ratingElement = document.querySelector("div.allmovie-rating");
 
-    // try looking at all spans and looking for ratings followed by / 10 or smthing
     if (!ratingElement) {
-      const spans = document.querySelectorAll('span');
-      for (const span of spans) {
-        const text = span.textContent.trim();
-        if (/^\d+\.\d+(\s*\/\s*10)?$/.test(text)) {
-          ratingElement = span;
-          break;
-        }
-      }
+      callback(new Error("Rating element not found for this url:" + url), null);
+      return;
     }
 
-    const rating = ratingElement ? ratingElement.textContent.trim() : 'N/A';
+    const rating = Number(ratingElement.textContent.split(" ")[0]);
 
-    // get more like this
-    let moreLikeThisMovies = document.querySelectorAll('a.ipc-poster-card__title');
+    const moreLikeThis = document.querySelectorAll("a.poster-link");
 
-    // try another one
-    if (moreLikeThisMovies.length === 0) {
-      moreLikeThisMovies = document.querySelectorAll('[data-testid="MoreLikeThis"] a');
+    if (moreLikeThis.length === 0) {
+      callback(new Error("No related books found for this url:" + url), null);
+      return;
     }
 
-    // if still nothing, try going for all h2 and h3 and searchin for similar section titles
+    const similar = [];
 
-    if (moreLikeThisMovies.length === 0) {
-      const headings = document.querySelectorAll('h2, h3');
-      for (const heading of headings) {
-        if (/More like this|Similar movies|You may also like/i.test(heading.textContent)) {
-          let section = heading.nextElementSibling;
-          while (section && !section.querySelectorAll) {
-            section = section.nextElementSibling;
-          }
-          if (section) {
-            moreLikeThisMovies = section.querySelectorAll('a[href*="/title/"]');
-          }
-          break;
-        }
+    moreLikeThis.forEach((link) => {
+      if (!link) {
+        console.error("Link is null or undefined");
+        callback(new Error("Link is null or undefined"), null);
+        return;
       }
-    }
 
-    const similarMovies = [];
+      const href = link.getAttribute("href");
+      const url_slice = new URL(href, baseURL).href;
+      const title = link.getAttribute("title");
 
-    // go through each movie
-    moreLikeThisMovies.forEach((link) => {
-      if (link.hasAttribute('href')) {
-        const href = link.getAttribute('href'); // get link
-        if (href.includes('/title/')) {
-          const titleMatch = href.match(/\/title\/(tt\d+)/); // gets title context (/title/tconst)
-          if (titleMatch) {
-            const titleId = titleMatch[1]; // get actual tconst
-            // console.log(titleMatch);
-            // console.log(titleId);
-            if (!seenMovies.has(titleId)) { // avoid duplicates (although this shouldnt' ever happen)?
-              seenMovies.add(titleId);
-              const fullUrl = new URL(href, baseURL).href; // use base url so that we dont use relative urls
-              let movieTitle = link.getAttribute('aria-label') || link.textContent.trim(); // get movie title
-              movieTitle = movieTitle.replace('View title page for ', ''); // replace the IMDB text with our text
-              similarMovies.push({
-                url: fullUrl,
-                name: movieTitle,
-              });
-            }
-          }
-        }
-      }
+      similar.push({
+        [title]: {
+          keyUrl: url_slice,
+          sourceURL: url,
+          sourceRating: rating,
+          sourceName: key,
+        },
+      });
     });
 
-    // have key as url, rating and then jsonify it
-
-    const objKey = JSON.stringify({url: url, rating: rating});
-    const result = {
-      [objKey]: similarMovies,
-    };
-
-    callback(null, result);
-  });
+    callback(null, [similar]);
+  } catch (error) {
+    console.error("Error fetching or processing HTML:", error);
+    callback(null, [
+      {
+        [JSON.stringify({ url: url, rating: "N/A" })]: [],
+      },
+    ]);
+  }
 }
 
 module.exports = {
-  extractIMDbInfo,
+  imdbMapper,
 };

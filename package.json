@@ -23,6 +23,7 @@
   "license": "ISC",
   "dependencies": {
     "@brown-ds/distribution": "^0.1.23",
+    "typo-js": "^1.2.5",
     "yargs": "^17.7.2"
   },
   "report": {

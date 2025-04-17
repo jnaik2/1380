@@ -10,7 +10,8 @@
   "dependencies": {
     "html-to-text": "^9.0.5",
     "jsdom": "^23.2.0",
-    "natural": "^6.10.4"
+    "natural": "^6.10.4",
+    "typo-js": "^1.2.5"
   },
   "scripts": {
     "pretest": "../scripts/pretest.sh",
@@ -32,8 +33,16 @@
       "ssd-gb": 59
     },
     "throughput": {
-      "dev": [676, 342, 337],
-      "aws": [1206, 1362, 1030],
+      "dev": [
+        676,
+        342,
+        337
+      ],
+      "aws": [
+        1206,
+        1362,
+        1030
+      ],
       "gs": []
     },
     "dloc": 3000

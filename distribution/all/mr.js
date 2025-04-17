@@ -1,6 +1,6 @@
 /** @typedef {import("../types").Callback} Callback */
 
-const id = require("../util/id");
+const id = require('../util/id');
 
 /**
  * Map functions used for mapreduce
@@ -35,7 +35,7 @@ const id = require("../util/id");
 
 function mr(config) {
   const context = {
-    gid: config.gid || "all",
+    gid: config.gid || 'all',
   };
 
   /**
@@ -51,7 +51,6 @@ function mr(config) {
     // Map
     mrServiceObject.map = (keys, mapFunc, gid, jobID, callback) => {
       const results = [];
-      const count = 0;
       if (keys.length === 0) {
         callback(null, []);
         return;
@@ -59,66 +58,40 @@ function mr(config) {
 
       // Keep track of pending operations
       let pendingOperations = keys.length;
-      // console.log("IN MAP, pendingOperations is: ", pendingOperations);
 
       for (const key of keys) {
-        // console.log("Current key is: ", key);
         global.distribution.local.store.get(
-          { key: key, gid: gid },
-          async (e, value) => {
-            try {
-              // Check if mapFunc returns a Promise
-              const result = mapFunc(key, value, (err, mapResult) => {
-                if (key == "Snow White") {
-                  console.log("Here");
-                }
-                if (err) {
-                  console.error("Mapper error:", err);
-                } else if (Array.isArray(mapResult)) {
-                  results.push(...mapResult);
-                } else {
-                  results.push(mapResult);
-                }
-
-                // console.log("I am in the mapFunc part");
-                // console.log(key);
-                // console.log(mapResult);
-
+            {key: key, gid: gid},
+            async (e, value) => {
+              try {
+                const result = mapFunc(key, value, (err, mapResult) => {
+                  if (err) {
+                  // console.error("Mapper error:", err);
+                  } else if (Array.isArray(mapResult)) {
+                    results.push(...mapResult);
+                  } else {
+                    results.push(mapResult);
+                  }
+                  pendingOperations--;
+                  checkCompletion();
+                });
+              } catch (error) {
+                console.error('Error in mapper:', error);
                 pendingOperations--;
-                // console.log("New pending operations is: ", pendingOperations);
                 checkCompletion();
-              });
-
-              // If mapFunc didn't use the callback (returned a value or Promise)
-              // if (result !== undefined) {
-              //   const resolvedResult = await Promise.resolve(result);
-              //   if (Array.isArray(resolvedResult)) {
-              //     results.push(...resolvedResult);
-              //   } else {
-              //     results.push(resolvedResult);
-              //   }
-
-              //   pendingOperations--;
-              //   checkCompletion();
-              // }
-            } catch (error) {
-              console.error("Error in mapper:", error);
-              pendingOperations--;
-              checkCompletion();
-            }
-          }
+              }
+            },
         );
       }
 
       function checkCompletion() {
         if (pendingOperations === 0) {
-          // console.log("Results in checking completion map: ", results);
           global.distribution.local.store.put(
-            results,
-            { key: `mr-map-${jobID}`, gid: gid },
-            (e, v) => {
-              callback(null, results);
-            }
+              results,
+              {key: `mr-map-${jobID}`, gid: gid},
+              (e, v) => {
+                callback(null, results);
+              },
           );
         }
       }
@@ -126,139 +99,129 @@ function mr(config) {
 
     // Shuffle
     mrServiceObject.shuffle = (gid, jobID, callback) => {
-      // console.log("IN SHUFFLE");
       // Retrieve map results
       global.distribution.local.store.get(
-        { key: `mr-map-${jobID}`, gid: gid },
-        (e, values) => {
-          if (e) {
-            callback(e, null);
-            return;
-          }
-          // console.log(`IN SHUFFLE, results are ${JSON.stringify(values)}`);
-          // Collect all values that have the same key
-          const collection = {};
-          // console.log("VALUES IN SHUFFLE IS: ", JSON.stringify(values));
-          // values = values[0];
-          // console.log(
-          //   `IN SHUFFLE, results are ${JSON.stringify(
-          //     values
-          //   )} and its size is ${values.length}`
-          // );
-          // for (const [k, v] in Object.entries(values)) {
-          //   console.log(`IN SHUFFLE, results key is ${k} and value is ${v}`);
-          //   console.log("\n");
-          // }
-          values.forEach((innerValue) => {
-            innerValue.forEach((value) => {
-              // console.log("Value in values loop: ", values);
-              const key = Object.keys(value)[0];
-              // console.log("key", key);
-              if (!collection[key]) {
-                collection[key] = [];
-              }
-              collection[key].push(value[key]);
-              // console.log(
-              //   "After adding key, we get: ",
-              //   JSON.stringify(collection)
-              // );
-            });
-          });
-
-          // console.log("IN SHUFFLE COLLECTION");
-          // console.log(collection);
-          // Store the collection in the distributed store
-          let count = 0;
-          for (const key in collection) {
-            // console.log("Trying to store key: ", key);
-            const lastIndex = key.lastIndexOf("/");
-            const tConst = key.substring(lastIndex + 1);
-            // console.log(tConst);
-            global.distribution[gid].store.put(
-              collection[key],
-              { key: `mr-shuffle-${tConst}`, append: "true" },
-              (e, v) => {
-                // console.log("IN STORE");
-                // console.log(e);
-                count++;
-                if (count === Object.keys(collection).length) {
-                  global.distribution.local.store.del(
-                    { key: `mr-map-${jobID}`, gid: gid },
-                    (e, v) => {
-                      callback(null, collection);
-                    }
-                  );
+          {key: `mr-map-${jobID}`, gid: gid},
+          (e, values) => {
+            if (e) {
+              callback(e, null);
+              return;
+            }
+            const collection = {};
+            values.forEach((innerValue) => {
+              innerValue.forEach((value) => {
+                const key = Object.keys(value)[0];
+                if (!collection[key]) {
+                  collection[key] = [];
                 }
-              }
-            );
-          }
-        }
+                collection[key].push(value[key]);
+              });
+            });
+            let count = 0;
+            for (const key in collection) {
+            // console.log(key);
+              global.distribution[gid].store.put(
+                  collection[key],
+                  {key: `mr-shuffle-${key}`, append: 'true'},
+                  (e, v) => {
+                    count++;
+                    if (count === Object.keys(collection).length) {
+                      global.distribution.local.store.del(
+                          {key: `mr-map-${jobID}`, gid: gid},
+                          (e, v) => {
+                            callback(null, Object.keys(collection).length);
+                          },
+                      );
+                    }
+                  },
+              );
+            }
+          },
       );
     };
 
     // Reduce
     mrServiceObject.reduce = (gid, reduceFunc, callback) => {
-      global.distribution.local.status.get("sid", (e, v) => {
+      global.distribution.local.status.get('sid', (e, v) => {
         const localSid = v;
         global.distribution.local.store.get(
-          { key: null, gid: gid },
-          (e, keys) => {
-            // if (e) {
-            //   console.log("Error in store get for reduce: ", e);
-            // }
-            // console.log("IN REDUCE PART OF MR");
-            // console.log("keys is: ", keys);
-            let count = 0;
-            const results = [];
-            const reduceKeys = [];
-            for (const key of keys) {
-              if (`${key}`.startsWith("mr-shuffle-")) {
-                reduceKeys.push(key);
-              }
-            }
-            if (reduceKeys.length === 0) {
-              callback(null, null);
-              return;
-            }
-            for (const key of reduceKeys) {
-              global.distribution.local.store.get(
-                { key: key, gid: gid },
-                (e, value) => {
-                  count++;
-                  const result = reduceFunc(key.slice(11), value);
-                  if (Array.isArray(result)) {
-                    results.push(...result);
-                  } else {
-                    results.push(result);
-                  }
-
-                  global.distribution.local.store.del(
-                    { key: key, gid: gid },
-                    (e, v) => {
-                      // if (count === reduceKeys.length) {
-                      //   callback(null, results);
-                      //   return;
-                      // }
-                      global.distribution.local.store.put(
-                        results,
-                        {
-                          key: `local-index-${localSid}`,
-                          gid: "local",
-                          append: "true",
-                        },
-                        (e, v) => {
-                          if (count === reduceKeys.length) {
-                            callback(null, results);
-                            return;
-                          }
-                        }
-                      );
-                    }
-                  );
+            {key: null, gid: gid},
+            (e, keys) => {
+              let count = 0;
+              const results = [];
+              const reduceKeys = [];
+              for (const key of keys) {
+                if (`${key}`.startsWith('mr-shuffle-')) {
+                  reduceKeys.push(key);
                 }
-              );
-            }
-          }
+              }
+              if (reduceKeys.length === 0) {
+                callback(null, null);
+                return;
+              }
+              for (const key of reduceKeys) {
+              // call local.mem.get for key (need to check whehter value is null or not)
+                const currName = key.slice(11);
+                // console.log("Current key is: ", key.slice(11));
+                global.distribution.local.mem.get(key, (e, v) => {
+                  if (currName === 'Pulp Fiction') {
+                    console.log('seen');
+                    console.log(JSON.stringify(v));
+                  }
+                  let seen;
+                  if (v !== null) {
+                    seen = new Set(v);
+                  } else {
+                    seen = new Set();
+                  }
+                  global.distribution.local.store.get(
+                      {key: key, gid: gid},
+                      (e, value) => {
+                        const result = reduceFunc(key.slice(11), value);
+                        if (!seen.has(JSON.stringify(result))) {
+                          results.push(result);
+                          seen.add(JSON.stringify(result));
+                        }
+
+                        // call local.mem.put again
+                        // if (currName === "Pulp Fiction") {
+                        //   console.log("new seen");
+                        //   console.log(JSON.stringify(seen));
+                        //   console.log(JSON.stringify(results));
+                        // }
+                        global.distribution.local.mem.put(seen, key, (e, v) => {
+                          if (e) {
+                            console.error(
+                                `Error in mem putting with object: ${seen} and key: ${key}`,
+                            );
+                          }
+                          global.distribution.local.store.del(
+                              {key: key, gid: gid},
+                              (e, v) => {
+                                count++;
+                                // this is step 4
+                                if (count === reduceKeys.length) {
+                                  global.distribution.local.store.put(
+                                      results,
+                                      {
+                                        key: `local-index-${localSid}`,
+                                        gid: 'local',
+                                        append: 'true',
+                                      },
+                                      (e, v) => {
+                                        callback(null, results);
+                                        return;
+                                      },
+                                  );
+                                }
+                              },
+                          );
+                        });
+                      },
+                  );
+                });
+              }
+            },
         );
       });
     };
@@ -281,80 +244,131 @@ function mr(config) {
 
     // Invocation
     const mrServiceName = `mr-${jobID}`;
+    console.log('Creating service: ');
     global.distribution[context.gid].routes.put(
-      mrServiceObject,
-      mrServiceName,
-      (e, v) => {
-        global.distribution.local.groups.get(context.gid, (e, groups) => {
-          let mapResponses = 0;
-          const workerCount = Object.keys(groups).length;
-          const partition = partitionKeys(configuration.keys, groups);
-          for (const sid in groups) {
-            const nid = id.getNID(groups[sid]);
-            const mapArgs = [
-              partition[nid],
-              configuration.map,
-              context.gid,
-              jobID,
-            ];
-            const mapRemote = {
-              service: mrServiceName,
-              method: "map",
-              node: groups[sid],
-            };
-            global.distribution.local.comm.send(mapArgs, mapRemote, (e, v) => {
-              if (e) {
-                console.error(e);
-              }
-              mapResponses++;
-              if (mapResponses == workerCount) {
-                // Start shuffle phase
-                const shuffleArgs = [context.gid, jobID];
-                const shuffleRemote = {
-                  service: mrServiceName,
-                  method: "shuffle",
-                };
-                global.distribution[context.gid].comm.send(
-                  shuffleArgs,
-                  shuffleRemote,
-                  (e, v) => {
-                    // Start reduce phase
-                    const reduceArgs = [context.gid, configuration.reduce];
-                    const reduceRemote = {
-                      service: mrServiceName,
-                      method: "reduce",
-                    };
-                    global.distribution[context.gid].comm.send(
-                      reduceArgs,
-                      reduceRemote,
+        mrServiceObject,
+        mrServiceName,
+        (e, v) => {
+          global.distribution.local.groups.get(context.gid, (e, groups) => {
+            let mapResponses = 0;
+            const workerCount = Object.keys(groups).length;
+            const partition = partitionKeys(configuration.keys, groups);
+            for (const sid in groups) {
+              const nid = id.getNID(groups[sid]);
+              const mapArgs = [
+                partition[nid],
+                configuration.map,
+                context.gid,
+                jobID,
+              ];
+              const mapRemote = {
+                service: mrServiceName,
+                method: 'map',
+                node: groups[sid],
+              };
+              let t1 = performance.now();
+              global.distribution.local.comm.send(mapArgs, mapRemote, (e, v) => {
+                if (e) {
+                  console.error(e);
+                }
+                mapResponses++;
+                if (mapResponses == workerCount) {
+                  let t2 = performance.now();
+                  console.log('Calculating performance');
+                  console.log('keys length: ', configuration.keys.length);
+                  const latency = (t2 - t1) / configuration.keys.length;
+                  const throughput = (configuration.keys.length * 1000) / (t2 - t1);
+                  let results = {
+                    throughput: throughput,
+                    latency: latency,
+                    time: (t2 - t1) / 1000,
+                  };
+                  global.distribution.local.store.put(
+                      [results],
+                      {
+                        key: `performance-mapper-results`,
+                        gid: 'local',
+                        append: 'true',
+                      },
                       (e, v) => {
-                        // Collect results from all nodes
-                        let reduceResults = [];
-                        for (const value of Object.values(v)) {
-                          if (value !== null) {
-                            reduceResults = reduceResults.concat(value);
-                          }
-                        }
-                        // Remove endpoint
-                        global.distribution[context.gid].routes.rem(
-                          mrServiceName,
-                          (e, _) => {
-                            cb(null, reduceResults);
-                          }
+                        // Start shuffle phase
+                        console.log('Stored performance results: ', v);
+                        const shuffleArgs = [context.gid, jobID];
+                        const shuffleRemote = {
+                          service: mrServiceName,
+                          method: 'shuffle',
+                        };
+
+                        t1 = performance.now();
+                        global.distribution[context.gid].comm.send(
+                            shuffleArgs,
+                            shuffleRemote,
+                            (e, v) => {
+                              const keyLength = Object.values(v).reduce(
+                                  (sum, value) => sum + value,
+                                  0,
+                              );
+                              // Start reduce phase
+                              const reduceArgs = [context.gid, configuration.reduce];
+                              const reduceRemote = {
+                                service: mrServiceName,
+                                method: 'reduce',
+                              };
+                              global.distribution[context.gid].comm.send(
+                                  reduceArgs,
+                                  reduceRemote,
+                                  (e, v) => {
+                                    let reduceResults = [];
+                                    for (const value of Object.values(v)) {
+                                      if (value !== null) {
+                                        reduceResults = reduceResults.concat(value);
+                                      }
+                                    }
+
+                                    t2 = performance.now();
+                                    const latency = (t2 - t1) / keyLength;
+                                    const throughput = (keyLength * 1000) / (t2 - t1);
+                                    results = {
+                                      throughput: throughput,
+                                      latency: latency,
+                                      time: (t2 - t1) / 1000,
+                                    };
+                                    console.log('Calculating indexer performance');
+                                    console.log('keys length: ' + keyLength);
+
+                                    global.distribution.local.store.put(
+                                        [results],
+                                        {
+                                          key: `performance-indexer-results`,
+                                          gid: 'local',
+                                          append: 'true',
+                                        },
+                                        (e, v2) => {
+                                          console.log('Stored performance results: ', v2);
+                                          global.distribution[context.gid].routes.rem(
+                                              mrServiceName,
+                                              (e, _) => {
+                                                console.log('Removed service');
+                                                cb(null, reduceResults);
+                                              },
+                                          );
+                                        },
+                                    );
+                                  },
+                              );
+                            },
                         );
-                      }
-                    );
-                  }
-                );
-              }
-            });
-          }
-        });
-      }
+                      },
+                  );
+                }
+              });
+            }
+          });
+        },
     );
   }
 
-  return { exec };
+  return {exec};
 }
 
 module.exports = mr;
